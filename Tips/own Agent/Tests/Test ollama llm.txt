@@ -1,0 +1,21 @@
+To start Ollama and test it with curl, follow these steps:
+
+1. Open a terminal and start the Ollama server:
+```bash
+ollama serve
+```
+Leave this terminal running.
+
+2. Open a new terminal and test the API with curl:
+```bash
+curl http://localhost:11434
+```
+You should see a response like Ollama is running or a JSON object.
+
+3. To test the LLM model specifically, use:
+```bash
+curl http://localhost:11434/api/generate -d '{"model": "llama3", "prompt": "Hello!", "stream": false}'
+```
+You should get a JSON response with the model's reply.
+
+If you see these responses, Ollama is running and ready for your CLI integration!

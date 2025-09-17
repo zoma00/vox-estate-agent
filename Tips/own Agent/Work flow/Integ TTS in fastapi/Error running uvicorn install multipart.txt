@@ -1,0 +1,306 @@
+  File "/home/hazem-elbatawy/Downloads/Multi Agent /realestate_agent/venv/lib/python3.11/site-packages/fastapi/routing.py", line 555, in __init__
+    self.dependant = get_dependant(path=self.path_format, call=self.endpoint)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hazem-elbatawy/Downloads/Multi Agent /realestate_agent/venv/lib/python3.11/site-packages/fastapi/dependencies/utils.py", line 285, in get_dependant
+    param_details = analyze_param(
+                    ^^^^^^^^^^^^^^
+  File "/home/hazem-elbatawy/Downloads/Multi Agent /realestate_agent/venv/lib/python3.11/site-packages/fastapi/dependencies/utils.py", line 482, in analyze_param
+    ensure_multipart_is_installed()
+  File "/home/hazem-elbatawy/Downloads/Multi Agent /realestate_agent/venv/lib/python3.11/site-packages/fastapi/dependencies/utils.py", line 115, in ensure_multipart_is_installed
+    raise RuntimeError(multipart_not_installed_error) from None
+RuntimeError: Form data requires "python-multipart" to be installed. 
+You can install "python-multipart" with: 
+
+pip install python-multipart
+
+
+You need to install the python-multipart package, which FastAPI uses to handle form data (like your text input).
+
+Run this command in your venv:
+```bash
+pip install python-multipart
+```
+
+Then restart your FastAPI server:
+```bash
+uvicorn app.main:app --host 0.0.0.0 --port 8000
+```
+
+After that, your endpoint should work as expected! Let me know if you hit any more issues.
+
+
+
+#######################################33
+            Bash
+            #############################33333
+
+(venv) hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/Multi Agent /realestate_agent$ pip install python-multipart
+Collecting python-multipart
+  Using cached python_multipart-0.0.20-py3-none-any.whl.metadata (1.8 kB)
+Using cached python_multipart-0.0.20-py3-none-any.whl (24 kB)
+Installing collected packages: python-multipart
+Successfully installed python-multipart-0.0.20
+(venv) hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/Multi Agent /realestate_agent$ uvicorn app.main:app --host 0.0.0.0 --port 8000
+Traceback (most recent call last):
+  File "/usr/bin/uvicorn", line 8, in <module>
+    sys.exit(main())
+             ^^^^^^
+  File "/usr/lib/python3/dist-packages/click/core.py", line 1157, in __call__
+    return self.main(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3/dist-packages/click/core.py", line 1078, in main
+    rv = self.invoke(ctx)
+         ^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3/dist-packages/click/core.py", line 1434, in invoke
+    return ctx.invoke(self.callback, **ctx.params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3/dist-packages/click/core.py", line 783, in invoke
+    return __callback(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3/dist-packages/uvicorn/main.py", line 418, in main
+    run(
+  File "/usr/lib/python3/dist-packages/uvicorn/main.py", line 587, in run
+    server.run()
+  File "/usr/lib/python3/dist-packages/uvicorn/server.py", line 62, in run
+    return asyncio.run(self.serve(sockets=sockets))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/runners.py", line 194, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "uvloop/loop.pyx", line 1516, in uvloop.loop.Loop.run_until_complete
+  File "/usr/lib/python3/dist-packages/uvicorn/server.py", line 69, in serve
+    config.load()
+  File "/usr/lib/python3/dist-packages/uvicorn/config.py", line 458, in load
+    self.loaded_app = import_from_string(self.app)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3/dist-packages/uvicorn/importer.py", line 24, in import_from_string
+    raise exc from None
+  File "/usr/lib/python3/dist-packages/uvicorn/importer.py", line 21, in import_from_string
+    module = importlib.import_module(module_str)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/importlib/__init__.py", line 90, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap>", line 1387, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 995, in exec_module
+  File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+  File "/home/hazem-elbatawy/Downloads/Multi Agent /realestate_agent/app/main.py", line 2, in <module>
+    from fastapi import FastAPI, UploadFile, File
+ModuleNotFoundError: No module named 'fastapi'
+
+
+###############################
+    Analysis        
+    ##############################################3333
+
+    The error ModuleNotFoundError: No module named 'fastapi' means that, even though you installed FastAPI in your venv, your current uvicorn command is using the system Python, not your venv’s Python.
+
+**How to fix:**
+
+1. Make sure your venv is activated:
+```bash
+source venv/bin/activate
+```
+(You should see (venv) in your prompt.)
+
+2. Run uvicorn using the venv’s Python:
+```bash
+python -m uvicorn app.main:app --host 0.0.0.0 --port 8000
+```
+or
+```bash
+venv/bin/uvicorn app.main:app --host 0.0.0.0 --port 8000
+```
+
+**Do not use the system’s /usr/bin/uvicorn** (which is outside your venv).
+
+---
+
+This will ensure all dependencies are found.  
+Let me know if your server starts successfully!
+
+###############################################
+Connected when use port not localhost
+##########################################
+nt$ source venv/bin/activate
+(venv) hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/Multi Agent /realestate_agent$ venv/bin/uvicorn app.main:app --host 0.0.0.0 --port 8000
+INFO:     Started server process [25162]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+why is that ?
+
+
+This is the correct and expected behavior!  
+When you run:
+
+```bash
+venv/bin/uvicorn app.main:app --host 0.0.0.0 --port 8000
+```
+
+- Uvicorn starts your FastAPI app using the Python and packages from your virtual environment (venv).
+- The message:
+  ```
+  INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+  ```
+  means your server is running and listening for connections on all network interfaces (0.0.0.0) at port 8000.
+
+**Why is this important?**
+- Using 0.0.0.0 allows you (and others) to access your app from other devices on your network, not just from localhost.
+- Running uvicorn from venv ensures all your dependencies (like FastAPI) are available.
+
+**Summary:**  
+Your FastAPI server is running correctly. You can now send requests to it (e.g., with your test script or curl) and continue development!
+#########################################
+
+##########################################
+
+** What i mean here in  this error happens because there is a diffs between the 2 commands as we see :
+First command which leads to no module fastapi error:
+
+uvicorn app.main:app --host 0.0.0.0 --port 8000
+
+Second command wich connect for the server successfully because we added the venv/bin before uvicorn :
+venv/bin/uvicorn app.main:app --host 0.0.0.0 --port 8000
+
+**And i think that is not normal behavior since i should run the command for ex :
+uvicorn app.main:app --host 0.0.0.0 --port 8000
+
+** So why is that happen is there is any realtion between this and my venv location?
+** Another issue my venv doesn't activated auto when i open a new terminal in vscode i have to 
+activate it manually. why is that too? This happened after creating the new venv for the python 3.11 to 
+be compatible with the TTs module. ** And we have deleted the old venv with was in this path:
+
+
+** This is my previous prompt when deleted the old venv python 3.12:
+------------------------------------------------------------------------
+
+Would you like me to check your environment and guide you step by step? If so, please run:
+```bash
+which python
+which pip
+pip show TTS
+```
+and share the output.
+
+zoma00: (venv) hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/Multi Agent /realestate_agent$ which python
+which pip
+pip show TTS
+/home/hazem-elbatawy/Downloads/Multi Agent /venv/bin/python
+/home/hazem-elbatawy/Downloads/Multi Agent /venv/bin/pip
+WARNING: Package(s) not found: TTS
+(venv) hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/Multi Agent /realestate_agent$ python --version
+Python 3.12.3
+(venv) hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/Multi Agent /realestate_agent$ 
+** i realized why this happen . I have 2 venv on is 
+home = /usr/bin
+include-system-site-packages = false
+version = 3.11.13
+executable = /usr/bin/python3.11
+command = /home/hazem-elbatawy/Downloads/Multi Agent /realestate_agent/venv/bin/python3.11 -m venv /home/hazem-elbatawy/Downloads/Multi Agent /realestate_agent/venv
+
+** And  the second one is :
+home = /usr/bin
+include-system-site-packages = false
+version = 3.12.3
+executable = /usr/bin/python3.12
+command = /usr/bin/python3 -m venv /home/hazem-elbatawy/Downloads/Multi Agent /venv
+
+** And not i am on the second venv 3.12.3 by default so i need to deactivate this venv and activate the first one python 3.11.13  
+** Even i want to delete the second venv to remove confusion and it is not compatible python 3.12 with coqui TTS.
+** So help me
+
+GitHub Copilot: You are correct: you have two virtual environments, and you are currently using the one at `/home/hazem-elbatawy/Downloads/Multi Agent /venv` (Python 3.12.3), which is not compatible with Coqui TTS. You want to:
+1. Deactivate the current venv.
+2. Activate the correct venv at `/home/hazem-elbatawy/Downloads/Multi Agent /realestate_agent/venv` (Python 3.11.13).
+3. Delete the wrong venv to avoid confusion.
+
+Here are the exact steps:
+
+---
+
+### 1. Deactivate the current venv
+```bash
+deactivate
+```
+
+---
+
+### 2. Activate the correct venv (Python 3.11.13)
+```bash
+source "/home/hazem-elbatawy/Downloads/Multi Agent /realestate_agent/venv/bin/activate"
+```
+
+---
+
+### 3. (Optional but recommended) Delete the wrong venv
+Make sure you are NOT inside the `/home/hazem-elbatawy/Downloads/Multi Agent /venv` directory before deleting:
+```bash
+rm -rf "/home/hazem-elbatawy/Downloads/Multi Agent /venv"
+```
+
+---
+
+### 4. Verify Python version and TTS installation
+```bash
+python --version
+pip show TTS
+```
+You should see Python 3.11.13 and TTS installed.
+
+---
+
+After this, you can run your TTS test script and it should work.  
+Would you like me to proceed with these commands for you?
+
+zoma00: (venv) hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/Multi Agent /realestate_agent$ python --version
+Python 3.11.13
+(venv) hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/Multi Agent /realestate_agent$ rm -rf "/home/hazem-elbatawy/Downloads/Multi Agent /venv"
+(venv) hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/Multi Agent /realestate_agent$ cd ..
+(venv) hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/Multi Agent $ rm -rf "/home/hazem-elbatawy/Downloads/Multi Agent /venv"
+(venv) hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/Multi Agent $ python --version
+Python 3.11.13
+(venv) hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/Multi Agent $ python --version
+pip show TTS
+Python 3.11.13
+
+
+Answer
+-----------
+Great questions! Here are clear answers to both issues:
+
+---
+
+### 1. Why does `uvicorn app.main:app ...` fail, but `venv/bin/uvicorn app.main:app ...` works?
+
+- When you run `uvicorn app.main:app ...`, your shell may use the system-wide uvicorn (e.g., uvicorn), not the one installed in your venv.
+- The system uvicorn does not see packages installed in your venv, so it can't find FastAPI or other dependencies.
+- When you run `venv/bin/uvicorn ...` (or `python -m uvicorn ...` with venv activated), you are guaranteed to use the uvicorn and Python from your venv, which has all your project dependencies.
+
+**This is not related to your venv location.**  
+It's about which uvicorn binary your shell finds first in your PATH.
+
+---
+
+### 2. Why doesn't my venv activate automatically in new VS Code terminals?
+
+- VS Code tries to auto-activate the venv it detects, but if you created a new venv after opening VS Code, or if you deleted/replaced venvs, VS Code may not detect it.
+- You must manually activate the venv with:
+  ```bash
+  source venv/bin/activate
+  ```
+- To fix auto-activation, close all VS Code windows, reopen the project, and open a new terminal. VS Code should detect and activate the venv if it’s in your project root and named `venv` or `.venv`.
+
+---
+
+**Summary:**  
+- Always use the venv’s uvicorn (or activate venv and use `python -m uvicorn ...`).
+- Manual venv activation is normal after venv changes; VS Code may need a restart to auto-detect new venvs.
+
+Let me know if you want tips for making venv activation even smoother!

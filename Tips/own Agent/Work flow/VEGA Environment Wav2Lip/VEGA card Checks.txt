@@ -1,0 +1,151 @@
+To check your AMD Vega GPU from the terminal, use the following commands:
+
+1. **List all PCI devices and look for your GPU:**
+```bash
+lspci | grep -i vga
+```
+You should see a line mentioning "AMD" or "Vega".
+
+2. **Get detailed info about your GPU:**
+```bash
+lspci -v -s $(lspci | grep -i vga | awk '{print $1}')
+```
+
+3. **Check driver and OpenCL support:**
+```bash
+glxinfo | grep "OpenGL renderer"
+```
+(You may need to install `mesa-utils` with `sudo apt install mesa-utils`.)
+
+4. **For more detailed AMD GPU info:**
+```bash
+sudo lshw -c video
+```
+
+Let me know if you want to check for ROCm (AMD GPU compute) or need help with GPU acceleration for Wav2Lip!
+
+
+
+
+#####################################################################
+
+
+(venv) hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/Multi Agent /realestate_agent$ lspci -v -s $(lspci | grep -i vga | awk '{print $1}')
+00:02.0 VGA compatible controller: Intel Corporation TigerLake-LP GT2 [Iris Xe Graphics] (rev 01) (prog-if 00 [VGA controller])
+        Subsystem: Dell TigerLake-LP GT2 [Iris Xe Graphics]
+        Flags: bus master, fast devsel, latency 0, IRQ 156, IOMMU group 0
+        Memory at 6012000000 (64-bit, non-prefetchable) [size=16M]
+        Memory at 4000000000 (64-bit, prefetchable) [size=256M]
+        I/O ports at 5000 [size=64]
+        Expansion ROM at 000c0000 [virtual] [disabled] [size=128K]
+        Capabilities: <access denied>
+        Kernel driver in use: i915
+        Kernel modules: i915, xe
+
+(venv) hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/Multi Agent /realestate_agent$ glxinfo | grep "OpenGL renderer"
+OpenGL renderer string: Mesa Intel(R) Iris(R) Xe Graphics (TGL GT2)
+(venv) hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/Multi Agent /realestate_agent$ sudo lshw -c video
+[sudo] password for hazem-elbatawy: 
+  *-display                 
+       description: VGA compatible controller
+       product: TigerLake-LP GT2 [Iris Xe Graphics]
+       vendor: Intel Corporation
+       physical id: 2
+       bus info: pci@0000:00:02.0
+       logical name: /dev/fb0
+       version: 01
+       width: 64 bits
+       clock: 33MHz
+       capabilities: pciexpress msi pm vga_controller bus_master cap_list rom fb
+       configuration: depth=32 driver=i915 latency=0 mode=1366x768 resolution=1366,768 visual=truecolor xres=1366 yres=768
+       resources: iomemory:600-5ff iomemory:400-3ff irq:156 memory:6012000000-6012ffffff memory:4000000000-400fffffff ioport:5000(size=64) memory:c0000-dffff memory:4010000000-4016ffffff memory:4020000000-40ffffffff
+  *-display
+       description: 3D controller
+       product: GP107M [GeForce MX350]
+       --------------------------
+       vendor: NVIDIA Corporation
+       ----------------------------
+       physical id: 0
+       bus info: pci@0000:01:00.0
+       version: a1
+       width: 64 bits
+       clock: 33MHz
+       capabilities: pm msi pciexpress bus_master cap_list rom
+       configuration: driver=nvidia latency=0
+       resources: iomemory:600-5ff iomemory:600-5ff irq:158 memory:71000000-71ffffff memory:6000000000-600fffffff memory:6010000000-6011ffffff ioport:4000(size=128)
+(venv) hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/Multi Agent /realestate_agent$ 
+
+
+
+analysis
+---------------------------------------
+
+
+Based on your output, **you do not have an AMD Vega GPU** in your system. Here’s what you actually have:
+
+---
+
+### Your GPUs:
+
+1. **Intel Iris Xe Graphics (TigerLake-LP GT2)**
+   - This is your integrated Intel GPU.
+   - OpenGL renderer and Xorg are using this by default.
+
+2. **NVIDIA GeForce MX350**
+   - This is a dedicated NVIDIA GPU.
+   - The driver in use is `nvidia`.
+
+---
+
+### What does this mean?
+
+- **No AMD Vega GPU is present.**
+- You have a decent NVIDIA GPU (MX350), which is much better for deep learning and video tasks than Intel integrated graphics.
+- If you want to accelerate Wav2Lip, you should configure your environment to use the NVIDIA GPU (with CUDA).
+
+---
+
+### Next steps for Wav2Lip acceleration:
+
+1. **Ensure NVIDIA drivers and CUDA are installed:**
+   ```bash
+   nvidia-smi
+   ```
+   You should see your MX350 listed.
+
+2. **Install PyTorch with CUDA support:**
+   Follow the [official PyTorch instructions](https://pytorch.org/get-started/locally/) and select CUDA for your version.
+
+3. **Run Wav2Lip with CUDA:**
+   Wav2Lip will automatically use the NVIDIA GPU if PyTorch with CUDA is installed.
+
+---
+
+**Summary:**  
+You have Intel + NVIDIA, not AMD Vega.  
+Your MX350 is suitable for Wav2Lip GPU acceleration, which will be much faster and less likely to crash your system than running on CPU.
+
+Let me know if you want help setting up CUDA or PyTorch for your NVIDIA GPU!
+
+###########################################################################
+
+
+Great question!  
+If you are running **Wav2Lip inside a Docker container** (using the provided Dockerfile and requirements.txt), you **do not need to install CUDA or PyTorch with CUDA in your venv or on your host system**. The Docker image should already include the correct CUDA-enabled PyTorch and all dependencies.
+
+**Why?**
+- The Docker container is isolated and contains its own Python environment and libraries.
+- The requirements.txt you showed is for the container, not your host venv.
+- As long as you run Wav2Lip via Docker (and use `--gpus all` or similar), it will use your system’s NVIDIA driver and GPU.
+
+**What you DO need on your host:**
+- NVIDIA drivers (which you have).
+- [NVIDIA Container Toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html) (so Docker can access your GPU).
+
+**Summary:**  
+- **No need to install CUDA/PyTorch in your venv if you use Docker for Wav2Lip.**
+- Just make sure Docker is set up for GPU access.
+
+If you want to run Wav2Lip outside Docker (directly in your venv), then you’d need CUDA-enabled PyTorch in your venv.
+
+Let me know if you want to check your Docker GPU setup or need a sample Docker run command for Wav2Lip with GPU!

@@ -1,0 +1,116 @@
+Here are answers to your questions:
+
+1. **Check laptop specs from Ubuntu terminal:**  
+Run this command to get a summary of your CPU, RAM, and system info:
+```sh
+inxi -Fxz
+```
+If inxi is not installed, you can install it with:
+```sh
+sudo apt install inxi
+```
+Alternatively, for basic info:
+```sh
+lscpu
+free -h
+lsb_release -a
+```
+
+
+
+(venv) hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/vox-estate-agent/backend/realestate_agent$
+
+ inxi -Fxz
+
+System:
+  Kernel: 6.14.0-29-generic arch: x86_64 bits: 64 compiler: gcc v: 13.3.0
+  Desktop: Unity v: N/A Distro: Ubuntu 24.04.3 LTS (Noble Numbat)
+Machine:
+  Type: Laptop System: Dell product: Vostro 15 3510 v: N/A
+    serial: <superuser required>
+  Mobo: Dell model: 0V799W v: A00 serial: <superuser required> UEFI: Dell
+    v: 1.37.1 date: 04/28/2025
+Battery:
+  ID-1: BAT0 charge: 17.0 Wh (71.4%) condition: 23.8/40.4 Wh (58.8%)
+    volts: 11.0 min: 11.2 model: SMP DELL MGCM51B status: discharging
+CPU:
+  Info: quad core model: 11th Gen Intel Core i5-1135G7 bits: 64 type: MT MCP
+    arch: Tiger Lake rev: 1 cache: L1: 320 KiB L2: 5 MiB L3: 8 MiB
+  Speed (MHz): avg: 1152 high: 1300 min/max: 400/4200 cores: 1: 638 2: 1195
+    3: 1269 4: 1140 5: 1300 6: 1141 7: 1268 8: 1266 bogomips: 38707
+  Flags: avx avx2 ht lm nx pae sse sse2 sse3 sse4_1 sse4_2 ssse3 vmx
+Graphics:
+  Device-1: Intel TigerLake-LP GT2 [Iris Xe Graphics] vendor: Dell
+    driver: i915 v: kernel arch: Gen-12.1 bus-ID: 00:02.0
+  Device-2: NVIDIA GP107M [GeForce MX350] vendor: Dell driver: nvidia
+    v: 535.247.01 arch: Pascal bus-ID: 01:00.0
+  Device-3: Sunplus Innovation Integrated_Webcam_HD driver: uvcvideo
+    type: USB bus-ID: 1-6:3
+  Display: x11 server: X.Org v: 21.1.11 with: Xwayland v: 23.2.6 driver: X:
+    loaded: modesetting,nvidia unloaded: fbdev,nouveau,vesa dri: iris gpu: i915
+    resolution: 1: 1920x1080~60Hz 2: 1366x768~60Hz
+  API: EGL v: 1.5 drivers: nvidia platforms: active: gbm inactive: N/A
+  API: OpenGL v: 4.6.0 compat-v: 4.6 vendor: intel mesa
+    v: 25.0.7-0ubuntu0.24.04.2 glx-v: 1.4 direct-render: yes renderer: Mesa
+    Intel Iris Xe Graphics (TGL GT2)
+  API: Vulkan v: 1.3.275 drivers: N/A surfaces: xcb,xlib devices: 3
+Audio:
+  Device-1: Intel Tiger Lake-LP Smart Sound Audio vendor: Dell
+    driver: snd_hda_intel v: kernel bus-ID: 00:1f.3
+  API: ALSA v: k6.14.0-29-generic status: kernel-api
+  Server-1: PipeWire v: 1.0.5 status: active
+Network:
+  Device-1: Intel Wi-Fi 6 AX201 driver: iwlwifi v: kernel bus-ID: 00:14.3
+  IF: wlp0s20f3 state: up mac: <filter>
+  Device-2: Realtek RTL8111/8168/8211/8411 PCI Express Gigabit Ethernet
+    vendor: Dell RTL8111/8168/8411 driver: r8169 v: kernel port: 3000
+    bus-ID: 03:00.0
+  IF: enp3s0 state: down mac: <filter>
+  IF-ID-1: docker0 state: down mac: <filter>
+Bluetooth:
+  Device-1: Intel Bluetooth 9460/9560 Jefferson Peak (JfP) driver: btusb
+    v: 0.8 type: USB bus-ID: 1-10:4
+  Report: hciconfig ID: hci0 rfk-id: 0 state: up address: <filter> bt-v: 5.1
+    lmp-v: 10
+Drives:
+  Local Storage: total: 1.38 TiB used: 90.48 GiB (6.4%)
+  ID-1: /dev/nvme0n1 vendor: Patriot model: M.2 P300 512GB size: 476.94 GiB
+    temp: 33.9 C
+  ID-2: /dev/sda vendor: Seagate model: ST1000LM035-1RK172 size: 931.51 GiB
+Partition:
+  ID-1: / size: 116.72 GiB used: 90.42 GiB (77.5%) fs: ext4 dev: /dev/sda4
+  ID-2: /boot/efi size: 871 MiB used: 68 MiB (7.8%) fs: vfat dev: /dev/sda1
+Swap:
+  ID-1: swap-1 type: file size: 8 GiB used: 0 KiB (0.0%) file: /swap.img
+Sensors:
+  System Temperatures: cpu: 55.0 C mobo: 52.0 C
+  Fan Speeds (rpm): cpu: 1208
+Info:
+  Memory: total: 20 GiB note: est. available: 19.28 GiB used: 5.19 GiB (26.9%)
+  Processes: 339 Uptime: 25m Init: systemd target: graphical (5)
+  Packages: 2552 Compilers: gcc: 13.3.0 Shell: Bash v: 5.2.21 inxi: 3.3.34
+(venv) hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/vox-estate-agent/backend/realestate_agent$ 
+
+
+
+############################    Analysis        #######################################################
+#####################################################################
+
+Your laptop specs summary:
+- CPU: Intel Core i5-1135G7 (4 cores, 8 threads, Tiger Lake, up to 4.2GHz)
+- RAM: 20GB
+- GPU: Intel Iris Xe (integrated) + NVIDIA GeForce MX350 (entry-level, not ideal for heavy deep learning)
+- Storage: 512GB NVMe SSD + 1TB HDD
+- OS: Ubuntu 24.04.3 LTS
+
+You are correct: the MX350 is not powerful for TTS/Wav2Lip deep learning workloads, so CPU-only is reasonable.
+
+For batching sentences in your TTS model:
+- Glow-TTS (the model you use) supports batching if you pass a list of sentences to its inference method,
+ instead of looping over sentences one by one.
+- Check your code where you call the TTS model. If you are processing each sentence in a loop, you can
+ optimize by passing the entire list of sentences 
+at once (if your TTS library supports it).
+
+Would you like me to help you find and update the batching code in your project? If so, let me know which 
+file or function handles TTS inference, or I can search for it.

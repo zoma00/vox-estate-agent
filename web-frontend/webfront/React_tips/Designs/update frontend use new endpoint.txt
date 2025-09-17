@@ -1,0 +1,15 @@
+Here’s how to proceed with your next steps:
+
+1. **Update your frontend to use the new endpoints:**
+   - Change your API calls in React to use `/api/chat` for chat+TTS and `/api/tts` for TTS only.
+   - Use `/api/languages` to fetch supported languages for dropdowns or settings.
+
+2. **Test the API with different languages and settings:**
+   - Try sending requests with `"language": "ar"` for Arabic, `"en"` for English, etc.
+   - Adjust `"model"`, `"temperature"`, and `"max_tokens"` in your requests to test AI response variations.
+
+3. **Monitor the logs in `app.log` for any issues:**
+   - Check `agent_pipeline.log` (or `app.log`) for errors, warnings, and info messages.
+   - Use logs to debug failed requests or unexpected behavior.
+
+Would you like a sample React code snippet for calling the new endpoints, or do you want to test a specific API endpoint now? Let me know your preferred next action!

@@ -1,0 +1,23 @@
+Here are some useful Docker commands for checking containers and images:
+
+- **List all containers (running and stopped):**
+  ```bash
+  docker ps -a
+  ```
+
+- **List all images:**
+  ```bash
+  docker images
+  ```
+
+- **Inspect a specific container or image:**
+  ```bash
+  docker inspect <container_id_or_image_name>
+  ```
+
+- **Show logs for a container:**
+  ```bash
+  docker logs <container_id>
+  ```
+
+There is no `docker ls` command; use `docker ps` for containers and `docker images` for images. Let me know if you want to check something specific!

@@ -1,0 +1,456 @@
+hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/Multi Agent /realestate_agent$
+hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/Multi Agent /realestate_agent$ source venv/bin/activate
+(venv) hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/Multi Agent /realestate_agent$ ollama run llama3
+>>> hello
+Hello! It's nice to meet you. Is there something I can help you with, or would 
+you like to chat?
+
+>>> 
+Use Ctrl + d or /bye to exit.
+>>> 
+Use Ctrl + d or /bye to exit.
+>>> 
+(venv) hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/Multi Agent /realestate_agent$ ollama serve
+Error: listen tcp 127.0.0.1:11434: bind: address already in use
+(venv) hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/Multi Agent /realestate_agent$ ollama serve
+Error: listen tcp 127.0.0.1:11434: bind: address already in use
+(venv) hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/Multi Agent /realestate_agent$ python cli_avatar.py
+=== AI Avatar CLI ===
+You: hellp
+AI: It looks like you might have meant to type "help"! Don't worry, I'm here to assist you. What do you need help with? Do you have a question or problem you'd like me to solve?
+[1/3] Generating speech audio with TTS (FastAPI)...
+[2/3] Generating talking video with Wav2Lip (Docker)...
+[sudo] password for hazem-elbatawy: 
+
+
+
+###########################################3333
+
+
+No, you do not need to manually run ollama run llama3 in the terminal every time
+ you want to use the LLM from your Python code or CLI.
+
+Once the model is downloaded, you should start the Ollama server (with ollama serve). 
+Then, your Python code (or CLI) can send requests to the Ollama API at http://localhost:11434, and Ollama will handle running the model in the background.
+
+Summary:
+--------------
+
+- Only run ollama run llama3 in the terminal if you want to chat interactively.
+- For integration, just make sure ollama serve is running, then use the API from your 
+code.
+
+Let me know if you want a sample Python function to call the Ollama API!
+
+=========================================================================
+** What is the command activate ollama LLM .
+
+** Check my cli integration with ollama:
+state_agent$ python cli_avatar.py
+=== AI Avatar CLI ===
+You: how are you
+Ollama LLM call failed: HTTPConnectionPool(host='localhost', port=11434): Read timed out. (read timeout=120)
+AI: [LLM error]
+[1/3] Generating speech audio with TTS (FastAPI)...
+[2/3] Generating talking video with Wav2Lip (Docker)...
+[sudo] password for hazem-elbatawy: 
+i will not continue.
+
+
+Answer:
+-----------
+
+To "activate" the Ollama LLM for your CLI or Python integration, you only need to make sure the Ollama server is running. The command is:
+
+```bash
+ollama serve
+```
+
+This starts the Ollama server on http://localhost:11434. You do NOT need to run `ollama run llama3` for API integration—just `ollama serve`.
+
+---
+
+### Troubleshooting your CLI integration
+
+Your error:
+```
+Ollama LLM call failed: HTTPConnectionPool(host='localhost', port=11434): Read timed out. (read timeout=120)
+AI: [LLM error]
+```
+means your Python script tried to call the Ollama API, but the server did not respond in time.
+
+**Possible causes:**
+- The Ollama server was not running.
+- The server was busy or crashed.
+- The model was not loaded or is taking too long to respond.
+
+**How to fix:**
+1. Make sure no other process is using port 11434. If you see "address already in use," kill the old process:
+   ```bash
+   sudo fuser -k 11434/tcp
+   ```
+2. Start the server:
+   ```bash
+   ollama serve
+   ```
+3. Wait until you see a message that Ollama is running.
+4. Now run your CLI:
+   ```bash
+   python cli_avatar.py
+   ```
+
+If you still get timeouts, check your Ollama logs for errors, and make sure your model (e.g., llama3) is downloaded and available.
+
+Let me know if you want a script to check Ollama status or need more help!
+
+
+=================================================================
+##########################################################
+
+
+state_agent$ ollama serve
+Error: listen tcp 127.0.0.1:11434: bind: address already in use
+(venv) hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/Multi Agent /realestate_agent$ 
+
+The error Error: listen tcp 127.0.0.1:11434: bind: address already in use means another process is already using port 11434—most likely, Ollama is already running in the background.
+
+To fix this:
+
+1. Kill the process using port 11434:
+   ```bash
+   sudo fuser -k 11434/tcp
+   ```
+
+2. Then start Ollama again:
+   ```bash
+   ollama serve
+   ```
+
+After this, your CLI should be able to connect to the Ollama API. 
+Let me know if you need more help!
+
+#######################################
+same error:
+
+You killed the process on port 11434, but Ollama still says "address already in use." This means another process is still using the port, or the previous process did not exit cleanly.
+
+Try these steps:
+
+1. Check which process is using the port:
+   ```bash
+   sudo lsof -i :11434
+   ```
+
+2. If you see a process (e.g., with PID 2131), kill it:
+   ```bash
+   sudo kill -9 2131
+   ```
+
+3. Wait a few seconds, then try again:
+   ```bash
+   ollama serve
+   ```
+
+If you still get the error, reboot your machine to clear any stuck processes.
+
+ Let me know the output of step 1 if the problem continues!
+
+==============================================================================
+###############################################################
+
+state_agent$ sudo lsof -i :11434
+COMMAND   PID           USER   FD   TYPE DEVICE SIZE/OFF NODE NAME
+chrome   5642 hazem-elbatawy   23u  IPv4  47504      0t0  TCP localhost:36706->localhost:11434 (CLOSE_WAIT)
+chrome   5642 hazem-elbatawy   33u  IPv4  47506      0t0  TCP localhost:36714->localhost:11434 (CLOSE_WAIT)
+ollama  15165         ollama    3u  IPv4 100554      0t0  TCP localhost:11434 (LISTEN)
+(venv) hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/Multi Agent /realestate_agent$ sudo kill -9 2131
+kill: (2131): No such process
+(venv) hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/Multi Agent /realestate_agent$ ollama serve
+Error: listen tcp 127.0.0.1:11434: bind: address already in use
+(venv) hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/Multi Agent /realestate_agent$   ollama run llama3
+>>> Send a me
+
+
+
+The process using port 11434 is:
+
+```
+ollama  15165         ollama    3u  IPv4 100554      0t0  TCP localhost:11434 (LISTEN)
+```
+
+To fully stop Ollama and free the port, run:
+
+```bash
+sudo kill -9 15165
+```
+
+Then, wait a few seconds and start the server again:
+
+```bash
+ollama serve
+```
+
+This will ensure Ollama is running as a background server for your CLI and API integration. Let me know if you still see the port in use after this!
+
+
+
+
+
+
+##########################################################################
+
+
+you see now it is working with cli check these terminal in chronological order
+ that i process :
+1- (venv) hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/Multi Agent /realestate_agent$ python -m uvicorn app.main:app --host 0.0.0.0 --port 8000
+INFO:     Started server process [11749]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+ > tts_models/en/ljspeech/glow-tts is already downloaded.
+ > vocoder_models/en/ljspeech/multiband-melgan is already downloaded.
+ > Using model: glow_tts
+ > Setting up Audio Processor...
+ | > sample_rate:22050
+
+ 2- (venv) hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/Multi Agent /realestate_agent$   ollama run llama3
+>>> Send a message (/? for help)
+
+** At the end i use the third terminal for the cli prompt:
+(venv) hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/Multi Agent /realestate_agent$ python cli_avatar.py
+=== AI Avatar CLI ===
+You: hellp
+AI: It seems like you might have meant to type "help"! I'm here to assist you with any questions or problems you have. What do you need help with today?
+[1/3] Generating speech audio with TTS (FastAPI)...
+[2/3] Generating talking video with Wav2Lip (Docker)...
+[sudo] password for hazem-elbatawy: 
+## Then suddenly my Ubuntu system go out for a dark screen then it prompt me as i 
+have just login and after login i shoul open the VScode from the start with no active 
+venv.
+hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/Multi Agent $ 
+
+
+
+Answer
+
+-------------
+
+Great job troubleshooting! Your CLI integration with Ollama and the TTS/video
+ pipeline is working, as shown by the successful AI response and TTS/Wav2Lip steps.
+
+However, the **dark screen and forced logout** you experienced is a sign that your
+ system ran out of memory (RAM) or hit a critical resource limit. 
+ Running Ollama (especially with large models like Llama 3), TTS, Wav2Lip,
+  and VS Code together can use a lot of RAM and CPU.
+
+**What happened:**
+------------------
+
+- When system memory is exhausted, Linux may trigger the OOM (Out-Of-Memory) killer,
+ which can log you out or crash processes to recover resources.
+
+**How to avoid this:**
+-------------------------------
+
+- Close unused applications before running heavy AI pipelines.
+- Monitor your RAM and swap usage (`htop` or `free -h`).
+- If possible, add more RAM or use a machine with higher specs.
+- Consider running only one heavy process at a time 
+(e.g., don't run `ollama run llama3` interactively if you're using the API).
+
+**Tip:**  
+--------------
+
+For API integration, you only need `ollama serve` running in the background, 
+not `ollama run llama3` in a terminal. This saves resources.
+
+Let me know if you want tips for optimizing memory usage or
+ running your stack more efficiently!
+
+
+###############################################
+
+
+help me run ollama server and  implement cli!!
+
+
+
+Here’s how to **properly run the Ollama server** and use your CLI integration efficiently:
+
+---
+
+### 1. **Start the Ollama Server (API mode, not interactive mode)**
+
+Open a terminal and run:
+```bash
+ollama serve
+```
+- This will start the Ollama server on `http://localhost:11434`.
+- **Do NOT run** `ollama run llama3` for API integration; that’s only for interactive chat in the terminal.
+
+---
+
+### 2. **Check that the server is running**
+
+In another terminal, you can check if the server is up:
+```bash
+curl http://localhost:11434
+```
+You should get a JSON response (like `{}` or model info).
+
+---
+
+### 3. **Activate your Python virtual environment**
+
+In your project directory:
+```bash
+source venv/bin/activate
+```
+
+---
+
+### 4. **Run your CLI script**
+
+Now, in a new terminal (with the venv activated), run:
+```bash
+python cli_avatar.py
+```
+- Your script should now connect to the Ollama server and get LLM responses.
+
+---
+
+### 5. **If you get "address already in use" errors**
+
+- Kill any stuck Ollama processes:
+    ```bash
+    sudo fuser -k 11434/tcp
+    ```
+- Then try `ollama serve` again.
+
+---
+
+### 6. **If your system crashes or logs you out**
+
+- This means you are running out of RAM. Try to:
+    - Close all unnecessary apps (especially browsers, VS Code, etc.).
+    - Only run `ollama serve` (not `ollama run llama3`).
+    - Run one heavy process at a time.
+
+---
+
+### **Summary**
+
+- Only use `ollama serve` for API/CLI integration.
+- Don’t run `ollama run llama3` unless you want to chat in the terminal.
+- Make sure your Python script is calling the Ollama API at `localhost:11434`.
+
+---
+
+Let me know if you want a **sample Python function** to call the Ollama API,
+ or if you need help with your `cli_avatar.py` or `ollama_llm.py` code!
+
+
+
+
+######################################################################
+
+
+
+ bash
+(venv) hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/Multi Agent /realestate_agent$ curl http://localhost:11434
+Ollama is running(venv) hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/Multi Agent /realestate_agent$ 
+(venv) hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/Multi Agent /realestate_agent$ python cli_avatar.py
+=== AI Avatar CLI ===
+You: Hello Can you help me to find my new fancy home?
+Ollama LLM call failed: HTTPConnectionPool(host='localhost', port=11434): Read timed out. (read timeout=120)
+AI: [LLM error]
+[1/3] Generating speech audio with TTS (FastAPI)...
+
+
+
+venv) hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/Multi Agent /realestate_agent$ free -h
+               total        used        free      shared  buff/cache   available
+Mem:            19Gi       4.3Gi       9.2Gi       463Mi       6.6Gi        14Gi
+Swap:          8.0Gi       624Mi       7.4Gi
+
+
+
+
+Your Ollama server is running (`curl http://localhost:11434` returns "Ollama is running"), but your CLI (`cli_avatar.py`) is still timing out when calling the LLM API.
+
+**This means:**
+- The Ollama server is up, but **no model is loaded** and ready to answer API requests.
+
+---
+
+## How to Fix
+
+### 1. **Load the Model via API (Recommended for CLI Integration)**
+
+You need to send a request to load the model (e.g., `llama3`) before your CLI can use it.  
+Here’s a sample Python function to do this:
+
+````python
+import requests
+
+def call_ollama_llm(prompt, model="llama3"):
+    url = "http://localhost:11434/api/generate"
+    data = {
+        "model": model,
+        "prompt": prompt,
+        "stream": False
+    }
+    try:
+        response = requests.post(url, json=data, timeout=120)
+        response.raise_for_status()
+        return response.json()["response"]
+    except Exception as e:
+        print(f"Ollama LLM call failed: {e}")
+        return "[LLM error]"
+````
+
+- Make sure your `cli_avatar.py` uses this function to call the LLM.
+
+---
+
+### 2. **Do NOT run `ollama run llama3` in another terminal**
+
+- If you run `ollama run llama3` interactively, it locks the model for that terminal session and the API cannot use it.
+- Only use `ollama serve` for API/CLI integration.
+
+---
+
+### 3. **Test with a Simple API Call**
+
+Try this in your terminal to check if the model responds:
+```bash
+curl http://localhost:11434/api/generate -d '{"model": "llama3", "prompt": "Hello!", "stream": false}'
+```
+- If you get a response, your API and model are working.
+- If it hangs or errors, the model is not loaded or there is a config issue.
+
+---
+
+### 4. **If you still get timeouts**
+
+- Restart the Ollama server:
+    ```bash
+    sudo fuser -k 11434/tcp
+    ollama serve
+    ```
+- Wait 10–20 seconds for the model to load before running your CLI.
+
+---
+
+## **Summary Checklist**
+
+- [x] Start Ollama with `ollama serve`
+- [x] Do **not** run `ollama run llama3`
+- [x] Use the API to load and query the model
+- [x] Make sure your CLI uses the API as shown above
+
+---
+
+Let me know if you want a full code patch for your CLI, 
+or if you get errors from the curl test!
+

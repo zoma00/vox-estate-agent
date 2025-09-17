@@ -1,0 +1,150 @@
+Your `.gitignore` is now updated, and the `results/` folder will be tracked by git. You still have untracked files (like `Wav2Lip/`) and unstaged changes to `.gitignore`.
+
+**To save your changes:**
+1. Stage the changes:
+   ```bash
+   git add .gitignore Wav2Lip/
+   ```
+2. Commit:
+   ```bash
+   git commit -m "Update .gitignore and add Wav2Lip directory"
+   ```
+
+Let me know if you want to track only specific files in `Wav2Lip/` or need help with your next git steps!
+
+hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/Multi Agent /realestate_agent$ git add .gitignore Wav2Lip/
+warning: adding embedded git repository: Wav2Lip
+hint: You've added another git repository inside your current repository.
+hint: Clones of the outer repository will not contain the contents of
+hint: the embedded repository and will not know how to obtain it.
+hint: If you meant to add a submodule, use:
+hint: 
+hint:   git submodule add <url> Wav2Lip
+hint: 
+hint: If you added this path by mistake, you can remove it from the
+hint: index with:
+hint: 
+hint:   git rm --cached Wav2Lip
+hint: 
+hint: See "git help submodule" for more information.
+
+
+
+Answer
+---------
+This message means that `Wav2Lip/` is itself a git repository (it has its own `.git` folder). When you add it to your main repo, git treats it as an embedded repository (a "submodule"), not as regular files.
+
+**What this means:**
+- If you push your main repo, the actual contents of `Wav2Lip/` will not be included—only a reference to its commit.
+- Others who clone your repo will not get the files in `Wav2Lip/` unless they also initialize submodules.
+
+**What to do:**
+- If you want to track the actual files (not as a submodule), you should remove the `.git` folder inside `Wav2Lip/`:
+  ```bash
+  rm -rf Wav2Lip/.git
+  git add Wav2Lip/
+  ```
+- If you want to keep it as a submodule (to track changes separately), use:
+  ```bash
+  git submodule add <url> Wav2Lip
+  ```
+
+**Most users want the first option** (remove the inner `.git`), unless you specifically want to use submodules.
+
+Let me know if you want to proceed with removing the inner `.git` and track all files directly!
+
+hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/Multi Agent /realestate_agent$ rm -rf Wav2Lip/.git 
+git add Wav2Lip/
+
+
+
+
+
+#####################################################
+It looks like `Wav2Lip` is still being added as a submodule (note the `create mode 160000 Wav2Lip`), which means git is tracking it as a reference, not as regular files.
+
+**How to fix:**
+1. Remove the submodule reference:
+   ```bash
+   git rm --cached Wav2Lip
+   ```
+2. Re-add the directory as regular files:
+   ```bash
+   git add Wav2Lip/
+   git commit -m "Track Wav2Lip as regular files, not submodule"
+   ```
+
+This will ensure all files in `Wav2Lip/` are tracked directly in your main repo. Let me know if you want to proceed and need the exact commands!
+
+
+
+
+Bash
+################################################
+
+
+hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/Multi Agent /realestate_agent$ git add Wav2Lip/
+git commit -m "Add Wav2Lip source as part of main repo (not as submodule)"
+[main 67329853] Add Wav2Lip source as part of main repo (not as submodule)
+ 2 files changed, 11 insertions(+)
+ create mode 160000 Wav2Lip
+hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/Multi Agent /realestate_agent$ git rm --cached Wav2Lip
+rm 'Wav2Lip'
+hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/Multi Agent /realestate_agent$ git add Wav2Lip/
+git commit -m "Track Wav2Lip as regular files, not submodule"
+[main 93b39634] Track Wav2Lip as regular files, not submodule
+ 41 files changed, 4743 insertions(+), 1 deletion(-)
+ delete mode 160000 Wav2Lip
+ create mode 100644 Wav2Lip/.gitignore
+ create mode 100644 Wav2Lip/Dockerfile
+ create mode 100644 Wav2Lip/README.md
+ create mode 100644 Wav2Lip/audio.py
+ create mode 100644 Wav2Lip/batch_wav2lip.sh
+ create mode 100644 Wav2Lip/color_syncnet_train.py
+ create mode 100644 Wav2Lip/evaluation/README.md
+ create mode 100644 Wav2Lip/evaluation/gen_videos_from_filelist.py
+ create mode 100644 Wav2Lip/evaluation/real_videos_inference.py
+ create mode 100644 Wav2Lip/evaluation/scores_LSE/SyncNetInstance_calc_scores.py
+ create mode 100644 Wav2Lip/evaluation/scores_LSE/calculate_scores_LRS.py
+ create mode 100755 Wav2Lip/evaluation/scores_LSE/calculate_scores_real_videos.py
+ create mode 100644 Wav2Lip/evaluation/scores_LSE/calculate_scores_real_videos.sh
+ create mode 100644 Wav2Lip/evaluation/test_filelists/README.md
+ create mode 100644 Wav2Lip/evaluation/test_filelists/ReSyncED/random_pairs.txt
+ create mode 100644 Wav2Lip/evaluation/test_filelists/ReSyncED/tts_pairs.txt
+ create mode 100644 Wav2Lip/face_detection/README.md
+ create mode 100644 Wav2Lip/face_detection/__init__.py
+ create mode 100644 Wav2Lip/face_detection/api.py
+ create mode 100644 Wav2Lip/face_detection/detection/__init__.py
+ create mode 100644 Wav2Lip/face_detection/detection/core.py
+ create mode 100644 Wav2Lip/face_detection/detection/sfd/__init__.py
+ create mode 100644 Wav2Lip/face_detection/detection/sfd/bbox.py
+ create mode 100644 Wav2Lip/face_detection/detection/sfd/detect.py
+ create mode 100644 Wav2Lip/face_detection/detection/sfd/net_s3fd.py
+ create mode 100644 Wav2Lip/face_detection/detection/sfd/sfd_detector.py
+ create mode 100644 Wav2Lip/face_detection/models.py
+ create mode 100644 Wav2Lip/face_detection/utils.py
+ create mode 100644 Wav2Lip/filelists/README.md
+ create mode 100644 Wav2Lip/hparams.py
+ create mode 100644 Wav2Lip/hq_wav2lip_train.py
+ create mode 100644 Wav2Lip/inference.py
+ create mode 100644 Wav2Lip/models/__init__.py
+ create mode 100644 Wav2Lip/models/conv.py
+ create mode 100644 Wav2Lip/models/syncnet.py
+ create mode 100644 Wav2Lip/models/wav2lip.py
+ create mode 100644 Wav2Lip/preprocess.py
+ create mode 100644 Wav2Lip/requirements.txt
+ create mode 100644 Wav2Lip/results/README.md
+ create mode 100644 Wav2Lip/wav2lip_train.py
+hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/
+
+
+hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/Multi Agent /realestate_agent$ git push
+Enumerating objects: 58, done.
+Counting objects: 100% (58/58), done.
+Delta compression using up to 8 threads
+Compressing objects: 100% (53/53), done.
+Writing objects: 100% (56/56), 48.98 KiB | 1.96 MiB/s, done.
+Total 56 (delta 6), reused 0 (delta 0), pack-reused 0
+remote: Resolving deltas: 100% (6/6), completed with 2 local objects.
+To github.com:zoma00/vox-estate-agent.git
+   f7b7b695..93b39634  main -> main

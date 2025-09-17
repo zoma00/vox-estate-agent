@@ -1,0 +1,135 @@
+# Lightweight TTS Implementation Guide
+
+This guide explains how to set up and use the lightweight Text-to-Speech
+ (TTS) system for the Real Estate Agent Assistant.
+
+
+## Features
+- Fast and lightweight TTS using gTTS (Google Text-to-Speech)
+- Multiple language support
+- Simple API integration
+- No heavy model downloads required
+- Works with both English and Arabic
+
+## Prerequisites
+- Python 3.7+
+- pip (Python package manager)
+- Internet connection (required for gTTS)
+
+## Installation
+
+1. **Create and activate a virtual environment (recommended):**
+   ```bash
+   python -m venv venv
+   source venv/bin/activate  # On Windows: .\venv\Scripts\activate
+   ```
+
+2. **Install required packages:**
+   ```bash
+   pip install fastapi uvicorn python-multipart gTTS
+   ```
+
+## Directory Structure
+```
+backend/
+├── realestate_agent/
+│   ├── tts/
+│   │   └── tts_simple.py  # Lightweight TTS implementation
+│   ├── app/
+│   │   └── main.py       # FastAPI application
+│   └── static/
+│       └── audio/        # Generated audio files
+```
+
+## Running the Server
+
+1. **Start the FastAPI server:**
+   ```bash
+   cd /path/to/realestate_agent
+   uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+   ```
+   - `--reload` enables auto-reload for development (remove for production)
+   - The API will be available at `http://localhost:8000`
+
+## API Endpoints
+
+### 1. Generate Speech
+- **Endpoint:** `POST /api/tts/generate`
+- **Request Body:**
+  ```json
+  {
+      "text": "Hello, this is a test",
+      "language": "en"
+  }
+  ```
+- **Response:**
+  ```json
+  {
+      "audio_url": "http://localhost:8000/static/audio/output_1234567890.mp3",
+      "text": "Hello, this is a test"
+  }
+  ```
+
+### 2. Chat with TTS
+- **Endpoint:** `POST /api/chat`
+- **Request Body:**
+  ```json
+  {
+      "message": "Tell me about available properties",
+      "generate_audio": true,
+      "language": "en"
+  }
+  ```
+- **Response:**
+  ```json
+  {
+      "text": "Here are the available properties...",
+      "audio_url": "http://localhost:8000/static/audio/response_1234567890.mp3"
+  }
+  ```
+
+## Supported Languages
+
+| Code | Language       |
+|------|----------------|
+| en   | English        |
+| ar   | Arabic         |
+| es   | Spanish        |
+| fr   | French         |
+| de   | German         |
+| it   | Italian        |
+| pt   | Portuguese     |
+| ru   | Russian        |
+| zh-CN| Chinese (Simplified) |
+| ja   | Japanese       |
+| ko   | Korean         |
+
+## Troubleshooting
+
+1. **Port already in use:**
+   ```bash
+   # Find and kill the process using port 8000
+   sudo lsof -i :8000
+   kill -9 <PID>
+   ```
+
+2. **gTTS not working:**
+   - Check internet connection
+   - Try updating gTTS: `pip install --upgrade gTTS`
+   - Verify Python version (3.7+ required)
+
+3. **Audio not playing in browser:**
+   - Check browser console for errors (F12)
+   - Verify CORS headers in FastAPI
+   - Ensure static files are properly served
+
+## Production Deployment
+
+For production, consider:
+1. Using a production ASGI server like Gunicorn with Uvicorn workers
+2. Setting up Nginx as a reverse proxy
+3. Implementing proper CORS policies
+4. Adding authentication/rate limiting
+
+## License
+This implementation is open-source and available under the MIT License.

@@ -1,0 +1,20 @@
+For production deployment with daily user interaction, the Lite plan (10 minutes/month) will not be enough. You will need a higher-tier plan with more video/agent minutes.
+
+Here’s a summary of D-ID’s main plans (as of 2025):
+
+- **Lite**: $4.7/month — 10 min/month (not suitable for production with daily users)
+- **Pro**: $16/month — 15 min/month (still limited for active production use)
+- **Advanced/Enterprise**: Custom pricing — much higher monthly video/agent minutes, priority support, and commercial use rights
+
+For a website with regular daily interactions:
+- Estimate the average length of each interaction (e.g., 30 seconds per user).
+- Estimate the number of users/interactions per day and multiply by 30 days.
+- Example: 20 users/day × 30 sec = 10 min/day × 30 days = 300 min/month needed.
+
+You will likely need an Enterprise or custom plan from D-ID, which can cost hundreds of dollars per month depending on usage. You should contact D-ID sales for a quote based on your expected traffic and usage.
+
+Summary:  
+- Lite/Pro plans are for demos or very light use.
+- Production with daily users requires a custom/enterprise plan and a higher budget.  
+- Always estimate your monthly video minutes and discuss with D-ID for the best plan.
+

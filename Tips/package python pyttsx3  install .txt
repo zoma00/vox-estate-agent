@@ -1,0 +1,4 @@
+Install pyttsx3
+Create a simple TTS wrapper
+Update the code to use the new solution
+Let's start by installing the required package:

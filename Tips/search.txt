@@ -1,0 +1,5 @@
+hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/Multi Agent /realestate_agent$ ls -a
+.          app                    batch_tts.sh        input_0.wav                   README.md         tts             venv
+..         avatar                 custom_output.wav   input.txt                     requirements.txt  tts_output.wav
+animation  batch_tts_and_play.sh  generate_avatar.py  project_deployment_guide.txt  test_tts_api.py   utils
+hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/Multi Agent /realestate_agent$ 

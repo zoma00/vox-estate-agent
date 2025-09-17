@@ -1,0 +1,785 @@
+hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~$ sudo du -h --max-depth=1 /home 2>/dev/null | sort -hr | head -n 20
+49G	/home/hazem-elbatawy
+49G	/home
+hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~$ sudo du -h --max-depth=1 /var 2>/dev/null | sort -hr | head -n 20
+32G	/var
+30G	/var/lib
+1.5G	/var/cache
+693M	/var/log
+37M	/var/snap
+6.3M	/var/backups
+1.9M	/var/crash
+216K	/var/spool
+108K	/var/tmp
+20K	/var/www
+4.0K	/var/opt
+4.0K	/var/metrics
+4.0K	/var/mail
+4.0K	/var/local
+hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~$ 
+hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~$ sudo du -h --max-depth=1 /usr 2>/dev/null | sort -hr | head -n 20
+[sudo] password for hazem-elbatawy: 
+21G	/usr
+12G	/usr/lib
+4.3G	/usr/share
+3.2G	/usr/local
+662M	/usr/bin
+394M	/usr/src
+263M	/usr/libexec
+94M	/usr/sbin
+40M	/usr/include
+144K	/usr/x86_64-w64-mingw32
+144K	/usr/i686-w64-mingw32
+28K	/usr/games
+4.0K	/usr/lib64
+hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~$ 
+ChatGPT said:
+
+Perfect 🚀 now we see exactly where your 111 GB went:
+
+/home/hazem-elbatawy → 49 GB (your personal files, Downloads, projects, maybe big datasets or videos).
+
+/var/lib → 30 GB (this is often Docker images/containers, databases, or system services).
+
+/usr → 21 GB (installed apps, libraries).
+
+That’s ~100 GB right there.
+
+🔹 Where to Clean Safely
+1. Your Home Folder (49G)
+
+Check Downloads (often huge installers, videos, datasets):
+
+du -h --max-depth=1 ~/Downloads | sort -hr | head -n 20
+
+
+You can move non-essential stuff to an external drive or another partition.
+
+2. Var Lib (30G)
+
+This is the biggest red flag — usually it’s Docker:
+
+Check Docker usage:
+
+docker system df -v
+
+
+To clean all unused containers, images, and volumes:
+
+docker system prune -a --volumes
+
+
+(⚠️ removes stopped containers, old images, dangling volumes)
+
+If you’re not using Docker, /var/lib may also contain:
+
+snapd → /var/lib/snapd
+
+databases → /var/lib/mysql (MySQL), /var/lib/postgresql (Postgres)
+
+3. System Logs & Cache
+
+Already not too bad (logs = 693M, cache = 1.5G). Still, you can clear:
+
+sudo journalctl --vacuum-time=7d
+sudo apt-get clean
+sudo apt-get autoremove -y
+
+🔹 Recommended Action Order
+
+Check ~/Downloads and clean/move large files.
+
+Run docker system df -v → if Docker is the culprit, prune.
+
+Clean logs & apt cache.
+
+👉 Do you want me to write you a safe cleanup script that will:
+
+Clear apt cache
+
+Vacuum logs
+
+Prune Docker (only if present)
+
+Show largest remaining files in /home
+
+so you can run it once and free space immediately?
+
+You said:
+hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~$ du -h --max-depth=1 ~/Downloads | sort -hr | head -n 20
+13G	/home/hazem-elbatawy/Downloads/Multi Agent 
+13G	/home/hazem-elbatawy/Downloads
+89M	/home/hazem-elbatawy/Downloads/HGM Real Estate
+59M	/home/hazem-elbatawy/Downloads/realestate_demo_HGM
+21M	/home/hazem-elbatawy/Downloads/APP_similarity
+20M	/home/hazem-elbatawy/Downloads/Marketing my projects
+1.9M	/home/hazem-elbatawy/Downloads/Similarity and Saas and miando pics
+584K	/home/hazem-elbatawy/Downloads/2D Shooter Assets
+148K	/home/hazem-elbatawy/Downloads/Android games
+68K	/home/hazem-elbatawy/Downloads/Claude invoice
+28K	/home/hazem-elbatawy/Downloads/n8n
+20K	/home/hazem-elbatawy/Downloads/Trojan
+12K	/home/hazem-elbatawy/Downloads/Smart humans than robots
+12K	/home/hazem-elbatawy/Downloads/pass 06-09-2025
+8.0K	/home/hazem-elbatawy/Downloads/SassyKit tutorials url
+8.0K	/home/hazem-elbatawy/Downloads/Gpt prompts
+8.0K	/home/hazem-elbatawy/Downloads/AutomationHub
+ChatGPT said:
+
+Nice, now it’s crystal clear 👍
+
+Your Downloads folder = 13 GB, almost all from Multi Agent.
+
+The rest is tiny (all other subfolders < 100 MB).
+
+So that 49 GB in /home probably comes from projects, datasets, or media files elsewhere (maybe in your home root, VSCode cache, or hidden dirs like .cache, .local, .conda, etc.).
+
+🔹 Next Steps to Free Space
+1. If Multi Agent is temporary
+
+Move it to an external drive or compress/archive it:
+
+tar -czvf MultiAgent_backup.tar.gz ~/Downloads/Multi\ Agent
+mv MultiAgent_backup.tar.gz /path/to/external/drive
+rm -rf ~/Downloads/Multi\ Agent
+
+
+That frees ~13 GB immediately.
+
+2. Check hidden cache in your home
+du -h --max-depth=1 ~/.* 2>/dev/null | sort -hr | head -n 20
+
+
+Typical culprits:
+
+~/.cache → browsers, pip, npm, etc.
+
+~/.local/share → flatpak, snap, etc.
+
+~/.conda or ~/.venv → big ML environments
+
+3. Big hitter: /var/lib (30 GB)
+
+Run:
+
+sudo du -h --max-depth=1 /var/lib | sort -hr | head -n 20
+
+
+That will tell us if it’s Docker, snapd, or databases eating your space.
+
+👉 Do you want me to write a step-by-step cleanup script that:
+
+Deletes apt cache & old logs
+
+Cleans browser & pip/npm caches
+
+Prunes Docker (if found)
+
+Shows largest remaining files
+
+so you can just run it and confirm before deletion?
+
+You said:
+hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~$ du -h --max-depth=1 ~/Downloads | sort -hr | head -n 20
+13G	/home/hazem-elbatawy/Downloads/Multi Agent 
+13G	/home/hazem-elbatawy/Downloads
+89M	/home/hazem-elbatawy/Downloads/HGM Real Estate
+59M	/home/hazem-elbatawy/Downloads/realestate_demo_HGM
+21M	/home/hazem-elbatawy/Downloads/APP_similarity
+20M	/home/hazem-elbatawy/Downloads/Marketing my projects
+1.9M	/home/hazem-elbatawy/Downloads/Similarity and Saas and miando pics
+584K	/home/hazem-elbatawy/Downloads/2D Shooter Assets
+148K	/home/hazem-elbatawy/Downloads/Android games
+68K	/home/hazem-elbatawy/Downloads/Claude invoice
+28K	/home/hazem-elbatawy/Downloads/n8n
+20K	/home/hazem-elbatawy/Downloads/Trojan
+12K	/home/hazem-elbatawy/Downloads/Smart humans than robots
+12K	/home/hazem-elbatawy/Downloads/pass 06-09-2025
+8.0K	/home/hazem-elbatawy/Downloads/SassyKit tutorials url
+8.0K	/home/hazem-elbatawy/Downloads/Gpt prompts
+8.0K	/home/hazem-elbatawy/Downloads/AutomationHub
+hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~$ du -h --max-depth=1 ~/.* 2>/dev/null | sort -hr | head -n 20
+5.3G	/home/hazem-elbatawy/.cache
+4.2G	/home/hazem-elbatawy/.cache/pip
+2.2G	/home/hazem-elbatawy/.codeium
+2.1G	/home/hazem-elbatawy/.vscode/extensions
+2.1G	/home/hazem-elbatawy/.vscode
+1.1G	/home/hazem-elbatawy/.config
+920M	/home/hazem-elbatawy/.config/Code
+899M	/home/hazem-elbatawy/.codeium/windsurf
+869M	/home/hazem-elbatawy/.codeium/ws-browser
+418M	/home/hazem-elbatawy/.codeium/database
+338M	/home/hazem-elbatawy/.cache/Unity
+252M	/home/hazem-elbatawy/.cache/ms-playwright-go
+236M	/home/hazem-elbatawy/.cache/unity3d
+209M	/home/hazem-elbatawy/.cache/vscode-cpptools
+109M	/home/hazem-elbatawy/.windsurf/extensions
+109M	/home/hazem-elbatawy/.windsurf
+73M	/home/hazem-elbatawy/.config/Windsurf
+45M	/home/hazem-elbatawy/.config/unityhub
+32M	/home/hazem-elbatawy/.cache/sublime-text
+18M	/home/hazem-elbatawy/.cache/tracker3
+hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~$ 
+ChatGPT said:
+
+Excellent work 👌 now we’ve pinpointed the main culprits in your home folder:
+
+Downloads/Multi Agent → 13 GB
+
+~/.cache → 5.3 GB (mostly pip)
+
+Codeium (~/.codeium) → 2.2 GB
+
+VSCode extensions (~/.vscode) → 2.1 GB
+
+VSCode config (~/.config/Code) → ~1 GB
+
+That’s ~24 GB just in your user caches & tools.
+
+🔹 How to Clean Safely
+1. Clear pip cache (safe)
+rm -rf ~/.cache/pip
+
+2. Clear Unity / Playwright / other tool caches (safe if you don’t need them right now)
+rm -rf ~/.cache/Unity
+rm -rf ~/.cache/unity3d
+rm -rf ~/.cache/ms-playwright-go
+
+3. Optional: Clean Codeium (AI plugin cache)
+
+If you don’t care about local history:
+
+rm -rf ~/.codeium
+
+4. Optional: VSCode extensions (will reinstall if needed)
+rm -rf ~/.vscode/extensions
+
+5. Clean Downloads (move/archive "Multi Agent")
+tar -czvf ~/MultiAgent_backup.tar.gz ~/Downloads/Multi\ Agent
+rm -rf ~/Downloads/Multi\ Agent
+
+🔹 Next Big Chunk: /var/lib (30 GB)
+
+We should check inside there — run:
+
+sudo du -h --max-depth=1 /var/lib | sort -hr | head -n 20
+
+
+This will show whether it’s Docker, snapd, databases, or something else eating your system space.
+
+👉 Do you want me to prepare a script that runs all the safe cleanups (pip cache, logs, apt cache, journalctl, Docker if available), so you free 20–40 GB in one go without breaking your system?
+
+ChatGPT can make mistakes. Chec
+
+
+
+
+hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/Multi Agent $ df -h
+Filesystem      Size  Used Avail Use% Mounted on
+tmpfs           2.0G  2.6M  2.0G   1% /run
+/dev/sda4       117G  106G  4.8G  96% /
+tmpfs           9.7G   94M  9.6G   1% /dev/shm
+tmpfs           5.0M  8.0K  5.0M   1% /run/lock
+efivarfs        374K  194K  176K  53% /sys/firmware/efi/efivars
+/dev/sda1       871M   69M  803M   8% /boot/efi
+tmpfs           2.0G  148K  2.0G   1% /run/user/1000
+
+
+
+
+Nice 🚀 you already freed some space!
+
+Here’s what your `df -h` shows now:
+
+```
+/dev/sda4   117G   106G   4.8G   96% /
+```
+
+* **Size:** 117 GB total
+* **Used:** 106 GB
+* **Available:** **4.8 GB free**
+* **Use%:** 96%
+
+So you recovered about **5 GB** 🎉 (before it was 100% full, 0 free).
+
+---
+
+### 🔹 Next Targets to Free More Space
+
+If you want breathing room (ideally keep usage below \~85%):
+
+1. **Remove pip cache (4.2 GB):**
+
+```bash
+rm -rf ~/.cache/pip
+```
+
+2. **Check `/var/lib` (30 GB monster):**
+
+```bash
+sudo du -h --max-depth=1 /var/lib | sort -hr | head -n 20
+```
+
+This will likely reveal **Docker, snap, or databases**.
+
+3. **Clean apt + logs (usually \~1–2 GB):**
+
+```bash
+sudo apt-get clean
+sudo apt-get autoremove -y
+sudo journalctl --vacuum-time=7d
+```
+
+---
+
+👉 Do you want me to make you a **cleanup script** that runs these safe steps in order, so you can go from 96% → maybe 70–75% free in one go?
+
+
+
+
+hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/Multi Agent $ sudo du -h --max-depth=1 /var/lib | sort -hr | head -n 20
+[sudo] password for hazem-elbatawy: 
+30G     /var/lib
+20G     /var/lib/docker
+9.6G    /var/lib/snapd
+274M    /var/lib/mysql
+272M    /var/lib/apt
+91M     /var/lib/mecab
+91M     /var/lib/dpkg
+46M     /var/lib/postgresql
+23M     /var/lib/swcatalog
+6.2M    /var/lib/ubuntu-advantage
+5.6M    /var/lib/gdm3
+4.6M    /var/lib/fwupd
+4.2M    /var/lib/aspell
+3.9M    /var/lib/command-not-found
+1.1M    /var/lib/phpmyadmin
+1000K   /var/lib/systemd
+684K    /var/lib/upower
+524K    /var/lib/ucf
+364K    /var/lib/containerd
+220K    /var/lib/cloud
+hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/Multi Agent $ 
+
+
+
+
+
+
+Great question 👍 you can check the **disk usage per container & image** directly with Docker.
+
+---
+
+### 🔹 Check container sizes
+
+```bash
+docker ps -a --size
+```
+
+This shows each container with its size (data + writable layer).
+
+---
+
+### 🔹 Check image sizes
+
+```bash
+docker images
+```
+
+or with sorting:
+
+```bash
+docker images --format "{{.Repository}}:{{.Tag}}  {{.Size}}" | sort -h -k2
+```
+
+---
+
+### 🔹 Full disk usage summary (images, containers, volumes, build cache)
+
+```bash
+docker system df -v
+```
+
+Example output:
+
+```
+TYPE            TOTAL     ACTIVE    SIZE      RECLAIMABLE
+Images          10        2         8.23GB    6.45GB (78%)
+Containers      3         0         1.2GB     1.2GB (100%)
+Local Volumes   5         2         10.5GB    4.3GB (40%)
+Build Cache     0         0         0B        0B
+```
+
+This tells you exactly what’s eating the **20 GB** in `/var/lib/docker`.
+
+---
+
+👉 Do you want me to give you a **step-by-step cleanup guide** based on whether the space is mostly in *images*, *containers*, or *volumes*?
+
+
+
+
+
+hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/Multi Agent /realestate_agent/Wav2Lip$ docker system df -v
+Images space usage:
+
+REPOSITORY                TAG       IMAGE ID       CREATED        SIZE      SHARED SIZE   UNIQUE SIZE   CONTAINERS
+wav2lip                   latest    626fbb30fefe   26 hours ago   3.81GB    841.3MB       2.972GB       0
+<none>                    <none>    411f51a0df16   26 hours ago   3.83GB    841.3MB       2.985GB       0
+<none>                    <none>    990232f37143   26 hours ago   3.92GB    841.3MB       3.079GB       0
+<none>                    <none>    fbd69517a78c   27 hours ago   4.16GB    841.3MB       3.323GB       0
+<none>                    <none>    ce4010d163ac   30 hours ago   4.16GB    124.7MB       4.035GB       0
+realestate_demo-fastapi   latest    9fd4b6d7ccb0   5 days ago     171MB     170.1MB       615.3kB       1
+<none>                    <none>    e7c8e2e8a52c   5 days ago     171MB     170.7MB       852B          0
+<none>                    <none>    0922260cf0d0   5 days ago     171MB     170.7MB       851B          0
+<none>                    <none>    0fc901373988   5 days ago     171MB     170.1MB       614.2kB       0
+<none>                    <none>    878abb753837   5 days ago     171MB     170.1MB       612kB         0
+<none>                    <none>    77be809dba46   5 days ago     171MB     170.1MB       614.2kB       0
+<none>                    <none>    038787cc0b6b   5 days ago     171MB     170.1MB       612.1kB       0
+<none>                    <none>    c4fb4446ae92   5 days ago     171MB     170.7MB       851B          0
+<none>                    <none>    64ca56dfa76a   5 days ago     171MB     170.7MB       487B          0
+<none>                    <none>    cdd3a2a25c73   5 days ago     171MB     170.1MB       608.5kB       0
+<none>                    <none>    7a966142e41a   5 days ago     171MB     170.1MB       608.5kB       0
+<none>                    <none>    913dd44325db   5 days ago     171MB     170.1MB       606.5kB       0
+<none>                    <none>    d1031e801dd7   5 days ago     170MB     124.8MB       45.73MB       0
+<none>                    <none>    378c0628dd15   5 days ago     168MB     167.9MB       603.4kB       0
+<none>                    <none>    e2fa1907334b   7 days ago     168MB     167.9MB       593.4kB       0
+<none>                    <none>    19322d0d5a2f   7 days ago     168MB     167.9MB       593.5kB       0
+<none>                    <none>    16b8417186e1   7 days ago     168MB     167.9MB       589.6kB       0
+<none>                    <none>    932f6303cb8d   7 days ago     168MB     168.4MB       180B          0
+<none>                    <none>    540481c769e5   7 days ago     168MB     168.4MB       130B          0
+<none>                    <none>    fde76918efe6   7 days ago     168MB     167.9MB       577.8kB       0
+<none>                    <none>    6dd9a78867d7   7 days ago     168MB     167.9MB       577.8kB       0
+<none>                    <none>    d9027c87380b   7 days ago     168MB     167.9MB       577.8kB       0
+<none>                    <none>    ee2aaa26191b   7 days ago     168MB     167.9MB       574.6kB       0
+<none>                    <none>    17e582cdf91d   7 days ago     168MB     167.9MB       130B          0
+<none>                    <none>    90a19d05e029   7 days ago     168MB     167.9MB       636B          0
+<none>                    <none>    250255eea67e   8 days ago     167MB     124.8MB       42.48MB       0
+n8nio/n8n                 latest    da84a18e49c8   2 weeks ago    1.03GB    0B            1.033GB       0
+postgres                  15        e195b2889efd   3 weeks ago    445MB     78.61MB       366.8MB       1
+
+Containers space usage:
+
+CONTAINER ID   IMAGE                     COMMAND                  LOCAL VOLUMES   SIZE      CREATED      STATUS                  NAMES
+1e22f71e9d23   realestate_demo-fastapi   "uvicorn app.main:ap…"   0               246kB     5 days ago   Exited (0) 5 days ago   realestate_demo-fastapi-1
+c1a1decfbcdb   postgres:15               "docker-entrypoint.s…"   1               0B        7 days ago   Exited (0) 5 days ago   realestate_demo-db-1
+
+Local Volumes space usage:
+
+VOLUME NAME                   LINKS     SIZE
+automationhub_pgadmin_data    0         169.2kB
+automationhub_postgres_data   0         47.52MB
+basic_db_data                 0         198.5MB
+realestate_demo_n8n_data      0         536kB
+realestate_demo_pgdata        1         47.46MB
+
+Build cache usage: 733.3MB
+
+CACHE ID       CACHE TYPE     SIZE      CREATED        LAST USED      USAGE     SHARED
+93ot21pj1zwn   regular        0B        8 days ago     8 days ago     1         true
+yppip7382a32   regular        0B        8 days ago     8 days ago     1         true
+jwoph51vx05i   regular        0B        8 days ago     8 days ago     1         true
+t8k09q7p3s3z   regular        53B       8 days ago     8 days ago     1         true
+u26e4qnbj2ew   regular        42.5MB    8 days ago     8 days ago     1         true
+4ld2g6n279et   regular        506B      8 days ago     8 days ago     1         true
+v32x9y3w5ik0   regular        130B      8 days ago     8 days ago     1         true
+vtgrjl7bbx5o   regular        0B        8 days ago     8 days ago     1         true
+z55h9mwd5io1   regular        0B        8 days ago     8 days ago     1         true
+navtubgkz32q   regular        65B       7 days ago     7 days ago     1         true
+u7g4o3s41vmy   regular        506B      7 days ago     7 days ago     1         true
+qlonsjdwbwp9   regular        130B      7 days ago     7 days ago     3         true
+kh6wg1fd6h9v   regular        130B      7 days ago     7 days ago     1         true
+qwe3u9vrlzo8   regular        3.22kB    7 days ago     7 days ago     2         true
+6wqpb36ik2hb   regular        130B      7 days ago     7 days ago     1         true
+0jppa4iz5783   regular        574kB     7 days ago     7 days ago     1         true
+1i6vkvdba5xh   regular        3.22kB    7 days ago     7 days ago     1         true
+ozfcmpzf4swp   regular        574kB     7 days ago     7 days ago     1         true
+x3lc6jo7qsf5   regular        130B      7 days ago     7 days ago     2         true
+l1bl1aendqcs   regular        3.22kB    7 days ago     7 days ago     1         true
+yq6gt8mc45ja   regular        130B      7 days ago     7 days ago     1         true
+k2xbquio344u   regular        574kB     7 days ago     7 days ago     1         true
+sg4j2n93szdu   regular        3.24kB    7 days ago     7 days ago     1         true
+bhttv4vhgxau   regular        574kB     7 days ago     7 days ago     1         true
+8z695z0jnixs   regular        130B      7 days ago     7 days ago     1         true
+akgue23tikkr   regular        43.1MB    7 days ago     7 days ago     6         true
+hxub0jtb374v   regular        130B      7 days ago     7 days ago     1         true
+hecbqek99zn1   regular        3.33kB    7 days ago     7 days ago     1         true
+0d8rz8sp0kkx   regular        574kB     7 days ago     7 days ago     2         true
+s1czhxqkw3dz   regular        180B      7 days ago     7 days ago     1         true
+zo2ars93qqxi   regular        180B      7 days ago     7 days ago     1         true
+zxeqvbtayu32   regular        15kB      7 days ago     7 days ago     1         true
+pzzc1kf6mdoh   regular        574kB     7 days ago     7 days ago     1         true
+iywk7o5ttt05   regular        18.9kB    7 days ago     7 days ago     1         true
+be79hx8tprc2   regular        574kB     7 days ago     7 days ago     1         true
+1zo33dcgeh91   regular        180B      7 days ago     7 days ago     1         true
+bit784dtxvmf   regular        18.8kB    7 days ago     7 days ago     1         true
+xktd4p6cs7g1   regular        574kB     7 days ago     7 days ago     1         true
+qoo6hhrz6tei   regular        180B      7 days ago     7 days ago     1         true
+vzn11ppgyd7e   regular        28.5kB    5 days ago     5 days ago     1         true
+v8g9yh699i5t   regular        574kB     5 days ago     5 days ago     1         true
+kilf9ffohnvn   regular        485B      5 days ago     5 days ago     2         true
+rhwq7l7zh6su   regular        485B      5 days ago     5 days ago     1         true
+5yt2cm7n2jjh   regular        31.6kB    5 days ago     5 days ago     1         true
+tkuug9sf3edn   regular        73B       5 days ago     5 days ago     1         true
+ouc0djj8a5t1   regular        574kB     5 days ago     5 days ago     1         true
+cg6ow2ynto6v   regular        45.1MB    5 days ago     5 days ago     1         true
+m77y0y1i5lel   regular        574kB     5 days ago     5 days ago     1         true
+whjpmccb88r6   regular        485B      5 days ago     5 days ago     1         true
+sy3an0mrabq4   regular        90B       5 days ago     5 days ago     1         true
+lgkxbfzy2ysy   regular        45.3MB    5 days ago     5 days ago     1         true
+me77zdz1em13   regular        31.6kB    5 days ago     5 days ago     1         true
+vgqm8karwwhp   regular        33.6kB    5 days ago     5 days ago     1         true
+xam4kq7flxst   regular        574kB     5 days ago     5 days ago     1         true
+qdcjy9wg7wwb   regular        485B      5 days ago     5 days ago     3         true
+22mpebih00t3   regular        574kB     5 days ago     5 days ago     1         true
+pcata8dd8n6n   regular        33.6kB    5 days ago     5 days ago     1         true
+um9t1c7hjlyf   regular        485B      5 days ago     5 days ago     1         true
+tjlvaecoogq3   regular        35.2kB    5 days ago     5 days ago     1         true
+wfwkwr93vd0d   regular        487B      5 days ago     5 days ago     1         true
+yovar1stjdzk   regular        574kB     5 days ago     5 days ago     2         true
+hh9rn19f8pr0   regular        851B      5 days ago     5 days ago     1         true
+bnr9devl3z3q   regular        574kB     5 days ago     5 days ago     1         true
+q73kgh7gqs6b   regular        36.9kB    5 days ago     5 days ago     1         true
+ldrdh89qpnf2   regular        851B      5 days ago     5 days ago     1         true
+btfp5oxc5pas   regular        38.9kB    5 days ago     5 days ago     1         true
+pc0nm83s9j1p   regular        574kB     5 days ago     5 days ago     1         true
+ybssb63qh0pm   regular        851B      5 days ago     5 days ago     2         true
+izdhbdpwb0cg   regular        36.7kB    5 days ago     5 days ago     1         true
+q3l48s5wfk20   regular        574kB     5 days ago     5 days ago     1         true
+nzab2htej789   regular        851B      5 days ago     5 days ago     1         true
+rh6e3wgz6bpp   regular        39kB      5 days ago     5 days ago     1         true
+xfyq10uruk4y   regular        851B      5 days ago     5 days ago     1         true
+kbp7utaxc1xz   regular        574kB     5 days ago     5 days ago     1         true
+wu2699llxpkq   regular        851B      5 days ago     5 days ago     1         true
+kxs0o8zuswsj   regular        39.8kB    5 days ago     5 days ago     1         true
+v4dwwp072szt   regular        852B      5 days ago     5 days ago     1         true
+opc9hdr2w84e   regular        574kB     5 days ago     5 days ago     2         true
+iud6zvds2bh3   source.local   210B      8 days ago     5 days ago     34        false
+5c460svz9idv   source.local   0B        8 days ago     5 days ago     34        false
+kc2b5an17dxo   source.local   689B      8 days ago     5 days ago     34        false
+qawdhf3k7zna   regular        574kB     5 days ago     5 days ago     1         true
+05hewawd4nhn   regular        811B      5 days ago     5 days ago     1         true
+rfil1gtfhak1   regular        40kB      5 days ago     5 days ago     1         true
+03v4spigaa8u   source.local   0B        30 hours ago   30 hours ago   1         false
+h2lcwmhkdkht   regular        0B        30 hours ago   30 hours ago   1         true
+5fjfcxn7x5pk   regular        0B        30 hours ago   30 hours ago   1         true
+7jxmtp12p8io   regular        0B        30 hours ago   30 hours ago   1         true
+hzhqx6ipod3c   regular        712MB     30 hours ago   30 hours ago   1         true
+1p0tzl72bjoq   regular        2.78MB    30 hours ago   30 hours ago   1         false
+wulnqidsjwem   regular        2.78MB    30 hours ago   30 hours ago   1         false
+dc0ab0uh0mis   regular        2.78MB    30 hours ago   30 hours ago   1         false
+quejgnxzs8qz   regular        2.78MB    30 hours ago   30 hours ago   1         false
+skx49o9t5e97   regular        0B        30 hours ago   30 hours ago   5         true
+bqenlxehaarb   regular        3.32GB    30 hours ago   30 hours ago   1         true
+1t8uyikq23q0   regular        2.78MB    30 hours ago   30 hours ago   1         true
+z448kzp0bbi5   regular        717MB     28 hours ago   27 hours ago   1         false
+jiqifedzknuh   regular        0B        28 hours ago   27 hours ago   1         false
+t13mlc36dcg1   regular        2.78MB    28 hours ago   27 hours ago   1         false
+gjzsllzahy51   regular        0B        30 hours ago   27 hours ago   3         true
+lq5t4lgvg4gg   regular        717MB     27 hours ago   27 hours ago   1         true
+r42tbe5098h2   regular        3.32GB    27 hours ago   27 hours ago   1         true
+xj6e4kxwl6pi   regular        2.78MB    27 hours ago   27 hours ago   1         true
+uze7jh5nz4qb   regular        3.08GB    26 hours ago   26 hours ago   1         true
+q08dal6m2grq   regular        2.78MB    26 hours ago   26 hours ago   1         true
+yycj8ulv218e   regular        2.79MB    26 hours ago   26 hours ago   1         true
+sukjnzkbjlzh   regular        2.98GB    26 hours ago   26 hours ago   1         true
+u0x7t68rjdmm   source.local   0B        30 hours ago   26 hours ago   10        false
+afcxtpvoku5d   regular        2.79MB    26 hours ago   26 hours ago   1         true
+92mtxmnwysaa   regular        2.97GB    26 hours ago   26 hours ago   1         true
+kzcogb6ja43z   source.local   0B        30 hours ago   26 hours ago   11        false
+wo1087cqk96v   regular        0B        27 hours ago   26 hours ago   4         true
+ouv7w54qc2g5   source.local   2.78MB    30 hours ago   26 hours ago   10        false
+hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/Multi Agent /realestate_agent/Wav2Lip$ 
+
+
+
+Perfect dump ✅ thanks. Now it’s clear where your **20 GB Docker space** went:
+
+### 🔹 Big space eaters
+
+1. **Dangling images (`<none>`)**
+
+   * You have multiple untagged builds (`<none>`) of \~3–4 GB each.
+   * Together they eat \~15 GB.
+   * These are leftover layers from re-building Wav2Lip & your FastAPI demo.
+
+2. **Wav2Lip images**
+
+   * One tagged image: `wav2lip:latest` (3.8 GB).
+   * Several intermediate untagged ones (\~3–4 GB each).
+
+3. **n8nio/n8n**
+
+   * 1.03 GB but only one copy, so not a big deal.
+
+4. **Postgres 15**
+
+   * 445 MB, negligible.
+
+5. **Build cache**
+
+   * \~733 MB, safe to clear.
+
+---
+
+### 🔹 Safe cleanup steps
+
+Run in order:
+
+```bash
+# 1. Remove dangling (untagged) images (~15 GB)
+docker image prune -a -f
+
+# 2. Remove stopped containers (you already have exited ones)
+docker container prune -f
+
+# 3. Remove unused volumes (some old pgdata etc.)
+docker volume prune -f
+
+# 4. Remove build cache (~733MB)
+docker builder prune -f
+```
+
+If you want **everything not used** (images, containers, volumes, networks, build cache):
+
+```bash
+docker system prune -a --volumes -f
+```
+
+⚠️ That will nuke all unused stuff. Only keep it if you’re okay with re-pulling/building images.
+
+---
+
+👉 Do you want me to prepare a **cleanup script** that does this step-by-step *with confirmation prompts*, so you don’t accidentally delete needed images (like `wav2lip:latest`)?
+
+
+
+
+👉 Do you want me to prepare a cleanup script that does this step-by-step with confirmation prompts, so you don’t accidentally delete needed images (like wav2lip:latest)?
+yes
+and i need 
+hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/Multi Agent /realestate_agent/Wav2Lip$ docker ps -a
+CONTAINER ID   IMAGE                     COMMAND                  CREATED      STATUS                  PORTS     NAMES
+1e22f71e9d23   realestate_demo-fastapi   "uvicorn app.main:ap…"   5 days ago   Exited (0) 5 days ago             realestate_demo-fastapi-1
+c1a1decfbcdb   postgres:15               "docker-entrypoint.s…"   7 days ago   Exited (0) 5 days ago             realestate_demo-db-1
+
+Perfect 👍 I’ll give you a **safe cleanup script** that:
+
+1. Shows you what will be deleted.
+2. Asks **yes/no** before each cleanup step.
+3. Keeps important containers/images unless you confirm removal.
+
+---
+
+### 📝 Script: `docker_cleanup.sh`
+
+```bash
+#!/bin/bash
+set -e
+
+echo "====================================="
+echo " Docker Cleanup Script (Interactive) "
+echo "====================================="
+
+# Step 1: Show stopped containers
+echo
+echo "Stopped containers:"
+docker ps -a --filter "status=exited"
+
+read -p "Do you want to remove all stopped containers? (y/n): " yn
+if [[ "$yn" == "y" ]]; then
+  docker container prune -f
+else
+  echo "Skipped removing stopped containers."
+fi
+
+# Step 2: Show dangling images
+echo
+echo "Dangling (untagged) images:"
+docker images -f "dangling=true"
+
+read -p "Do you want to remove all dangling images? (y/n): " yn
+if [[ "$yn" == "y" ]]; then
+  docker image prune -f
+else
+  echo "Skipped removing dangling images."
+fi
+
+# Step 3: Show unused images
+echo
+echo "All images:"
+docker images
+
+read -p "Do you want to remove unused images (not used by any container)? (y/n): " yn
+if [[ "$yn" == "y" ]]; then
+  docker image prune -a -f
+else
+  echo "Skipped removing unused images."
+fi
+
+# Step 4: Show unused volumes
+echo
+echo "Unused volumes:"
+docker volume ls -f "dangling=true"
+
+read -p "Do you want to remove unused volumes? (y/n): " yn
+if [[ "$yn" == "y" ]]; then
+  docker volume prune -f
+else
+  echo "Skipped removing unused volumes."
+fi
+
+# Step 5: Build cache
+echo
+echo "Docker build cache size:"
+docker builder prune --filter until=24h --dry-run
+
+read -p "Do you want to clear ALL build cache? (y/n): " yn
+if [[ "$yn" == "y" ]]; then
+  docker builder prune -f
+else
+  echo "Skipped clearing build cache."
+fi
+
+echo
+echo "====================================="
+echo " Cleanup finished!"
+echo " Current usage:"
+docker system df -v
+echo "====================================="
+```
+
+---
+
+### 🔹 Usage
+
+1. Save script:
+
+```bash
+nano docker_cleanup.sh
+```
+
+(paste script, save & exit)
+
+2. Make executable:
+
+```bash
+chmod +x docker_cleanup.sh
+```
+
+3. Run it:
+
+```bash
+./docker_cleanup.sh
+```
+
+---
+
+👉 This way you’ll be asked before deleting:
+
+* Your **exited containers** (like `realestate_demo-fastapi-1` & `realestate_demo-db-1`)
+* Your **dangling images (\~15GB)**
+* Your **unused volumes (like old pgdata)**
+
+Would you like me to also add a **special safeguard** so it never deletes `wav2lip:latest` automatically?
+

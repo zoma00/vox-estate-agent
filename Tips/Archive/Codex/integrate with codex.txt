@@ -1,0 +1,23 @@
+After installing the Codex extension in VS Code,
+ you can find the Codex panel in the Activity Bar 
+ (usually on the left side of VS Code, where you see 
+ icons for Explorer, Search, Source Control, etc.). Look 
+ for an icon labeled “Codex” or “OpenAI Codex.” Click it to 
+ open the panel.
+
+If you don’t see it:
+- Press Ctrl+Shift+P (or Cmd+Shift+P on Mac) to open the
+ Command Palette.
+- Type “Codex” or “OpenAI Codex” and select “Open Codex Panel”
+ or a similar option.
+
+Once open, you can move the panel to the right side by
+ dragging its tab.
+
+If you still can’t find it, make sure the extension is enabled and VS Code has been restarted after
+ installation.
+
+
+
+
+ 

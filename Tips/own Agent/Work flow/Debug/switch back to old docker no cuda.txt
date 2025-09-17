@@ -1,0 +1,794 @@
+Here’s exactly what you need to do to switch back to CPU-only Wav2Lip with OpenAI integration:
+
+---
+
+### 1. Remove the CUDA Docker Image (optional, but saves space)
+
+```bash
+docker rmi wav2lip-gpu
+```
+
+---
+
+### 2. Prepare the CPU-only Dockerfile
+
+Rename your old Dockerfile (the one based on `python:3.8-slim`) to `Dockerfile.cpu` for clarity.  
+If you don’t have it, here’s the content you should use:
+
+```dockerfile
+FROM python:3.8-slim
+
+RUN apt-get update && \
+    apt-get install -y ffmpeg git libsm6 libxext6 libxrender-dev && \
+    rm -rf /var/lib/apt/lists/*
+
+WORKDIR /workspace
+
+COPY requirements.txt ./
+RUN pip install --upgrade pip && \
+    pip install -r requirements.txt
+
+COPY . .
+
+CMD ["/bin/bash"]
+```
+
+---
+
+### 3. Update requirements.txt for CPU
+
+Replace your current `requirements.txt` with this (no CUDA, just CPU):
+
+```
+torch==1.7.1
+torchvision==0.8.2
+librosa==0.7.0
+numpy>=1.17.3
+opencv-contrib-python>=4.2.0.34,<4.3
+tqdm==4.45.0
+numba>=0.48.0
+```
+
+---
+
+### 4. Build the CPU Docker Image
+
+```bash
+docker build -t wav2lip-cpu -f Dockerfile.cpu .
+```
+
+---
+
+### 5. Update your CLI to use the CPU image
+
+Update the `get_wav2lip_docker_cmd()` function in cli_avatar.py to:
+
+```python
+def get_wav2lip_docker_cmd():
+    return [
+        "docker", "run", "--rm",
+        "-v", f"{os.path.abspath(WAV2LIP_DIR)}/:/workspace",
+        "wav2lip-cpu",
+        "python3", WAV2LIP_INFER_PATH,
+        "--checkpoint_path", WAV2LIP_CHECKPOINT,
+        "--face", FACE_IMAGE,
+        "--audio", "tts_output.wav"
+    ]
+```
+
+---
+
+### 6. Run your CLI as usual
+
+OpenAI integration will work, and Wav2Lip will run on CPU (slower, but stable).
+
+---
+
+I will now:
+- Patch your `requirements.txt` for CPU.
+- Patch your `cli_avatar.py` to use the CPU Docker image.
+- (Assume you have or will create `Dockerfile.cpu` as above.)
+
+Let’s proceed with the code changes. 
+```
+
+
+Made changes.
+
+
+```
+
+```
+
+
+Made changes.
+
+
+```
+Your system is now set up to run Wav2Lip in CPU-only mode with OpenAI integration:
+
+- `requirements.txt` is updated for CPU (no CUDA).
+- `cli_avatar.py` now uses the `wav2lip-cpu` Docker image and does not request GPU.
+
+Next steps for you:
+1. Build the Docker image:
+   ```bash
+   docker build -t wav2lip-cpu -f Dockerfile.cpu .
+   ```
+2. Run your CLI as usual.
+
+Note: The CLI has some missing Python packages (`dotenv`, `openai`) and a reference to `call_ollama_llm` that is not defined. If you want, I can help you fix these issues as well. Let me know if 
+you need further assistance!
+
+
+realestate_agent/Wav2Lip/requirements.txt
+
+torch==1.7.1
+torchvision==0.8.2
+librosa==0.7.0
+numpy>=1.17.3
+opencv-contrib-python>=4.2.0.34,<4.3
+tqdm==4.45.0
+numba>=0.48.0
+
+
+
+
+
+
+This one should be revised for the ollama and docker command:
+------------------------------------------------------------
+
+realestate_agent/cli_avatar.py
+
+
+
+#!/usr/bin/env python3
+"""
+Simple CLI script for Text-to-Avatar pipeline:
+- User enters text
+- TTS generates audio
+- Wav2Lip generates video
+- Output video path is shown
+"""
+
+# Load environment variables from .env
+import os
+import sys
+import time
+import subprocess
+import requests
+from dotenv import load_dotenv
+import openai
+load_dotenv()
+
+# === LLM Backend Selection ===
+
+# Updated for openai>=1.0.0
+def call_openai_llm(prompt, api_key=None, model="gpt-3.5-turbo"):
+    import openai
+    client = openai.OpenAI(api_key=api_key or os.getenv("OPENAI_API_KEY"))
+    response = client.chat.completions.create(
+        model=model,
+        messages=[{"role": "user", "content": prompt}],
+        max_tokens=512,
+        temperature=0.7,
+    )
+    return response.choices[0].message.content.strip()
+
+
+def call_llm(prompt, use_openai=True, **kwargs):
+    if use_openai:
+        return call_openai_llm(prompt, **kwargs)
+    else:
+        return call_ollama_llm(prompt, **kwargs)
+    
+# CONFIGURABLE PATHS
+TTS_SCRIPT = "batch_tts.sh"  # Your TTS batch script
+FACE_IMAGE = "face.jpg"  # Path to your avatar image (relative to Wav2Lip dir)
+WAV2LIP_INFER_PATH = "inference.py"  # Path inside Wav2Lip dir
+WAV2LIP_CHECKPOINT = "wav2lip.pth"  # Path inside Wav2Lip dir
+WAV2LIP_DIR = "Wav2Lip"
+OUTPUT_DIR = os.path.join(WAV2LIP_DIR, "results")  # Where output videos are saved
+
+# Generate a unique base name for this run
+timestamp = time.strftime("%Y%m%d_%H%M%S")
+base_name = f"avatar_{timestamp}"
+
+def get_wav2lip_docker_cmd():
+    return [
+        "docker", "run", "--rm",
+        "-v", f"{os.path.abspath(WAV2LIP_DIR)}/:/workspace",
+        "wav2lip-cpu",
+        "python3", WAV2LIP_INFER_PATH,
+        "--checkpoint_path", WAV2LIP_CHECKPOINT,
+        "--face", FACE_IMAGE,
+        "--audio", "tts_output.wav"
+    ]
+
+
+def main():
+    print("=== AI Avatar CLI ===")
+    user_text = input("You: ").strip()
+    if not user_text:
+        print("No input provided. Exiting.")
+        return
+
+    # Get AI response from OpenAI (default) or Ollama (set use_openai=False)
+    ai_response = call_llm(user_text, use_openai=True)
+    print(f"AI: {ai_response}")
+
+    # Use AI response as the text for TTS and video
+    tts_text = ai_response
+
+    # Call FastAPI TTS endpoint to generate audio
+    print("[1/3] Generating speech audio with TTS (FastAPI)...")
+    tts_api_url = "http://localhost:8000/agent/tts"
+    tts_wav_name = f"tts_output_{base_name}.wav"
+    try:
+        response = requests.post(tts_api_url, data={"text": tts_text})
+        response.raise_for_status()
+        # Save the returned audio content
+        with open(tts_wav_name, "wb") as f:
+            f.write(response.content)
+    except Exception as e:
+        print(f"TTS API call failed: {e}")
+        sys.exit(1)
+
+    # Copy generated wav to Wav2Lip dir as input for Docker
+    tts_wav_dst = os.path.join(WAV2LIP_DIR, f"tts_output.wav")
+    if os.path.exists(tts_wav_name):
+        import shutil
+        shutil.copy(tts_wav_name, tts_wav_dst)
+    else:
+        print(f"Error: TTS output wav '{tts_wav_name}' not found. Check TTS API output.")
+        sys.exit(1)
+
+
+    # Ensure face image exists before running Docker
+    face_path = os.path.join(WAV2LIP_DIR, FACE_IMAGE)
+    if not os.path.exists(face_path):
+        print(f"Error: Face image '{face_path}' not found. Please check the path.")
+        sys.exit(1)
+
+    # Ensure results directory exists before running Docker
+    if not os.path.exists(OUTPUT_DIR):
+        os.makedirs(OUTPUT_DIR)
+
+    # Copy tts_output.wav to Wav2Lip dir for Docker
+    tts_wav_src = "tts_output.wav"
+    tts_wav_dst = os.path.join(WAV2LIP_DIR, "tts_output.wav")
+    if os.path.exists(tts_wav_src):
+        import shutil
+        shutil.copy(tts_wav_src, tts_wav_dst)
+
+    print("[2/3] Generating talking video with Wav2Lip (Docker)...")
+    # Remove old result_voice.mp4 if exists to avoid confusion
+    result_voice_path = os.path.join(OUTPUT_DIR, "result_voice.mp4")
+    if os.path.exists(result_voice_path):
+        os.remove(result_voice_path)
+
+    wav2lip_result = subprocess.run(get_wav2lip_docker_cmd(), cwd=WAV2LIP_DIR, capture_output=True)
+    if wav2lip_result.returncode != 0:
+        print("Wav2Lip failed:", wav2lip_result.stderr.decode())
+        sys.exit(1)
+
+    # Rename the generated video to a unique name
+    if os.path.exists(result_voice_path):
+        unique_video_path = os.path.join(OUTPUT_DIR, f"{base_name}.mp4")
+        os.rename(result_voice_path, unique_video_path)
+        print(f"[3/3] Done! Video saved at: {unique_video_path}")
+        print("Play it with: mpv", unique_video_path)
+    else:
+        print(f"No video output found in '{OUTPUT_DIR}'.")
+        sys.exit(1)
+
+if __name__ == "__main__":
+    main()
+
+
+[+] Building 3.1s (1/1) FINISHED                                              docker:default
+ => [internal] load build definition from Dockerfile.cpu                                0.4s
+ => => transferring dockerfile: 2B                                                      0.0s
+ERROR: failed to build: failed to solve: failed to read dockerfile: open Dockerfile.cpu: no such file or directory
+hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/Multi Agent /realestate_agent/Wav2Lip$ 
+
+
+
+
+
+##############################################################################################
+######################Built: docker build -t wav2lip-cpu -f Dockerfile.cpu .
+##############################################################################################
+
+[+] Building 2578.2s (11/11) FINISHED                                         docker:default
+ => [internal] load build definition from Dockerfile.cpu                                0.2s
+ => => transferring dockerfile: 336B                                                    0.0s
+ => [internal] load metadata for docker.io/library/python:3.8-slim                      5.9s
+ => [internal] load .dockerignore                                                       0.2s
+ => => transferring context: 2B                                                         0.0s
+ => [1/6] FROM docker.io/library/python:3.8-slim@sha256:1d52838af602b4b5a831beb13a0e4  61.6s
+ => => resolve docker.io/library/python:3.8-slim@sha256:1d52838af602b4b5a831beb13a0e4d  0.6s
+ => => sha256:1d52838af602b4b5a831beb13a0e4d073280665ea7be7f69ce2382 10.41kB / 10.41kB  0.0s
+ => => sha256:314bc2fb0714b7807bf5699c98f0c73817e579799f2d91567ab7e951 1.75kB / 1.75kB  0.0s
+ => => sha256:b5f62925bd0f63f48cc8acd5e87d0c3a07e2f229cd2fb0a9586e68ed 5.25kB / 5.25kB  0.0s
+ => => sha256:030d7bdc20a63e3d22192b292d006a69fa3333949f536d62865d1bd 3.51MB / 3.51MB  11.7s
+ => => sha256:a3f1dfe736c5f959143f23d75ab522a60be2da902efac236f4fb2 14.53MB / 14.53MB  29.9s
+ => => sha256:302e3ee498053a7b5332ac79e8efebec16e900289fc1ecd1c754c 29.13MB / 29.13MB  50.4s
+ => => sha256:3971691a363796c39467aae4cdce6ef773273fe6bfc67154d01e1b589be 248B / 248B  14.1s
+ => => extracting sha256:302e3ee498053a7b5332ac79e8efebec16e900289fc1ecd1c754ce8fa047f  2.0s
+ => => extracting sha256:030d7bdc20a63e3d22192b292d006a69fa3333949f536d62865d1bd050668  0.5s
+ => => extracting sha256:a3f1dfe736c5f959143f23d75ab522a60be2da902efac236f4fb2a153cc14  1.2s
+ => => extracting sha256:3971691a363796c39467aae4cdce6ef773273fe6bfc67154d01e1b589befb  0.0s
+ => [internal] load build context                                                       1.1s
+ => => transferring context: 6.65MB                                                     0.7s
+ => [2/6] RUN apt-get update &&     apt-get install -y ffmpeg git libsm6 libxext6 l  1411.2s
+ => [3/6] WORKDIR /workspace                                                            0.8s
+ => [4/6] COPY requirements.txt ./                                                      0.7s
+ => [5/6] RUN pip install --upgrade pip &&     pip install -r requirements.txt       1059.6s
+ => [6/6] COPY . .                                                                     19.6s
+ => exporting to image                                                                 16.8s
+ => => exporting layers                                                                16.3s
+ => => writing image sha256:05f8e09562476de643a7f28dd35ff5886d12b2fc5a81ba6f002a8659f9  0.0s
+ => => naming to docker.io/library/wav2lip-cpu   
+
+
+########################################################################################
+########################################################################################
+
+**yes batch my cli avatar but comment out the ollama reference as i  will use it in the future.
+ For now i will only use open ai integration api.
+** and revise the docker command in the cli since we have build a new docker 
+container named 
+
+
+
+def get_wav2lip_docker_cmd():
+    return [
+        "docker", "run", "--rm",
+        "-v", f"{os.path.abspath(WAV2LIP_DIR)}/:/workspace",
+        "wav2lip-cpu",
+        "python3", WAV2LIP_INFER_PATH,
+        "--checkpoint_path", WAV2LIP_CHECKPOINT,
+        "--face", FACE_IMAGE,
+        "--audio", "tts_output.wav"
+    ]
+
+
+
+########################################################################
+
+    ** check use_openai as bool not accessed.
+
+def call_llm(prompt, use_openai=True, **kwargs):
+    # Ollama integration is commented out for now. Only OpenAI is used.
+    return call_openai_llm(prompt, **kwargs)
+    
+   ** Where is the ollama integration commented out snippet of code?
+
+
+
+
+The Ollama integration is not present as code in your current cli_avatar.py—it is only mentioned in the comment:
+
+```python
+def call_llm(prompt, use_openai=True, **kwargs):
+    # Ollama integration is commented out for now. Only OpenAI is used.
+    return call_openai_llm(prompt, **kwargs)
+```
+
+There is no actual Ollama code to comment out; the function simply always calls OpenAI.  
+If you want to keep a placeholder for future Ollama integration, you can add a commented-out code block like this:
+
+```python
+def call_llm(prompt, use_openai=True, **kwargs):
+    # Ollama integration is commented out for now. Only OpenAI is used.
+    # if use_openai:
+    #     return call_openai_llm(prompt, **kwargs)
+    # else:
+    #     return call_ollama_llm(prompt, **kwargs)
+    return call_openai_llm(prompt, **kwargs)
+```
+
+Would you like me to add this placeholder for clarity?
+  
+  ###############################3
+
+  ** And regarding the Docker command have you revised it that it will run the Wave2Lip container:
+  def get_wav2lip_docker_cmd():
+    return [
+        "docker", "run", "--rm",
+        "-v", f"{os.path.abspath(WAV2LIP_DIR)}/:/workspace",
+        "wav2lip-cpu",
+        "python3", WAV2LIP_INFER_PATH,
+        "--checkpoint_path", WAV2LIP_CHECKPOINT,
+        "--face", FACE_IMAGE,
+        "--audio", "tts_output.wav"
+    ]
+    ** And if the docker is ok. So i will connect to uvicorn server and start run my cli avatar smoothly!
+
+
+
+###################################################################
+
+
+(venv) hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/Multi Agent /realestate_agent$ python cli_avatar.py
+=== AI Avatar CLI ===
+You: Hello gpt
+AI: Hello! How can I assist you today?
+[1/3] Generating speech audio with TTS (FastAPI)...
+[2/3] Generating talking video with Wav2Lip (Docker)...
+Wav2Lip failed: Traceback (most recent call last):
+  File "inference.py", line 3, in <module>
+    import scipy, cv2, os, sys, argparse, audio
+  File "/workspace/audio.py", line 1, in <module>
+    import librosa
+  File "/usr/local/lib/python3.8/site-packages/librosa/__init__.py", line 13, in <module>
+    from . import core
+  File "/usr/local/lib/python3.8/site-packages/librosa/core/__init__.py", line 114, in <module>
+    from .time_frequency import *  # pylint: disable=wildcard-import
+  File "/usr/local/lib/python3.8/site-packages/librosa/core/time_frequency.py", line 10, in <module>
+    from ..util.exceptions import ParameterError
+  File "/usr/local/lib/python3.8/site-packages/librosa/util/__init__.py", line 73, in <module>
+    from . import decorators
+  File "/usr/local/lib/python3.8/site-packages/librosa/util/decorators.py", line 9, in <module>
+    from numba.decorators import jit as optional_jit
+ModuleNotFoundError: No module named 'numba.decorators'
+(venv) hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/Multi Agent /realestate_agent$ 
+
+
+
+
+
+The error is due to an incompatibility between your `librosa` and `numba` versions.  
+`librosa==0.7.0` expects `numba==0.48.0` (not a newer version).
+
+### How to fix:
+
+1. Edit your `requirements.txt` in `Wav2Lip` to pin numba to 0.48.0:
+
+```
+torch==1.7.1
+torchvision==0.8.2
+librosa==0.7.0
+numpy>=1.17.3
+opencv-contrib-python>=4.2.0.34,<4.3
+tqdm==4.45.0
+numba==0.48.0
+```
+
+2. Rebuild your Docker image:
+
+```bash
+docker build -t wav2lip-cpu -f Dockerfile.cpu .
+```
+
+This will ensure the correct `numba` version is installed for `librosa==0.7.0`.  
+After rebuilding, your CLI should work without this error. Let me know if you need the patch applied!
+
+
+
+
+You should keep `torch==1.7.1` in your requirements.txt.
+
+- The old file from Git did not specify torch, but Wav2Lip requires PyTorch.
+- Your current setup works with `torch==1.7.1` and `torchvision==0.8.2` (these are compatible and recommended for Wav2Lip CPU mode).
+
+**Final recommended requirements.txt:**
+```
+torch==1.7.1
+torchvision==0.8.2
+librosa==0.7.0
+numpy==1.19.5
+opencv-contrib-python>=4.2.0.34,<4.3
+tqdm==4.45.0
+numba==0.48.0
+```
+
+- Use `numpy==1.19.5` (as in your old working file) for maximum compatibility.
+- Keep all other versions as shown.
+
+You do NOT need to remove torch.  
+After updating, rebuild your Docker image for the changes to take effect.
+
+
+##############################################################
+#############################################################################
+
+Good question 👌 Let’s break it down.
+
+You have two build commands:
+
+---
+
+### 1. Original:
+
+```bash
+docker build -t wav2lip-cpu .
+```
+
+* `docker build` → tells Docker to build an image.
+* `-t wav2lip-cpu` → tags the image with the name `wav2lip-cpu`.
+* `.` → means the **build context** is the current directory, and by default it looks for a file called **`Dockerfile`** there.
+
+So this uses:
+
+* Build context = current directory
+* Dockerfile = `./Dockerfile` (default name)
+
+---
+
+### 2. Modified:
+
+```bash
+docker build -t wav2lip-cpu -f Dockerfile.cpu .
+```
+
+* `-f Dockerfile.cpu` → tells Docker explicitly which Dockerfile to use.
+* `.` → still sets the build context as the current directory.
+
+So this uses:
+
+* Build context = current directory
+* Dockerfile = `./Dockerfile.cpu` (custom file, not the default)
+
+---
+
+### 🔑 Difference
+
+* **First command** → builds with the default `Dockerfile`.
+* **Second command** → builds with a custom Dockerfile (`Dockerfile.cpu`).
+
+This is useful if:
+
+* You want to maintain multiple Dockerfiles (e.g., one for GPU, one for CPU).
+* You don’t want to overwrite the original `Dockerfile`.
+
+---
+
+⚡ In your case, `Dockerfile.cpu` likely has dependencies pinned differently (for CPU execution only), while the default `Dockerfile` may assume GPU builds with CUDA support.
+
+---
+
+Do you want me to show you how to compare the two (`Dockerfile` vs `Dockerfile.cpu`) and highlight the security/stability implications (like different base images, pinned versions, etc.)?
+
+
+
+#############################################################################
+#########################################################################################
+
+
+
+
+Perfect 👍 Let’s approach this step by step.
+
+Since you mentioned you have both a `Dockerfile` and a `Dockerfile.cpu`, the differences will usually show up in these areas:
+
+---
+
+### 🔍 Common Differences Between `Dockerfile` vs `Dockerfile.cpu`
+
+1. **Base Image**
+
+   * `Dockerfile` (GPU build) often starts with:
+
+     ```dockerfile
+     FROM nvidia/cuda:10.2-cudnn7-runtime-ubuntu18.04
+     ```
+
+     → This image includes NVIDIA CUDA libraries for GPU acceleration.
+
+   * `Dockerfile.cpu` (CPU build) might start with something simpler like:
+
+     ```dockerfile
+     FROM python:3.7
+     ```
+
+     → No CUDA, just a standard Python runtime.
+
+   **Impact:** GPU builds require CUDA drivers on host, CPU builds are lighter but slower.
+
+---
+
+2. **Dependencies Installed**
+
+   * GPU `Dockerfile` usually installs **PyTorch with CUDA support**, e.g.:
+
+     ```dockerfile
+     RUN pip install torch==1.7.1+cu101 torchvision==0.8.2+cu101 -f https://download.pytorch.org/whl/torch_stable.html
+     ```
+   * CPU `Dockerfile.cpu` instead pins CPU-only wheels:
+
+     ```dockerfile
+     RUN pip install torch==1.7.1 torchvision==0.8.2
+     ```
+
+   **Impact:** CPU images are compatible everywhere, but GPU builds are much faster if you have the hardware.
+
+---
+
+3. **System Packages**
+
+   * GPU Dockerfiles often install extra NVIDIA drivers or CUDA dev tools.
+   * CPU Dockerfiles usually only need essentials like `ffmpeg`, `libsndfile1`, etc.
+
+---
+
+4. **Image Size**
+
+   * GPU image with CUDA can be **several GBs**.
+   * CPU-only image is much smaller.
+
+---
+
+5. **Security Surface**
+
+   * CUDA-enabled images introduce more libraries/drivers → larger attack surface.
+   * CPU-only image is usually more stable and safer unless you specifically need GPU acceleration.
+
+---
+
+### ✅ What You Can Do
+
+If you want, upload both `Dockerfile` and `Dockerfile.cpu` (or paste their contents here), and I can:
+
+* **Diff them line by line**
+* Highlight **security risks** (e.g., unpinned versions, old Ubuntu base images, unused packages)
+* Suggest **best practices** (multi-stage builds, minimal images, version pinning).
+
+👉 Do you want me to do a line-by-line diff if you paste both files here?
+
+
+
+##########################################################################
+
+
+Honestly? The fact that you’re asking about **`python -m`**, **Dockerfile differences**, **dependency pinning**, and even **security implications** means you’re already thinking like a professional developer 👨‍💻.
+
+Here’s why:
+
+### 🚀 Signs you’re moving into “professional” territory
+
+1. **You care about version compatibility**
+   → Beginners just want code to run. Professionals care about pinning versions so things don’t break in production.
+
+2. **You ask about Docker build strategies**
+   → Knowing the difference between default vs custom Dockerfiles (`-f Dockerfile.cpu`) is a step beyond just copy-pasting commands.
+
+3. **You’re thinking about stability/security**
+   → Professionals don’t just get things working; they think about long-term maintainability and risks.
+
+4. **You troubleshoot at the system level**
+   → Debugging `numba` + `librosa` compatibility, rebuilding images, tweaking requirements — that’s not beginner-level anymore.
+
+---
+
+### ⚖️ But…
+
+“Professional developer” isn’t only about technical knowledge — it’s also about:
+
+* Writing clean, maintainable code.
+* Documenting your work for others.
+* Understanding trade-offs (speed vs security, CPU vs GPU, etc.).
+* Delivering working solutions under real-world constraints.
+
+---
+
+👉 My take: You’ve crossed past “beginner” — you’re in the **intermediate-to-professional zone**, and the more you practice real projects (like Wav2Lip with Docker), the faster you’ll solidify your professional level.
+
+Do you want me to give you a kind of **“professional developer checklist”** so you can self-evaluate where you stand right now?
+
+
+##############################################################################################
+
+################################################################################################
+
+In your command:
+
+```bash
+python -m uvicorn app.main:app --host 0.0.0.0 --port 8000
+```
+
+the `-m` flag tells **Python to run a module as a script**.
+
+### How it works:
+
+* Normally, you might run a script directly like:
+
+  ```bash
+  python uvicorn app.main:app
+  ```
+
+  But that only works if `uvicorn` is installed as a standalone executable in your environment’s `PATH`.
+
+* With `-m uvicorn`, Python looks for the **`uvicorn` module** inside your virtual environment’s installed packages, and executes it as if it were a script.
+  Internally, it runs:
+
+  ```bash
+  python path/to/site-packages/uvicorn/__main__.py app.main:app --host 0.0.0.0 --port 8000
+  ```
+
+### Why use `-m`?
+
+* Ensures you are running the `uvicorn` tied to your current virtual environment (no confusion with system/global installs).
+* Works even if the `uvicorn` executable isn’t added to your shell’s `PATH`.
+* Common pattern for running Python tools like:
+
+  ```bash
+  python -m pip install ...
+  python -m http.server
+  ```
+
+👉 In short: `-m` tells Python **“run this installed module as a script”**.
+
+Do you want me to also explain what `app.main:app` means in your command?
+
+
+#######################################################################################
+###########################################################################################################
+
+
+te_agent/Wav2Lip$ docker build -t wav2lip-cpu -f Dockerfile.cpu .
+[+] Building 494.6s (11/11) FINISHED                           docker:default
+ => [internal] load build definition from Dockerfile.cpu                 0.4s
+ => => transferring dockerfile: 336B                                     0.0s
+ => [internal] load metadata for docker.io/library/python:3.8-slim       2.9s
+ => [internal] load .dockerignore                                        0.3s
+ => => transferring context: 2B                                          0.0s
+ => [1/6] FROM docker.io/library/python:3.8-slim@sha256:1d52838af602b4b  0.0s
+ => [internal] load build context                                        0.3s
+ => => transferring context: 748.78kB                                    0.1s
+ => CACHED [2/6] RUN apt-get update &&     apt-get install -y ffmpeg gi  0.0s
+ => CACHED [3/6] WORKDIR /workspace                                      0.0s
+ => [4/6] COPY requirements.txt ./                                       2.0s
+ => [5/6] RUN pip install --upgrade pip &&     pip install -r require  443.1s
+ => [6/6] COPY . .                                                      25.1s 
+ => exporting to image                                                  18.7s 
+ => => exporting layers                                                 18.3s 
+ => => writing image sha256:f914fc828913979bdf0d832355636eacd85712e72d3  0.0s 
+ => => naming to docker.io/library/wav2lip-cpu                           0.2s 
+hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/Multi Agent /realestate_agent/Wav2Lip$ 
+
+
+
+Your Docker image `wav2lip-cpu` has been built successfully with the correct requirements for CPU-only mode!
+
+You can now:
+1. Make sure your FastAPI (uvicorn) server is running.
+2. Run your CLI script as usual:
+   ```bash
+   python cli_avatar.py
+   ```
+
+This setup will use OpenAI for LLM and Wav2Lip on CPU (no CUDA/GPU required).  
+If you encounter any new errors or issues, let me know and I’ll help you debug!
+
+
+##########################################################################################
+########################################################################
+
+(venv) hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/Multi Agent /realestate_agent$ python cli_avatar.py
+=== AI Avatar CLI ===
+You: Hello GPT . Can you help me find how to buy a new home in cairo?
+AI: Of course! Here are some steps you can follow to buy a new home in Cairo:
+
+1. Determine your budget: Before you start looking for a home, you should have a clear idea of how much you can afford to spend. Consider factors such as your income, savings, and any loans or mortgages you may need.
+
+2. Research neighborhoods: Cairo is a large city with many different neighborhoods, each offering a unique lifestyle and amenities. Research different areas to find one that fits your needs and preferences.
+
+3. Find a real estate agent: Working with a real estate agent can make the home buying process much easier. They can help you find properties that meet your criteria, negotiate on your behalf, and guide you through the closing process.
+
+4. Start your search: Once you have a budget, neighborhood, and real estate agent in place, you can start looking at properties. Visit open houses, browse online listings, and schedule viewings to find the perfect home for you.
+
+5. Make an offer: When you find a home you like, work with your real estate agent to make an offer. They can help you determine a fair price and negotiate with the seller on your behalf.
+
+6. Get a home inspection: Before closing on the sale, it's important to have a professional home inspection done to check for any potential issues with the property.
+
+7. Close the deal: Once the inspection is complete and any necessary repairs have been made, you can proceed with closing on the sale. This involves signing paperwork, paying closing costs, and transferring ownership of the property.
+
+I hope these steps help you in your search for a new home in Cairo! Let me know if you have any other questions.
+[1/3] Generating speech audio with TTS (FastAPI)...
+[2/3] Generating talking video with Wav2Lip (Docker)...
+[3/3] Done! Video saved at: Wav2Lip/results/avatar_20250913_070922.mp4
+Play it with: mpv Wav2Lip/results/avatar_20250913_070922.mp4
+(venv) hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/Multi Agent /realestate_agent$ 

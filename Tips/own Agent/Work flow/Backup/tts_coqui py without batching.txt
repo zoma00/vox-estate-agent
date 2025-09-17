@@ -1,0 +1,14 @@
+# Basic TTS module using Coqui TTS
+# Install with: pip install TTS
+from TTS.api import TTS
+
+def generate_tts_audio(text: str, output_path: str = "tts_output.wav") -> str:
+    # Use a more reliable model (glow-tts)
+    tts = TTS(model_name="tts_models/en/ljspeech/glow-tts", progress_bar=False, gpu=False)
+    tts.tts_to_file(text=text, file_path=output_path)
+    return output_path
+
+if __name__ == "__main__":
+    test_text = "Hello, this is a test of the Coqui TTS system."
+    audio_file = generate_tts_audio(test_text)
+    print(f"Audio saved to {audio_file}")

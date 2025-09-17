@@ -1,0 +1,35 @@
+You should add the URL detection and browser opening feature to your CLI script 
+that interacts with the AI model and displays its response. Based on your previous 
+messages, the most relevant file is:
+
+
+Active venv then:
+------------------------
+hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/vox-estate-agent$ cd backend/realestate_agent/
+hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/vox-estate-agent/backend/realestate_agent$ 
+
+ source venv/bin/activate && python -m uvicorn app.main:app --host 0.0.0.0 --port 8000
+
+
+
+React:
+-----------
+npm start 
+-------------------------
+
+Running your interactive chat  using cli script:
+--------------------------------------------------
+
+
+realestate_agent$ source venv/bin/activate
+(venv) hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/vox-estate-agent/backend/realestate_agent$ pip show gTTS
+Name: gTTS
+Version: 2.5.4
+Summary: gTTS (Google Text-to-Speech), a Python library and CLI tool to interface with Google Translate text-to-speech API
+Home-page: https://github.com/pndurette/gTTS
+Author: 
+Author-email: Pierre Nicolas Durette <pndurette@gmail.com>
+License: MIT
+Location: /home/hazem-elbatawy/Downloads/vox-estate-agent/backend/realestate_agent/venv/lib/python3.11/site-packages
+Requires: click, requests
+Required-by: 

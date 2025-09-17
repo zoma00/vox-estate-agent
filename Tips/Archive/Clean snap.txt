@@ -1,0 +1,39 @@
+Nice 🚀 — now you’ve got **6.2 GB free** (95% usage). That’s better than before (you were stuck at 4.8 GB).
+
+Here’s a quick recap:
+
+* `/dev/sda4` (your root partition) → **117 GB total, 105 GB used, 6.2 GB free**
+* `/boot/efi` → **871 MB total, 803 MB free**
+* tmpfs (RAM-based filesystems) → not relevant for storage
+
+---
+
+✅ Next steps if you still want **more free space**:
+
+1. **Clean Snap packages** (your `/var/lib/snapd` was \~9.6 GB):
+
+   ```bash
+   sudo du -sh /var/lib/snapd
+   sudo snap list --all | awk '/disabled/{print $1, $2}' | while read snapname revision; do sudo snap remove "$snapname" --revision="$revision"; done
+   ```
+
+   That removes old disabled revisions.
+
+2. **Prune Docker** with the cleanup script we prepared (to target unused stuff but keep `wav2lip` and your 2 containers).
+
+3. **Clean apt cache**:
+
+   ```bash
+   sudo apt-get clean
+   sudo apt-get autoremove -y
+   ```
+
+4. **Check big hidden caches** (you already saw `.cache` and `.vscode` are heavy). If you don’t need old extensions/models, you can remove them safely:
+
+   ```bash
+   rm -rf ~/.cache/*
+   ```
+
+---
+
+👉 Do you want me to modify the cleanup script so it also includes **Snap cleanup** and **apt cache cleanup**, making it a full “system + Docker” space recovery tool?

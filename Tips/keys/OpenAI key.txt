@@ -1,0 +1,51 @@
+Perfect! 🎯
+
+That's even better! You have a field in the application interface where you can enter the API key directly.
+
+## ✅ **For the Input Field in Your App:**
+
+**Use the key exactly as is, without quotes:**
+
+Disabled:
+```
+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
+```
+
+New:
+```
+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
+
+```
+## 🚀 **Client Experience:**
+
+1. **Open the app**: http://46.232.249.36:8501
+2. **Find the OpenAI API Key field** in the interface
+3. **Paste the key** (without quotes)
+4. **Start using GPT features** immediately!
+
+This is much more user-friendly for your client - they can simply paste the key into the web interface instead of dealing with terminal commands. Great design! 👍
+
+**The app will then use this key for all AI-powered product suggestions and descriptions.**
+
+
+
+#################################################33
+
+Created env file and this is the seps following it :
+
+
+```
+
+
+Made changes.
+
+
+```
+Your CLI now automatically loads environment variables from the .env file using python-dotenv.
+
+However, you need to install the required packages if you haven't already:
+```bash
+pip install python-dotenv openai requests
+```
+This will resolve the import errors for dotenv, openai, and requests. 
+Let me know if you need help with anything else!

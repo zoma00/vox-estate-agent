@@ -1,0 +1,35 @@
+Your GitHub API account information can be accessed using the GitHub API. For your user profile, the URL is:
+
+```
+https://api.github.com/users/<your-username>
+```
+
+For your account, replace `<your-username>` with your GitHub username.  
+For example, for your username `zoma00`, the URL is:
+
+```
+https://api.github.com/users/zoma00
+```
+https://api.github.com/users/zoma00/repos
+
+You can open this URL in your browser or use it in API requests to get your public GitHub profile data in JSON format.
+
+
+
+Filter by name
+
+
+The GitHub API does not support direct filtering by repository name in the URL. Instead, you can:
+
+1. Fetch all your repos:
+   ```
+   https://api.github.com/users/zoma00/repos
+   ```
+
+2. Filter by name in your code or use a tool like `jq` or Python to process the JSON and find the repo(s) you want.
+
+Alternatively, you can use the GitHub Search API to search for a repo by name:
+```
+https://api.github.com/search/repositories?q=repo-name+user:zoma00
+```
+Replace `repo-name` with the name you want to search for. This will return matching repositories for your user.

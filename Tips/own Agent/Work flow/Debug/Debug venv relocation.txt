@@ -1,0 +1,1424 @@
+Ahhh 😅 got you — thanks for clarifying.
+You're totally right: deleting the whole `venv` and redownloading **900 MB of Torch** was the *nuclear option*.
+
+Since your issue was just the **broken `pyvenv.cfg` path** (it had that `Multi Agent /...` space in it), the lighter fix was indeed:
+
+1. Open
+
+   ```bash
+   backend/realestate_agent/venv/pyvenv.cfg
+   ```
+2. Fix the `home` / `executable` / `command` paths so they point to the correct Python:
+
+   ```ini
+   home = /usr/bin
+   include-system-site-packages = false
+   version = 3.11.13
+   executable = /usr/bin/python3.11
+   command = /usr/bin/python3.11 -m venv /home/hazem-elbatawy/Downloads/vox-estate-agent/backend/realestate_agent/venv
+   ```
+
+That would’ve made the old venv usable again, without forcing Torch/TTS re-download. ✅
+
+---
+
+### ⚡ Pro-tip for next time
+
+If `venv` feels broken:
+
+```bash
+python3 -m venv venv --upgrade-deps
+```
+
+will repair the paths in `pyvenv.cfg` without wiping installed packages.
+
+---
+
+Do you want me to show you a **safe workflow for fixing venv path issues** in the future (without redownloading 1GB each time)?
+
+
+
+
+
+
+
+Got it ✅ — since your shell prompt shows:
+
+```
+(venv) hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/vox-estate-agent/backend/realestate_agent$
+```
+
+and you just ran:
+
+```bash
+pip install TTS
+```
+
+which is installing into the **currently active venv**, that means the one in use is:
+
+👉 **`/home/hazem-elbatawy/Downloads/vox-estate-agent/backend/realestate_agent/venv`** ✅
+
+The `.venv` at the project root (`/home/hazem-elbatawy/Downloads/vox-estate-agent/.venv`) is the extra one that’s not being used right now.
+
+---
+
+⚡ Recommended cleanup:
+
+```bash
+rm -rf /home/hazem-elbatawy/Downloads/vox-estate-agent/.venv
+```
+
+That way you won’t confuse your future self (or `pip`) with two environments.
+
+---
+
+Do you want me to also show you how to **force pip to always confirm which environment it’s installing into**? That prevents accidental installs into system Python or the wrong venv.
+
+
+
+
+
+
+te_agent$ venv/bin/uvicorn app.main:app --host 0.0.0.0 --port 8000
+venv/bin/uvicorn: 2: exec: /home/hazem-elbatawy/Downloads/Multi Agent /realestate_agent/venv/bin/python3.11: not found
+(venv) hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/vox-estate-agent/backend/realestate_agent$ 
+** how come since i have the venv activated
+home = /usr/bin
+include-system-site-packages = false
+version = 3.11.13
+executable = /usr/bin/python3.11
+command = /home/hazem-elbatawy/Downloads/Multi Agent /realestate_agent/venv/bin/python3.11 -m venv /home/hazem-elbatawy/Downloads/Multi Agent /realestate_agent/venv
+** i think i have to customize this path in the venv or even create a new venv
+
+
+
+
+
+💡 You nailed it — the problem is the **broken path in your `pyvenv.cfg`**.
+
+Look closely at what you pasted:
+
+```
+command = /home/hazem-elbatawy/Downloads/Multi Agent /realestate_agent/venv/bin/python3.11 -m venv ...
+```
+
+Notice the **space in the folder name** (`Multi Agent`). That breaks the path, so your venv thinks its Python executable is in a non-existent directory. That’s why you get:
+
+```
+exec: .../Multi Agent /realestate_agent/venv/bin/python3.11: not found
+```
+
+---
+
+### ✅ Fix options
+
+#### Option 1: Recreate the venv (recommended)
+
+Simplest and cleanest fix — delete the broken one and recreate:
+
+```bash
+rm -rf venv
+python3.11 -m venv venv
+source venv/bin/activate
+pip install --upgrade pip
+pip install -r requirements.txt
+```
+
+Now `venv/bin/uvicorn ...` will work without path issues.
+
+---
+
+#### Option 2: Manually fix `pyvenv.cfg`
+
+If you don’t want to recreate, you could edit:
+
+```
+backend/realestate_agent/venv/pyvenv.cfg
+```
+
+and correct the `command =` line so it points to the real Python, e.g.:
+
+```
+home = /usr/bin
+include-system-site-packages = false
+version = 3.11.13
+executable = /usr/bin/python3.11
+command = /usr/bin/python3.11 -m venv /home/hazem-elbatawy/Downloads/vox-estate-agent/backend/realestate_agent/venv
+```
+
+But honestly, recreating is safer.
+
+---
+
+### 🚀 After fixing
+
+From inside `backend/realestate_agent/`, run:
+
+```bash
+source venv/bin/activate
+uvicorn app.main:app --host 0.0.0.0 --port 8000
+```
+
+---
+
+👉 Do you want me to write the exact **clean re-install commands** for your case (to ensure you don’t lose any dependencies), or do you prefer to just patch `pyvenv.cfg` manually?
+
+
+
+
+
+##########################################3
+
+Recreated the venv
+##################################################
+
+(venv) hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/vox-estate-agent/backend/realestate_agent$ rm -rf venv
+python3.11 -m venv venv
+source venv/bin/activate
+pip install --upgrade pip
+pip install -r requirements.txt
+Requirement already satisfied: pip in ./venv/lib/python3.11/site-packages (24.0)
+Collecting pip
+  Using cached pip-25.2-py3-none-any.whl.metadata (4.7 kB)
+Using cached pip-25.2-py3-none-any.whl (1.8 MB)
+Installing collected packages: pip
+  Attempting uninstall: pip
+    Found existing installation: pip 24.0
+    Uninstalling pip-24.0:
+      Successfully uninstalled pip-24.0
+Successfully installed pip-25.2
+Collecting fastapi (from -r requirements.txt (line 1))
+  Using cached fastapi-0.116.1-py3-none-any.whl.metadata (28 kB)
+Collecting uvicorn (from -r requirements.txt (line 2))
+  Using cached uvicorn-0.35.0-py3-none-any.whl.metadata (6.5 kB)
+Collecting requests (from -r requirements.txt (line 3))
+  Using cached requests-2.32.5-py3-none-any.whl.metadata (4.9 kB)
+Collecting starlette<0.48.0,>=0.40.0 (from fastapi->-r requirements.txt (line 1))
+  Using cached starlette-0.47.3-py3-none-any.whl.metadata (6.2 kB)
+Collecting pydantic!=1.8,!=1.8.1,!=2.0.0,!=2.0.1,!=2.1.0,<3.0.0,>=1.7.4 (from fastapi->-r requirements.txt (line 1))
+  Using cached pydantic-2.11.9-py3-none-any.whl.metadata (68 kB)
+Collecting typing-extensions>=4.8.0 (from fastapi->-r requirements.txt (line 1))
+  Using cached typing_extensions-4.15.0-py3-none-any.whl.metadata (3.3 kB)
+Collecting annotated-types>=0.6.0 (from pydantic!=1.8,!=1.8.1,!=2.0.0,!=2.0.1,!=2.1.0,<3.0.0,>=1.7.4->fastapi->-r requirements.txt (line 1))
+  Using cached annotated_types-0.7.0-py3-none-any.whl.metadata (15 kB)
+Collecting pydantic-core==2.33.2 (from pydantic!=1.8,!=1.8.1,!=2.0.0,!=2.0.1,!=2.1.0,<3.0.0,>=1.7.4->fastapi->-r requirements.txt (line 1))
+  Using cached pydantic_core-2.33.2-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (6.8 kB)
+Collecting typing-inspection>=0.4.0 (from pydantic!=1.8,!=1.8.1,!=2.0.0,!=2.0.1,!=2.1.0,<3.0.0,>=1.7.4->fastapi->-r requirements.txt (line 1))
+  Using cached typing_inspection-0.4.1-py3-none-any.whl.metadata (2.6 kB)
+Collecting anyio<5,>=3.6.2 (from starlette<0.48.0,>=0.40.0->fastapi->-r requirements.txt (line 1))
+  Using cached anyio-4.10.0-py3-none-any.whl.metadata (4.0 kB)
+Collecting idna>=2.8 (from anyio<5,>=3.6.2->starlette<0.48.0,>=0.40.0->fastapi->-r requirements.txt (line 1))
+  Using cached idna-3.10-py3-none-any.whl.metadata (10 kB)
+Collecting sniffio>=1.1 (from anyio<5,>=3.6.2->starlette<0.48.0,>=0.40.0->fastapi->-r requirements.txt (line 1))
+  Using cached sniffio-1.3.1-py3-none-any.whl.metadata (3.9 kB)
+Collecting click>=7.0 (from uvicorn->-r requirements.txt (line 2))
+  Using cached click-8.2.1-py3-none-any.whl.metadata (2.5 kB)
+Collecting h11>=0.8 (from uvicorn->-r requirements.txt (line 2))
+  Using cached h11-0.16.0-py3-none-any.whl.metadata (8.3 kB)
+Collecting charset_normalizer<4,>=2 (from requests->-r requirements.txt (line 3))
+  Using cached charset_normalizer-3.4.3-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (36 kB)
+Collecting urllib3<3,>=1.21.1 (from requests->-r requirements.txt (line 3))
+  Using cached urllib3-2.5.0-py3-none-any.whl.metadata (6.5 kB)
+Collecting certifi>=2017.4.17 (from requests->-r requirements.txt (line 3))
+  Using cached certifi-2025.8.3-py3-none-any.whl.metadata (2.4 kB)
+Using cached fastapi-0.116.1-py3-none-any.whl (95 kB)
+Using cached pydantic-2.11.9-py3-none-any.whl (444 kB)
+Using cached pydantic_core-2.33.2-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (2.0 MB)
+Using cached starlette-0.47.3-py3-none-any.whl (72 kB)
+Using cached anyio-4.10.0-py3-none-any.whl (107 kB)
+Using cached uvicorn-0.35.0-py3-none-any.whl (66 kB)
+Using cached requests-2.32.5-py3-none-any.whl (64 kB)
+Using cached charset_normalizer-3.4.3-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (150 kB)
+Using cached idna-3.10-py3-none-any.whl (70 kB)
+Using cached urllib3-2.5.0-py3-none-any.whl (129 kB)
+Using cached annotated_types-0.7.0-py3-none-any.whl (13 kB)
+Using cached certifi-2025.8.3-py3-none-any.whl (161 kB)
+Using cached click-8.2.1-py3-none-any.whl (102 kB)
+Using cached h11-0.16.0-py3-none-any.whl (37 kB)
+Using cached sniffio-1.3.1-py3-none-any.whl (10 kB)
+Using cached typing_extensions-4.15.0-py3-none-any.whl (44 kB)
+Using cached typing_inspection-0.4.1-py3-none-any.whl (14 kB)
+Installing collected packages: urllib3, typing-extensions, sniffio, idna, h11, click, charset_normalizer, certifi, annotated-types, uvicorn, typing-inspection, requests, pydantic-core, anyio, starlette, pydantic, fastapi
+Successfully installed annotated-types-0.7.0 anyio-4.10.0 certifi-2025.8.3 charset_normalizer-3.4.3 click-8.2.1 fastapi-0.116.1 h11-0.16.0 idna-3.10 pydantic-2.11.9 pydantic-core-2.33.2 requests-2.32.5 sniffio-1.3.1 starlette-0.47.3 typing-extensions-4.15.0 typing-inspection-0.4.1 urllib3-2.5.0 uvicorn-0.35.0
+(venv) hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/vox-estate-agent/backend/realestate_agent$ 
+
+
+
+Got it ✅ — now FastAPI is being found correctly, but your **dependencies are incomplete**.
+
+The error:
+
+```
+ModuleNotFoundError: No module named 'TTS'
+```
+
+means your code imports:
+
+```python
+from TTS.api import TTS
+```
+
+but the **`TTS` library (Coqui TTS)** is not installed in your new venv.
+
+---
+
+### 🔧 Fix: Install Coqui TTS
+
+From inside your activated venv:
+
+```bash
+pip install TTS
+```
+
+This is the [Coqui TTS](https://pypi.org/project/TTS/) package that provides `TTS.api`.
+
+---
+
+### 📝 Next steps
+
+1. Install missing lib:
+
+   ```bash
+   pip install TTS
+   ```
+
+2. If you see more `ModuleNotFoundError` after that (for `torch`, `numpy`, etc.), install them one by one, or better:
+
+   * Check if your repo has a `requirements.txt` or `environment.yml` that includes TTS and related packages.
+   * Add `TTS` to `requirements.txt` so it’s consistent for the future.
+
+---
+
+⚠️ **Heads up:** Coqui TTS depends on **PyTorch**, which can be large. If you don’t have it yet, pip will install CPU-only PyTorch automatically. If you want GPU acceleration, you’ll need to install the correct PyTorch build for your CUDA setup.
+
+---
+
+👉 Do you want me to check what’s already inside your `requirements.txt` and then generate a **fixed version** that includes `TTS` (and likely `torch`) so you won’t have to chase missing modules one by one?
+
+
+
+Downloading SudachiPy-0.6.10-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (1.7 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.7/1.7 MB 1.3 MB/s  0:00:01
+Downloading threadpoolctl-3.6.0-py3-none-any.whl (18 kB)
+Downloading torch-2.8.0-cp311-cp311-manylinux_2_28_x86_64.whl (888.1 MB)
+   ━━━━━━━━━━━━╺━━━━━━━━━━━━━━━━━━━━━━━━━━━ 274.2/888.1 MB 2.0 MB/s eta 0:05:15
+** it is downloading torch again as you said since we deleted the previous venv
+Ethical Hacker GPT said:
+
+Exactly 👍 — since you wiped the old venv and rebuilt it, pip is now pulling Torch (≈900 MB) again because TTS depends on it.
+
+That’s the default behavior unless you tell pip otherwise.
+
+🔧 You have two options here:
+Option 1: Let it finish
+
+If you’re okay with a big venv:
+
+pip install TTS
+
+
+will finish and you’ll have Torch + TTS inside your new venv.
+✅ Easiest, fastest way to get running now.
+⚠️ Downsides: venv is heavy, duplicates Torch (also in Docker).
+
+Option 2: Avoid installing Torch in venv
+
+If you really want to keep Torch only in Docker:
+
+pip install TTS --no-deps
+
+
+This installs TTS, but without pulling Torch.
+
+Problem: when your app tries to call Coqui TTS, it will still look for torch.
+You’d need to either:
+
+Proxy those TTS calls into your Docker (where Torch is), or
+
+Patch imports so FastAPI never directly runs Torch-dependent code.
+
+This is cleaner long-term but requires restructuring.
+
+⚡ My recommendation
+
+Since you’re still in the setup phase and just trying to get FastAPI + TTS working:
+
+👉 Option 1: Let Torch finish downloading inside venv.
+Get the system running, verify FastAPI + TTS works.
+
+Later, if you want to optimize & deduplicate Torch, we can restructure so TTS and Wave2Lip both live in Docker.
+
+Do you want me to help you restructure FastAPI so that TTS calls are routed into your Docker container (Option 2), or do you just want to get it running now (Option 1)?
+
+You said:
+no my docker file is running another separate thing it is wav2lip so i should have torch in the venv for tts and in docker for the wave2lip.
+* this is the req text for docker :
+torch==1.7.1
+torchvision==0.8.2
+librosa==0.7.0
+numpy==1.19.5
+opencv-contrib-python>=4.2.0.34,<4.3
+tqdm==4.45.0
+numba==0.48.0
+Ethical Hacker GPT said:
+
+Perfect 👌 thanks for clarifying.
+So your setup is:
+
+FastAPI venv → runs Coqui TTS → needs modern Torch (whatever TTS installs, e.g. 2.8.0).
+
+Docker (Wave2Lip) → runs lip-syncing → needs Torch 1.7.1 + older deps (as in your requirements.txt).
+
+That separation is exactly the right approach ✅. Keeping two environments avoids dependency hell, since Wave2Lip is pinned to old PyTorch and Coqui TTS wants a new one.
+
+⚡ What you should do:
+
+In venv (FastAPI + TTS):
+
+Let pip finish installing TTS + Torch 2.8.0.
+
+This environment is isolated, so no conflict with Docker.
+
+source venv/bin/activate
+pip install -r requirements.txt   # your FastAPI reqs
+pip install TTS                   # brings in latest Torch
+
+
+In Docker (Wave2Lip):
+
+Keep your Dockerfile pinned to old Torch & deps:
+
+torch==1.7.1
+torchvision==0.8.2
+librosa==0.7.0
+numpy==1.19.5
+opencv-contrib-python>=4.2.0.34,<4.3
+tqdm==4.45.0
+numba==0.48.0
+
+
+Don’t upgrade Torch here. Wave2Lip was built/tested on 1.7.1.
+
+Runtime flow:
+
+FastAPI (in venv) generates audio →
+
+Passes audio into Dockerized Wave2Lip →
+
+Docker handles animation with its old Torch.
+
+That way:
+
+No conflict between Torch 2.8.0 and 1.7.1.
+
+Each environment has exactly what it needs.
+
+⚠️ Just be careful: if you ever try to share the same venv/Docker for both TTS and Wave2Lip, you’ll hit version conflicts (new TTS won’t run on old Torch, and Wave2Lip won’t run on new Torch). Keeping them separate = safest.
+
+Do you want me to help you wire FastAPI ↔ Docker (Wave2Lip) so that FastAPI can automatically call the container when TTS is done? That way the pipeline is smooth.
+
+You said:
+⚠️ Just be careful: if you ever try to share the same venv/Docker for both TTS and Wave2Lip, you’ll hit version conflicts (new TTS won’t run on old Torch, and Wave2Lip won’t run on new Torch). Keeping them separate = safest.
+** i run them using cli avatar script:
+#!/usr/bin/env python3
+"""
+Simple CLI script for Text-to-Avatar pipeline:
+- User enters text
+- TTS generates audio
+- Wav2Lip generates video
+- Output video path is shown
+"""
+
+# Load environment variables from .env
+import os
+import sys
+import time
+import subprocess
+import requests
+from dotenv import load_dotenv
+import openai
+load_dotenv()
+
+# === LLM Backend Selection ===
+
+# Updated for openai>=1.0.0
+def call_openai_llm(prompt, api_key=None, model="gpt-3.5-turbo"):
+    import openai
+    client = openai.OpenAI(api_key=api_key or os.getenv("OPENAI_API_KEY"))
+    response = client.chat.completions.create(
+        model=model,
+        messages=[{"role": "user", "content": prompt}],
+        max_tokens=512,
+        temperature=0.7,
+    )
+    return response.choices[0].message.content.strip()
+
+def call_llm(prompt, use_openai=True, **kwargs):
+    # Ollama integration is commented out for now. Only OpenAI is used.
+    return call_openai_llm(prompt, **kwargs)
+   
+
+# CONFIGURABLE PATHS
+TTS_SCRIPT = "batch_tts.sh"  # Your TTS batch script
+FACE_IMAGE = "face.jpg"  # Path to your avatar image (relative to Wav2Lip dir)
+WAV2LIP_INFER_PATH = "inference.py"  # Path inside Wav2Lip dir
+WAV2LIP_CHECKPOINT = "wav2lip.pth"  # Path inside Wav2Lip dir
+WAV2LIP_DIR = "Wav2Lip"
+OUTPUT_DIR = os.path.join(WAV2LIP_DIR, "results")  # Where output videos are saved
+
+# Generate a unique base name for this run
+timestamp = time.strftime("%Y%m%d_%H%M%S")
+base_name = f"avatar_{timestamp}"
+
+def get_wav2lip_docker_cmd():
+    return [
+        "docker", "run", "--rm",
+        "-v", f"{os.path.abspath(WAV2LIP_DIR)}/:/workspace",
+        "wav2lip-cpu",
+        "python3", WAV2LIP_INFER_PATH,
+        "--checkpoint_path", WAV2LIP_CHECKPOINT,
+        "--face", FACE_IMAGE,
+        "--audio", "tts_output.wav"
+    ]
+
+
+def main():
+    print("=== AI Avatar CLI ===")
+    user_text = input("You: ").strip()
+    if not user_text:
+        print("No input provided. Exiting.")
+        return
+
+    # Get AI response from OpenAI (default) or Ollama (set use_openai=False)
+    ai_response = call_llm(user_text, use_openai=True)
+    print(f"AI: {ai_response}")
+
+    # Use AI response as the text for TTS and video
+    tts_text = ai_response
+
+    # Call FastAPI TTS endpoint to generate audio
+    print("[1/3] Generating speech audio with TTS (FastAPI)...")
+    tts_api_url = "http://localhost:8000/agent/tts"
+    tts_wav_name = f"tts_output_{base_name}.wav"
+    try:
+        response = requests.post(tts_api_url, data={"text": tts_text})
+        response.raise_for_status()
+        # Save the returned audio content
+        with open(tts_wav_name, "wb") as f:
+            f.write(response.content)
+    except Exception as e:
+        print(f"TTS API call failed: {e}")
+        sys.exit(1)
+
+    # Copy generated wav to Wav2Lip dir as input for Docker
+    tts_wav_dst = os.path.join(WAV2LIP_DIR, f"tts_output.wav")
+    if os.path.exists(tts_wav_name):
+        import shutil
+        shutil.copy(tts_wav_name, tts_wav_dst)
+    else:
+        print(f"Error: TTS output wav '{tts_wav_name}' not found. Check TTS API output.")
+        sys.exit(1)
+
+
+    # Ensure face image exists before running Docker
+    face_path = os.path.join(WAV2LIP_DIR, FACE_IMAGE)
+    if not os.path.exists(face_path):
+        print(f"Error: Face image '{face_path}' not found. Please check the path.")
+        sys.exit(1)
+
+    # Ensure results directory exists before running Docker
+    if not os.path.exists(OUTPUT_DIR):
+        os.makedirs(OUTPUT_DIR)
+
+    # Copy tts_output.wav to Wav2Lip dir for Docker
+    tts_wav_src = "tts_output.wav"
+    tts_wav_dst = os.path.join(WAV2LIP_DIR, "tts_output.wav")
+    if os.path.exists(tts_wav_src):
+        import shutil
+        shutil.copy(tts_wav_src, tts_wav_dst)
+
+    print("[2/3] Generating talking video with Wav2Lip (Docker)...")
+    # Remove old result_voice.mp4 if exists to avoid confusion
+    result_voice_path = os.path.join(OUTPUT_DIR, "result_voice.mp4")
+    if os.path.exists(result_voice_path):
+        os.remove(result_voice_path)
+
+    wav2lip_result = subprocess.run(get_wav2lip_docker_cmd(), cwd=WAV2LIP_DIR, capture_output=True)
+    if wav2lip_result.returncode != 0:
+        print("Wav2Lip failed:", wav2lip_result.stderr.decode())
+        sys.exit(1)
+
+    # Rename the generated video to a unique name
+    if os.path.exists(result_voice_path):
+        unique_video_path = os.path.join(OUTPUT_DIR, f"{base_name}.mp4")
+        os.rename(result_voice_path, unique_video_path)
+        print(f"[3/3] Done! Video saved at: {unique_video_path}")
+        print("Play it with: mpv", unique_video_path)
+    else:
+        print(f"No video output found in '{OUTPUT_DIR}'.")
+        sys.exit(1)
+
+if __name__ == "__main__":
+    main()
+Ethical Hacker GPT said:
+
+Got it ✅ thanks for sharing your CLI script — this actually confirms your architecture is solid and cleanly separated:
+
+FastAPI (venv) → handles TTS (modern Torch, Coqui).
+
+Docker (Wave2Lip) → handles lip-sync (old Torch 1.7.1).
+
+Your cli_avatar.py script orchestrates both by:
+
+Sending text → FastAPI → get TTS wav.
+
+Copying wav → into Wav2Lip/.
+
+Running Dockerized Wav2Lip with the pinned deps.
+
+This way, you avoid dependency hell between PyTorch versions. Perfect separation. 👌
+
+⚡ Improvements you can make:
+
+Mount audio dynamically into Docker instead of copying files
+Right now you do:
+
+shutil.copy(tts_wav_name, tts_wav_dst)
+
+
+and mount the whole Wav2Lip dir.
+A cleaner option is to mount just the audio file + results folder:
+
+return [
+    "docker", "run", "--rm",
+    "-v", f"{os.path.abspath(tts_wav_name)}:/workspace/tts_output.wav",
+    "-v", f"{os.path.abspath(WAV2LIP_DIR)}/results:/workspace/results",
+    "wav2lip-cpu",
+    "python3", WAV2LIP_INFER_PATH,
+    "--checkpoint_path", WAV2LIP_CHECKPOINT,
+    "--face", FACE_IMAGE,
+    "--audio", "tts_output.wav"
+]
+
+
+→ No more file-copy juggling, just bind-mount directly.
+
+Stream TTS output instead of writing to disk
+Your FastAPI endpoint could stream audio back and your CLI script pipes it directly into Wav2Lip (via temp file or FIFO). This saves disk writes, though not essential.
+
+Add GPU support (if you have CUDA)
+Right now you’re using "wav2lip-cpu". If you want GPU acceleration:
+
+docker run --gpus all ...
+
+
+And in your Dockerfile use a torch==1.7.1+cu110 wheel. Huge speedup.
+
+Error handling & logging
+
+Capture stdout/stderr from Wav2Lip better:
+
+print("Wav2Lip logs:", wav2lip_result.stdout.decode())
+
+
+If Docker fails, dump the exact command it ran for easier debugging.
+
+✅ Bottom line:
+Your current design (TTS in venv, Wave2Lip in Docker, orchestrated by CLI) is the correct way. Just let Torch install in your venv for TTS, and keep Wave2Lip pinned in Docker.
+
+Do you want me to also show you how to call this same pipeline from inside FastAPI (so you don’t always need to use the CLI script, and can trigger full avatar generation via an API request)?
+
+ChatGPT can make mistakes. Check important info.
+
+
+
+
+bash
+
+(venv) hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/vox-estate-agent/backend/realestate_agent$ source venv/bin/activate
+uvicorn app.main:app --host 0.0.0.0 --port 8000
+Traceback (most recent call last):
+  File "/home/hazem-elbatawy/Downloads/vox-estate-agent/backend/realestate_agent/venv/bin/uvicorn", line 7, in <module>
+    sys.exit(main())
+             ^^^^^^
+  File "/home/hazem-elbatawy/Downloads/vox-estate-agent/backend/realestate_agent/venv/lib/python3.11/site-packages/click/core.py", line 1442, in __call__
+    return self.main(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hazem-elbatawy/Downloads/vox-estate-agent/backend/realestate_agent/venv/lib/python3.11/site-packages/click/core.py", line 1363, in main
+    rv = self.invoke(ctx)
+         ^^^^^^^^^^^^^^^^
+  File "/home/hazem-elbatawy/Downloads/vox-estate-agent/backend/realestate_agent/venv/lib/python3.11/site-packages/click/core.py", line 1226, in invoke
+    return ctx.invoke(self.callback, **ctx.params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hazem-elbatawy/Downloads/vox-estate-agent/backend/realestate_agent/venv/lib/python3.11/site-packages/click/core.py", line 794, in invoke
+    return callback(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hazem-elbatawy/Downloads/vox-estate-agent/backend/realestate_agent/venv/lib/python3.11/site-packages/uvicorn/main.py", line 413, in main
+    run(
+  File "/home/hazem-elbatawy/Downloads/vox-estate-agent/backend/realestate_agent/venv/lib/python3.11/site-packages/uvicorn/main.py", line 580, in run
+    server.run()
+  File "/home/hazem-elbatawy/Downloads/vox-estate-agent/backend/realestate_agent/venv/lib/python3.11/site-packages/uvicorn/server.py", line 67, in run
+    return asyncio.run(self.serve(sockets=sockets))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.11/asyncio/runners.py", line 190, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.11/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.11/asyncio/base_events.py", line 654, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/home/hazem-elbatawy/Downloads/vox-estate-agent/backend/realestate_agent/venv/lib/python3.11/site-packages/uvicorn/server.py", line 71, in serve
+    await self._serve(sockets)
+  File "/home/hazem-elbatawy/Downloads/vox-estate-agent/backend/realestate_agent/venv/lib/python3.11/site-packages/uvicorn/server.py", line 78, in _serve
+    config.load()
+  File "/home/hazem-elbatawy/Downloads/vox-estate-agent/backend/realestate_agent/venv/lib/python3.11/site-packages/uvicorn/config.py", line 436, in load
+    self.loaded_app = import_from_string(self.app)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hazem-elbatawy/Downloads/vox-estate-agent/backend/realestate_agent/venv/lib/python3.11/site-packages/uvicorn/importer.py", line 22, in import_from_string
+    raise exc from None
+  File "/home/hazem-elbatawy/Downloads/vox-estate-agent/backend/realestate_agent/venv/lib/python3.11/site-packages/uvicorn/importer.py", line 19, in import_from_string
+    module = importlib.import_module(module_str)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.11/importlib/__init__.py", line 126, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap>", line 1204, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1176, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1147, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 690, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 940, in exec_module
+  File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
+  File "/home/hazem-elbatawy/Downloads/vox-estate-agent/backend/realestate_agent/app/main.py", line 6, in <module>
+    from app.agent_pipeline import generate_ai_response, generate_tts_audio, animate_avatar
+  File "/home/hazem-elbatawy/Downloads/vox-estate-agent/backend/realestate_agent/app/agent_pipeline.py", line 3, in <module>
+    from tts.tts_coqui import generate_tts_audio as coqui_generate_tts_audio
+  File "/home/hazem-elbatawy/Downloads/vox-estate-agent/backend/realestate_agent/tts/tts_coqui.py", line 3, in <module>
+    from TTS.api import TTS
+ModuleNotFoundError: No module named 'TTS'
+(venv) hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/vox-estate-agent/backend/realestate_agent$ pip install TTS
+Collecting TTS
+  Downloading TTS-0.22.0-cp311-cp311-manylinux1_x86_64.whl.metadata (21 kB)
+Collecting cython>=0.29.30 (from TTS)
+  Downloading cython-3.1.3-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (4.7 kB)
+Collecting scipy>=1.11.2 (from TTS)
+  Downloading scipy-1.16.2-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (62 kB)
+Collecting torch>=2.1 (from TTS)
+  Downloading torch-2.8.0-cp311-cp311-manylinux_2_28_x86_64.whl.metadata (30 kB)
+Collecting torchaudio (from TTS)
+  Downloading torchaudio-2.8.0-cp311-cp311-manylinux_2_28_x86_64.whl.metadata (7.2 kB)
+Collecting soundfile>=0.12.0 (from TTS)
+  Downloading soundfile-0.13.1-py2.py3-none-manylinux_2_28_x86_64.whl.metadata (16 kB)
+Collecting librosa>=0.10.0 (from TTS)
+  Downloading librosa-0.11.0-py3-none-any.whl.metadata (8.7 kB)
+Collecting scikit-learn>=1.3.0 (from TTS)
+  Downloading scikit_learn-1.7.2-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (11 kB)
+Collecting inflect>=5.6.0 (from TTS)
+  Downloading inflect-7.5.0-py3-none-any.whl.metadata (24 kB)
+Collecting tqdm>=4.64.1 (from TTS)
+  Downloading tqdm-4.67.1-py3-none-any.whl.metadata (57 kB)
+Collecting anyascii>=0.3.0 (from TTS)
+  Downloading anyascii-0.3.3-py3-none-any.whl.metadata (1.6 kB)
+Collecting pyyaml>=6.0 (from TTS)
+  Downloading PyYAML-6.0.2-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (2.1 kB)
+Collecting fsspec>=2023.6.0 (from TTS)
+  Downloading fsspec-2025.9.0-py3-none-any.whl.metadata (10 kB)
+Collecting aiohttp>=3.8.1 (from TTS)
+  Downloading aiohttp-3.12.15-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (7.7 kB)
+Collecting packaging>=23.1 (from TTS)
+  Downloading packaging-25.0-py3-none-any.whl.metadata (3.3 kB)
+Collecting flask>=2.0.1 (from TTS)
+  Downloading flask-3.1.2-py3-none-any.whl.metadata (3.2 kB)
+Collecting pysbd>=0.3.4 (from TTS)
+  Downloading pysbd-0.3.4-py3-none-any.whl.metadata (6.1 kB)
+Collecting umap-learn>=0.5.1 (from TTS)
+  Downloading umap_learn-0.5.9.post2-py3-none-any.whl.metadata (25 kB)
+Collecting pandas<2.0,>=1.4 (from TTS)
+  Downloading pandas-1.5.3-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (11 kB)
+Collecting matplotlib>=3.7.0 (from TTS)
+  Downloading matplotlib-3.10.6-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (11 kB)
+Collecting trainer>=0.0.32 (from TTS)
+  Downloading trainer-0.0.36-py3-none-any.whl.metadata (8.1 kB)
+Collecting coqpit>=0.0.16 (from TTS)
+  Downloading coqpit-0.0.17-py3-none-any.whl.metadata (11 kB)
+Collecting jieba (from TTS)
+  Downloading jieba-0.42.1.tar.gz (19.2 MB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 19.2/19.2 MB 948.9 kB/s  0:00:20
+  Installing build dependencies ... done
+  Getting requirements to build wheel ... done
+  Preparing metadata (pyproject.toml) ... done
+Collecting pypinyin (from TTS)
+  Downloading pypinyin-0.55.0-py2.py3-none-any.whl.metadata (12 kB)
+Collecting hangul-romanize (from TTS)
+  Downloading hangul_romanize-0.1.0-py3-none-any.whl.metadata (1.2 kB)
+Collecting gruut==2.2.3 (from gruut[de,es,fr]==2.2.3->TTS)
+  Downloading gruut-2.2.3.tar.gz (73 kB)
+  Installing build dependencies ... done
+  Getting requirements to build wheel ... done
+  Preparing metadata (pyproject.toml) ... done
+Collecting jamo (from TTS)
+  Downloading jamo-0.4.1-py3-none-any.whl.metadata (2.3 kB)
+Collecting nltk (from TTS)
+  Downloading nltk-3.9.1-py3-none-any.whl.metadata (2.9 kB)
+Collecting g2pkk>=0.1.1 (from TTS)
+  Downloading g2pkk-0.1.2-py3-none-any.whl.metadata (2.0 kB)
+Collecting bangla (from TTS)
+  Downloading bangla-0.0.5-py3-none-any.whl.metadata (4.7 kB)
+Collecting bnnumerizer (from TTS)
+  Downloading bnnumerizer-0.0.2.tar.gz (4.7 kB)
+  Installing build dependencies ... done
+  Getting requirements to build wheel ... done
+  Preparing metadata (pyproject.toml) ... done
+Collecting bnunicodenormalizer (from TTS)
+  Downloading bnunicodenormalizer-0.1.7-py3-none-any.whl.metadata (22 kB)
+Collecting einops>=0.6.0 (from TTS)
+  Downloading einops-0.8.1-py3-none-any.whl.metadata (13 kB)
+Collecting transformers>=4.33.0 (from TTS)
+  Downloading transformers-4.56.1-py3-none-any.whl.metadata (42 kB)
+Collecting encodec>=0.1.1 (from TTS)
+  Downloading encodec-0.1.1.tar.gz (3.7 MB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 3.7/3.7 MB 1.3 MB/s  0:00:02
+  Installing build dependencies ... done
+  Getting requirements to build wheel ... done
+  Preparing metadata (pyproject.toml) ... done
+Collecting unidecode>=1.3.2 (from TTS)
+  Downloading Unidecode-1.4.0-py3-none-any.whl.metadata (13 kB)
+Collecting num2words (from TTS)
+  Downloading num2words-0.5.14-py3-none-any.whl.metadata (13 kB)
+Collecting spacy>=3 (from spacy[ja]>=3->TTS)
+  Downloading spacy-3.8.7-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (27 kB)
+Collecting numpy>=1.24.3 (from TTS)
+  Downloading numpy-2.3.3-cp311-cp311-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl.metadata (62 kB)
+Collecting numba>=0.57.0 (from TTS)
+  Downloading numba-0.61.2-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (2.8 kB)
+Collecting Babel<3.0.0,>=2.8.0 (from gruut==2.2.3->gruut[de,es,fr]==2.2.3->TTS)
+  Downloading babel-2.17.0-py3-none-any.whl.metadata (2.0 kB)
+Collecting dateparser~=1.1.0 (from gruut==2.2.3->gruut[de,es,fr]==2.2.3->TTS)
+  Downloading dateparser-1.1.8-py2.py3-none-any.whl.metadata (27 kB)
+Collecting gruut-ipa<1.0,>=0.12.0 (from gruut==2.2.3->gruut[de,es,fr]==2.2.3->TTS)
+  Downloading gruut-ipa-0.13.0.tar.gz (101 kB)
+  Installing build dependencies ... done
+  Getting requirements to build wheel ... done
+  Preparing metadata (pyproject.toml) ... done
+Collecting gruut_lang_en~=2.0.0 (from gruut==2.2.3->gruut[de,es,fr]==2.2.3->TTS)
+  Downloading gruut_lang_en-2.0.1.tar.gz (15.3 MB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 15.3/15.3 MB 956.1 kB/s  0:00:15
+  Installing build dependencies ... done
+  Getting requirements to build wheel ... done
+  Preparing metadata (pyproject.toml) ... done
+Collecting jsonlines~=1.2.0 (from gruut==2.2.3->gruut[de,es,fr]==2.2.3->TTS)
+  Downloading jsonlines-1.2.0-py2.py3-none-any.whl.metadata (1.3 kB)
+Collecting networkx<3.0.0,>=2.5.0 (from gruut==2.2.3->gruut[de,es,fr]==2.2.3->TTS)
+  Downloading networkx-2.8.8-py3-none-any.whl.metadata (5.1 kB)
+Collecting numpy>=1.24.3 (from TTS)
+  Downloading numpy-1.26.4-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (61 kB)
+Collecting python-crfsuite~=0.9.7 (from gruut==2.2.3->gruut[de,es,fr]==2.2.3->TTS)
+  Downloading python_crfsuite-0.9.11-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (4.3 kB)
+Collecting gruut_lang_de~=2.0.0 (from gruut[de,es,fr]==2.2.3->TTS)
+  Downloading gruut_lang_de-2.0.1.tar.gz (18.1 MB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 18.1/18.1 MB 1.3 MB/s  0:00:13
+  Installing build dependencies ... done
+  Getting requirements to build wheel ... done
+  Preparing metadata (pyproject.toml) ... done
+Collecting gruut_lang_es~=2.0.0 (from gruut[de,es,fr]==2.2.3->TTS)
+  Downloading gruut_lang_es-2.0.1.tar.gz (31.4 MB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 31.4/31.4 MB 890.1 kB/s  0:00:34
+  Installing build dependencies ... done
+  Getting requirements to build wheel ... done
+  Preparing metadata (pyproject.toml) ... done
+Collecting gruut_lang_fr~=2.0.0 (from gruut[de,es,fr]==2.2.3->TTS)
+  Downloading gruut_lang_fr-2.0.2.tar.gz (10.9 MB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 10.9/10.9 MB 1.5 MB/s  0:00:07
+  Installing build dependencies ... done
+  Getting requirements to build wheel ... done
+  Preparing metadata (pyproject.toml) ... done
+Collecting python-dateutil (from dateparser~=1.1.0->gruut==2.2.3->gruut[de,es,fr]==2.2.3->TTS)
+  Downloading python_dateutil-2.9.0.post0-py2.py3-none-any.whl.metadata (8.4 kB)
+Collecting pytz (from dateparser~=1.1.0->gruut==2.2.3->gruut[de,es,fr]==2.2.3->TTS)
+  Downloading pytz-2025.2-py2.py3-none-any.whl.metadata (22 kB)
+Collecting regex!=2019.02.19,!=2021.8.27 (from dateparser~=1.1.0->gruut==2.2.3->gruut[de,es,fr]==2.2.3->TTS)
+  Downloading regex-2025.9.1-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (40 kB)
+Collecting tzlocal (from dateparser~=1.1.0->gruut==2.2.3->gruut[de,es,fr]==2.2.3->TTS)
+  Downloading tzlocal-5.3.1-py3-none-any.whl.metadata (7.6 kB)
+Collecting six (from jsonlines~=1.2.0->gruut==2.2.3->gruut[de,es,fr]==2.2.3->TTS)
+  Downloading six-1.17.0-py2.py3-none-any.whl.metadata (1.7 kB)
+Collecting docopt>=0.6.2 (from num2words->TTS)
+  Downloading docopt-0.6.2.tar.gz (25 kB)
+  Installing build dependencies ... done
+  Getting requirements to build wheel ... done
+  Preparing metadata (pyproject.toml) ... done
+Collecting aiohappyeyeballs>=2.5.0 (from aiohttp>=3.8.1->TTS)
+  Downloading aiohappyeyeballs-2.6.1-py3-none-any.whl.metadata (5.9 kB)
+Collecting aiosignal>=1.4.0 (from aiohttp>=3.8.1->TTS)
+  Downloading aiosignal-1.4.0-py3-none-any.whl.metadata (3.7 kB)
+Collecting attrs>=17.3.0 (from aiohttp>=3.8.1->TTS)
+  Downloading attrs-25.3.0-py3-none-any.whl.metadata (10 kB)
+Collecting frozenlist>=1.1.1 (from aiohttp>=3.8.1->TTS)
+  Downloading frozenlist-1.7.0-cp311-cp311-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (18 kB)
+Collecting multidict<7.0,>=4.5 (from aiohttp>=3.8.1->TTS)
+  Downloading multidict-6.6.4-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (5.3 kB)
+Collecting propcache>=0.2.0 (from aiohttp>=3.8.1->TTS)
+  Downloading propcache-0.3.2-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (12 kB)
+Collecting yarl<2.0,>=1.17.0 (from aiohttp>=3.8.1->TTS)
+  Downloading yarl-1.20.1-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (73 kB)
+Requirement already satisfied: idna>=2.0 in ./venv/lib/python3.11/site-packages (from yarl<2.0,>=1.17.0->aiohttp>=3.8.1->TTS) (3.10)
+Requirement already satisfied: typing-extensions>=4.2 in ./venv/lib/python3.11/site-packages (from aiosignal>=1.4.0->aiohttp>=3.8.1->TTS) (4.15.0)
+Collecting blinker>=1.9.0 (from flask>=2.0.1->TTS)
+  Downloading blinker-1.9.0-py3-none-any.whl.metadata (1.6 kB)
+Requirement already satisfied: click>=8.1.3 in ./venv/lib/python3.11/site-packages (from flask>=2.0.1->TTS) (8.2.1)
+Collecting itsdangerous>=2.2.0 (from flask>=2.0.1->TTS)
+  Downloading itsdangerous-2.2.0-py3-none-any.whl.metadata (1.9 kB)
+Collecting jinja2>=3.1.2 (from flask>=2.0.1->TTS)
+  Downloading jinja2-3.1.6-py3-none-any.whl.metadata (2.9 kB)
+Collecting markupsafe>=2.1.1 (from flask>=2.0.1->TTS)
+  Downloading MarkupSafe-3.0.2-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (4.0 kB)
+Collecting werkzeug>=3.1.0 (from flask>=2.0.1->TTS)
+  Downloading werkzeug-3.1.3-py3-none-any.whl.metadata (3.7 kB)
+Collecting more_itertools>=8.5.0 (from inflect>=5.6.0->TTS)
+  Downloading more_itertools-10.8.0-py3-none-any.whl.metadata (39 kB)
+Collecting typeguard>=4.0.1 (from inflect>=5.6.0->TTS)
+  Downloading typeguard-4.4.4-py3-none-any.whl.metadata (3.3 kB)
+Collecting audioread>=2.1.9 (from librosa>=0.10.0->TTS)
+  Downloading audioread-3.0.1-py3-none-any.whl.metadata (8.4 kB)
+Collecting joblib>=1.0 (from librosa>=0.10.0->TTS)
+  Downloading joblib-1.5.2-py3-none-any.whl.metadata (5.6 kB)
+Collecting decorator>=4.3.0 (from librosa>=0.10.0->TTS)
+  Downloading decorator-5.2.1-py3-none-any.whl.metadata (3.9 kB)
+Collecting pooch>=1.1 (from librosa>=0.10.0->TTS)
+  Downloading pooch-1.8.2-py3-none-any.whl.metadata (10 kB)
+Collecting soxr>=0.3.2 (from librosa>=0.10.0->TTS)
+  Downloading soxr-1.0.0-cp311-cp311-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl.metadata (5.6 kB)
+Collecting lazy_loader>=0.1 (from librosa>=0.10.0->TTS)
+  Downloading lazy_loader-0.4-py3-none-any.whl.metadata (7.6 kB)
+Collecting msgpack>=1.0 (from librosa>=0.10.0->TTS)
+  Downloading msgpack-1.1.1-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (8.4 kB)
+Collecting contourpy>=1.0.1 (from matplotlib>=3.7.0->TTS)
+  Downloading contourpy-1.3.3-cp311-cp311-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl.metadata (5.5 kB)
+Collecting cycler>=0.10 (from matplotlib>=3.7.0->TTS)
+  Downloading cycler-0.12.1-py3-none-any.whl.metadata (3.8 kB)
+Collecting fonttools>=4.22.0 (from matplotlib>=3.7.0->TTS)
+  Downloading fonttools-4.59.2-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (109 kB)
+Collecting kiwisolver>=1.3.1 (from matplotlib>=3.7.0->TTS)
+  Downloading kiwisolver-1.4.9-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (6.3 kB)
+Collecting pillow>=8 (from matplotlib>=3.7.0->TTS)
+  Downloading pillow-11.3.0-cp311-cp311-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl.metadata (9.0 kB)
+Collecting pyparsing>=2.3.1 (from matplotlib>=3.7.0->TTS)
+  Downloading pyparsing-3.2.4-py3-none-any.whl.metadata (5.0 kB)
+Collecting llvmlite<0.45,>=0.44.0dev0 (from numba>=0.57.0->TTS)
+  Downloading llvmlite-0.44.0-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (4.8 kB)
+Collecting platformdirs>=2.5.0 (from pooch>=1.1->librosa>=0.10.0->TTS)
+  Downloading platformdirs-4.4.0-py3-none-any.whl.metadata (12 kB)
+Requirement already satisfied: requests>=2.19.0 in ./venv/lib/python3.11/site-packages (from pooch>=1.1->librosa>=0.10.0->TTS) (2.32.5)
+Requirement already satisfied: charset_normalizer<4,>=2 in ./venv/lib/python3.11/site-packages (from requests>=2.19.0->pooch>=1.1->librosa>=0.10.0->TTS) (3.4.3)
+Requirement already satisfied: urllib3<3,>=1.21.1 in ./venv/lib/python3.11/site-packages (from requests>=2.19.0->pooch>=1.1->librosa>=0.10.0->TTS) (2.5.0)
+Requirement already satisfied: certifi>=2017.4.17 in ./venv/lib/python3.11/site-packages (from requests>=2.19.0->pooch>=1.1->librosa>=0.10.0->TTS) (2025.8.3)
+Collecting threadpoolctl>=3.1.0 (from scikit-learn>=1.3.0->TTS)
+  Downloading threadpoolctl-3.6.0-py3-none-any.whl.metadata (13 kB)
+Collecting cffi>=1.0 (from soundfile>=0.12.0->TTS)
+  Downloading cffi-2.0.0-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (2.6 kB)
+Collecting pycparser (from cffi>=1.0->soundfile>=0.12.0->TTS)
+  Downloading pycparser-2.23-py3-none-any.whl.metadata (993 bytes)
+Collecting spacy-legacy<3.1.0,>=3.0.11 (from spacy>=3->spacy[ja]>=3->TTS)
+  Downloading spacy_legacy-3.0.12-py2.py3-none-any.whl.metadata (2.8 kB)
+Collecting spacy-loggers<2.0.0,>=1.0.0 (from spacy>=3->spacy[ja]>=3->TTS)
+  Downloading spacy_loggers-1.0.5-py3-none-any.whl.metadata (23 kB)
+Collecting murmurhash<1.1.0,>=0.28.0 (from spacy>=3->spacy[ja]>=3->TTS)
+  Downloading murmurhash-1.0.13-cp311-cp311-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (2.2 kB)
+Collecting cymem<2.1.0,>=2.0.2 (from spacy>=3->spacy[ja]>=3->TTS)
+  Downloading cymem-2.0.11-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (8.5 kB)
+Collecting preshed<3.1.0,>=3.0.2 (from spacy>=3->spacy[ja]>=3->TTS)
+  Downloading preshed-3.0.10-cp311-cp311-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (2.4 kB)
+Collecting thinc<8.4.0,>=8.3.4 (from spacy>=3->spacy[ja]>=3->TTS)
+  Downloading thinc-8.3.6-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (15 kB)
+Collecting wasabi<1.2.0,>=0.9.1 (from spacy>=3->spacy[ja]>=3->TTS)
+  Downloading wasabi-1.1.3-py3-none-any.whl.metadata (28 kB)
+Collecting srsly<3.0.0,>=2.4.3 (from spacy>=3->spacy[ja]>=3->TTS)
+  Downloading srsly-2.5.1-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (19 kB)
+Collecting catalogue<2.1.0,>=2.0.6 (from spacy>=3->spacy[ja]>=3->TTS)
+  Downloading catalogue-2.0.10-py3-none-any.whl.metadata (14 kB)
+Collecting weasel<0.5.0,>=0.1.0 (from spacy>=3->spacy[ja]>=3->TTS)
+  Downloading weasel-0.4.1-py3-none-any.whl.metadata (4.6 kB)
+Collecting typer<1.0.0,>=0.3.0 (from spacy>=3->spacy[ja]>=3->TTS)
+  Downloading typer-0.17.4-py3-none-any.whl.metadata (15 kB)
+Requirement already satisfied: pydantic!=1.8,!=1.8.1,<3.0.0,>=1.7.4 in ./venv/lib/python3.11/site-packages (from spacy>=3->spacy[ja]>=3->TTS) (2.11.9)
+Requirement already satisfied: setuptools in ./venv/lib/python3.11/site-packages (from spacy>=3->spacy[ja]>=3->TTS) (65.5.0)
+Collecting langcodes<4.0.0,>=3.2.0 (from spacy>=3->spacy[ja]>=3->TTS)
+  Downloading langcodes-3.5.0-py3-none-any.whl.metadata (29 kB)
+Collecting language-data>=1.2 (from langcodes<4.0.0,>=3.2.0->spacy>=3->spacy[ja]>=3->TTS)
+  Downloading language_data-1.3.0-py3-none-any.whl.metadata (4.3 kB)
+Requirement already satisfied: annotated-types>=0.6.0 in ./venv/lib/python3.11/site-packages (from pydantic!=1.8,!=1.8.1,<3.0.0,>=1.7.4->spacy>=3->spacy[ja]>=3->TTS) (0.7.0)
+Requirement already satisfied: pydantic-core==2.33.2 in ./venv/lib/python3.11/site-packages (from pydantic!=1.8,!=1.8.1,<3.0.0,>=1.7.4->spacy>=3->spacy[ja]>=3->TTS) (2.33.2)
+Requirement already satisfied: typing-inspection>=0.4.0 in ./venv/lib/python3.11/site-packages (from pydantic!=1.8,!=1.8.1,<3.0.0,>=1.7.4->spacy>=3->spacy[ja]>=3->TTS) (0.4.1)
+Collecting blis<1.4.0,>=1.3.0 (from thinc<8.4.0,>=8.3.4->spacy>=3->spacy[ja]>=3->TTS)
+  Downloading blis-1.3.0-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (7.4 kB)
+Collecting confection<1.0.0,>=0.0.1 (from thinc<8.4.0,>=8.3.4->spacy>=3->spacy[ja]>=3->TTS)
+  Downloading confection-0.1.5-py3-none-any.whl.metadata (19 kB)
+INFO: pip is looking at multiple versions of thinc to determine which version is compatible with other requirements. This could take a while.
+Collecting thinc<8.4.0,>=8.3.4 (from spacy>=3->spacy[ja]>=3->TTS)
+  Downloading thinc-8.3.4-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (15 kB)
+Collecting blis<1.3.0,>=1.2.0 (from thinc<8.4.0,>=8.3.4->spacy>=3->spacy[ja]>=3->TTS)
+  Downloading blis-1.2.1-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (7.4 kB)
+Collecting shellingham>=1.3.0 (from typer<1.0.0,>=0.3.0->spacy>=3->spacy[ja]>=3->TTS)
+  Downloading shellingham-1.5.4-py2.py3-none-any.whl.metadata (3.5 kB)
+Collecting rich>=10.11.0 (from typer<1.0.0,>=0.3.0->spacy>=3->spacy[ja]>=3->TTS)
+  Downloading rich-14.1.0-py3-none-any.whl.metadata (18 kB)
+Collecting cloudpathlib<1.0.0,>=0.7.0 (from weasel<0.5.0,>=0.1.0->spacy>=3->spacy[ja]>=3->TTS)
+  Downloading cloudpathlib-0.22.0-py3-none-any.whl.metadata (16 kB)
+Collecting smart-open<8.0.0,>=5.2.1 (from weasel<0.5.0,>=0.1.0->spacy>=3->spacy[ja]>=3->TTS)
+  Downloading smart_open-7.3.1-py3-none-any.whl.metadata (24 kB)
+Collecting wrapt (from smart-open<8.0.0,>=5.2.1->weasel<0.5.0,>=0.1.0->spacy>=3->spacy[ja]>=3->TTS)
+  Downloading wrapt-1.17.3-cp311-cp311-manylinux1_x86_64.manylinux_2_28_x86_64.manylinux_2_5_x86_64.whl.metadata (6.4 kB)
+Collecting marisa-trie>=1.1.0 (from language-data>=1.2->langcodes<4.0.0,>=3.2.0->spacy>=3->spacy[ja]>=3->TTS)
+  Downloading marisa_trie-1.3.1-cp311-cp311-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl.metadata (10 kB)
+Collecting markdown-it-py>=2.2.0 (from rich>=10.11.0->typer<1.0.0,>=0.3.0->spacy>=3->spacy[ja]>=3->TTS)
+  Downloading markdown_it_py-4.0.0-py3-none-any.whl.metadata (7.3 kB)
+Collecting pygments<3.0.0,>=2.13.0 (from rich>=10.11.0->typer<1.0.0,>=0.3.0->spacy>=3->spacy[ja]>=3->TTS)
+  Downloading pygments-2.19.2-py3-none-any.whl.metadata (2.5 kB)
+Collecting mdurl~=0.1 (from markdown-it-py>=2.2.0->rich>=10.11.0->typer<1.0.0,>=0.3.0->spacy>=3->spacy[ja]>=3->TTS)
+  Downloading mdurl-0.1.2-py3-none-any.whl.metadata (1.6 kB)
+Collecting sudachipy!=0.6.1,>=0.5.2 (from spacy[ja]>=3->TTS)
+  Downloading SudachiPy-0.6.10-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (12 kB)
+Collecting sudachidict_core>=20211220 (from spacy[ja]>=3->TTS)
+  Downloading sudachidict_core-20250825-py3-none-any.whl.metadata (2.7 kB)
+Collecting filelock (from torch>=2.1->TTS)
+  Downloading filelock-3.19.1-py3-none-any.whl.metadata (2.1 kB)
+Collecting sympy>=1.13.3 (from torch>=2.1->TTS)
+  Downloading sympy-1.14.0-py3-none-any.whl.metadata (12 kB)
+Collecting nvidia-cuda-nvrtc-cu12==12.8.93 (from torch>=2.1->TTS)
+  Downloading nvidia_cuda_nvrtc_cu12-12.8.93-py3-none-manylinux2010_x86_64.manylinux_2_12_x86_64.whl.metadata (1.7 kB)
+Collecting nvidia-cuda-runtime-cu12==12.8.90 (from torch>=2.1->TTS)
+  Downloading nvidia_cuda_runtime_cu12-12.8.90-py3-none-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (1.7 kB)
+Collecting nvidia-cuda-cupti-cu12==12.8.90 (from torch>=2.1->TTS)
+  Downloading nvidia_cuda_cupti_cu12-12.8.90-py3-none-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (1.7 kB)
+Collecting nvidia-cudnn-cu12==9.10.2.21 (from torch>=2.1->TTS)
+  Downloading nvidia_cudnn_cu12-9.10.2.21-py3-none-manylinux_2_27_x86_64.whl.metadata (1.8 kB)
+Collecting nvidia-cublas-cu12==12.8.4.1 (from torch>=2.1->TTS)
+  Downloading nvidia_cublas_cu12-12.8.4.1-py3-none-manylinux_2_27_x86_64.whl.metadata (1.7 kB)
+Collecting nvidia-cufft-cu12==11.3.3.83 (from torch>=2.1->TTS)
+  Downloading nvidia_cufft_cu12-11.3.3.83-py3-none-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (1.7 kB)
+Collecting nvidia-curand-cu12==10.3.9.90 (from torch>=2.1->TTS)
+  Downloading nvidia_curand_cu12-10.3.9.90-py3-none-manylinux_2_27_x86_64.whl.metadata (1.7 kB)
+Collecting nvidia-cusolver-cu12==11.7.3.90 (from torch>=2.1->TTS)
+  Downloading nvidia_cusolver_cu12-11.7.3.90-py3-none-manylinux_2_27_x86_64.whl.metadata (1.8 kB)
+Collecting nvidia-cusparse-cu12==12.5.8.93 (from torch>=2.1->TTS)
+  Downloading nvidia_cusparse_cu12-12.5.8.93-py3-none-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (1.8 kB)
+Collecting nvidia-cusparselt-cu12==0.7.1 (from torch>=2.1->TTS)
+  Downloading nvidia_cusparselt_cu12-0.7.1-py3-none-manylinux2014_x86_64.whl.metadata (7.0 kB)
+Collecting nvidia-nccl-cu12==2.27.3 (from torch>=2.1->TTS)
+  Downloading nvidia_nccl_cu12-2.27.3-py3-none-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (2.0 kB)
+Collecting nvidia-nvtx-cu12==12.8.90 (from torch>=2.1->TTS)
+  Downloading nvidia_nvtx_cu12-12.8.90-py3-none-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (1.8 kB)
+Collecting nvidia-nvjitlink-cu12==12.8.93 (from torch>=2.1->TTS)
+  Downloading nvidia_nvjitlink_cu12-12.8.93-py3-none-manylinux2010_x86_64.manylinux_2_12_x86_64.whl.metadata (1.7 kB)
+Collecting nvidia-cufile-cu12==1.13.1.3 (from torch>=2.1->TTS)
+  Downloading nvidia_cufile_cu12-1.13.1.3-py3-none-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (1.7 kB)
+Collecting triton==3.4.0 (from torch>=2.1->TTS)
+  Downloading triton-3.4.0-cp311-cp311-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl.metadata (1.7 kB)
+Collecting mpmath<1.4,>=1.1.0 (from sympy>=1.13.3->torch>=2.1->TTS)
+  Downloading mpmath-1.3.0-py3-none-any.whl.metadata (8.6 kB)
+Collecting psutil (from trainer>=0.0.32->TTS)
+  Downloading psutil-7.0.0-cp36-abi3-manylinux_2_12_x86_64.manylinux2010_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (22 kB)
+Collecting tensorboard (from trainer>=0.0.32->TTS)
+  Downloading tensorboard-2.20.0-py3-none-any.whl.metadata (1.8 kB)
+Collecting huggingface-hub<1.0,>=0.34.0 (from transformers>=4.33.0->TTS)
+  Downloading huggingface_hub-0.34.4-py3-none-any.whl.metadata (14 kB)
+Collecting tokenizers<=0.23.0,>=0.22.0 (from transformers>=4.33.0->TTS)
+  Downloading tokenizers-0.22.0-cp39-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (6.8 kB)
+Collecting safetensors>=0.4.3 (from transformers>=4.33.0->TTS)
+  Downloading safetensors-0.6.2-cp38-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (4.1 kB)
+Collecting hf-xet<2.0.0,>=1.1.3 (from huggingface-hub<1.0,>=0.34.0->transformers>=4.33.0->TTS)
+  Downloading hf_xet-1.1.10-cp37-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (4.7 kB)
+Collecting pynndescent>=0.5 (from umap-learn>=0.5.1->TTS)
+  Downloading pynndescent-0.5.13-py3-none-any.whl.metadata (6.8 kB)
+Collecting absl-py>=0.4 (from tensorboard->trainer>=0.0.32->TTS)
+  Downloading absl_py-2.3.1-py3-none-any.whl.metadata (3.3 kB)
+Collecting grpcio>=1.48.2 (from tensorboard->trainer>=0.0.32->TTS)
+  Downloading grpcio-1.74.0-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (3.8 kB)
+Collecting markdown>=2.6.8 (from tensorboard->trainer>=0.0.32->TTS)
+  Downloading markdown-3.9-py3-none-any.whl.metadata (5.1 kB)
+Collecting protobuf!=4.24.0,>=3.19.6 (from tensorboard->trainer>=0.0.32->TTS)
+  Downloading protobuf-6.32.1-cp39-abi3-manylinux2014_x86_64.whl.metadata (593 bytes)
+Collecting tensorboard-data-server<0.8.0,>=0.7.0 (from tensorboard->trainer>=0.0.32->TTS)
+  Downloading tensorboard_data_server-0.7.2-py3-none-manylinux_2_31_x86_64.whl.metadata (1.1 kB)
+Downloading TTS-0.22.0-cp311-cp311-manylinux1_x86_64.whl (937 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 938.0/938.0 kB 716.0 kB/s  0:00:01
+Downloading babel-2.17.0-py3-none-any.whl (10.2 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 10.2/10.2 MB 2.0 MB/s  0:00:05
+Downloading dateparser-1.1.8-py2.py3-none-any.whl (293 kB)
+Downloading jsonlines-1.2.0-py2.py3-none-any.whl (7.6 kB)
+Downloading networkx-2.8.8-py3-none-any.whl (2.0 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 2.0/2.0 MB 863.5 kB/s  0:00:02
+Downloading num2words-0.5.14-py3-none-any.whl (163 kB)
+Downloading numpy-1.26.4-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (18.3 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 18.3/18.3 MB 2.0 MB/s  0:00:08
+Downloading pandas-1.5.3-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (12.0 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 12.0/12.0 MB 1.5 MB/s  0:00:07
+Downloading python_crfsuite-0.9.11-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (1.3 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.3/1.3 MB 1.7 MB/s  0:00:00
+Downloading aiohttp-3.12.15-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (1.7 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.7/1.7 MB 1.6 MB/s  0:00:01
+Downloading multidict-6.6.4-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (246 kB)
+Downloading yarl-1.20.1-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (348 kB)
+Downloading aiohappyeyeballs-2.6.1-py3-none-any.whl (15 kB)
+Downloading aiosignal-1.4.0-py3-none-any.whl (7.5 kB)
+Downloading anyascii-0.3.3-py3-none-any.whl (345 kB)
+Downloading attrs-25.3.0-py3-none-any.whl (63 kB)
+Downloading coqpit-0.0.17-py3-none-any.whl (13 kB)
+Downloading cython-3.1.3-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (3.3 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 3.3/3.3 MB 1.7 MB/s  0:00:01
+Downloading einops-0.8.1-py3-none-any.whl (64 kB)
+Downloading flask-3.1.2-py3-none-any.whl (103 kB)
+Downloading blinker-1.9.0-py3-none-any.whl (8.5 kB)
+Downloading frozenlist-1.7.0-cp311-cp311-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl (235 kB)
+Downloading fsspec-2025.9.0-py3-none-any.whl (199 kB)
+Downloading g2pkk-0.1.2-py3-none-any.whl (25 kB)
+Downloading inflect-7.5.0-py3-none-any.whl (35 kB)
+Downloading itsdangerous-2.2.0-py3-none-any.whl (16 kB)
+Downloading jinja2-3.1.6-py3-none-any.whl (134 kB)
+Downloading librosa-0.11.0-py3-none-any.whl (260 kB)
+Downloading audioread-3.0.1-py3-none-any.whl (23 kB)
+Downloading decorator-5.2.1-py3-none-any.whl (9.2 kB)
+Downloading joblib-1.5.2-py3-none-any.whl (308 kB)
+Downloading lazy_loader-0.4-py3-none-any.whl (12 kB)
+Downloading MarkupSafe-3.0.2-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (23 kB)
+Downloading matplotlib-3.10.6-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (8.7 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 8.7/8.7 MB 2.1 MB/s  0:00:04
+Downloading contourpy-1.3.3-cp311-cp311-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (355 kB)
+Downloading cycler-0.12.1-py3-none-any.whl (8.3 kB)
+Downloading fonttools-4.59.2-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (5.0 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 5.0/5.0 MB 1.4 MB/s  0:00:03
+Downloading kiwisolver-1.4.9-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (1.4 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.4/1.4 MB 1.6 MB/s  0:00:00
+Downloading more_itertools-10.8.0-py3-none-any.whl (69 kB)
+Downloading msgpack-1.1.1-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (429 kB)
+Downloading numba-0.61.2-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (3.8 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 3.8/3.8 MB 1.2 MB/s  0:00:03
+Downloading llvmlite-0.44.0-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (42.4 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 42.4/42.4 MB 2.1 MB/s  0:00:20
+Downloading packaging-25.0-py3-none-any.whl (66 kB)
+Downloading pillow-11.3.0-cp311-cp311-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (6.6 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 6.6/6.6 MB 1.9 MB/s  0:00:03
+Downloading pooch-1.8.2-py3-none-any.whl (64 kB)
+Downloading platformdirs-4.4.0-py3-none-any.whl (18 kB)
+Downloading propcache-0.3.2-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (213 kB)
+Downloading pyparsing-3.2.4-py3-none-any.whl (113 kB)
+Downloading pysbd-0.3.4-py3-none-any.whl (71 kB)
+Downloading python_dateutil-2.9.0.post0-py2.py3-none-any.whl (229 kB)
+Downloading pytz-2025.2-py2.py3-none-any.whl (509 kB)
+Downloading PyYAML-6.0.2-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (762 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 763.0/763.0 kB 1.4 MB/s  0:00:00
+Downloading regex-2025.9.1-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (798 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 799.0/799.0 kB 1.9 MB/s  0:00:00
+Downloading scikit_learn-1.7.2-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (9.7 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 9.7/9.7 MB 1.7 MB/s  0:00:05
+Downloading scipy-1.16.2-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (35.9 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 35.9/35.9 MB 1.9 MB/s  0:00:19
+Downloading six-1.17.0-py2.py3-none-any.whl (11 kB)
+Downloading soundfile-0.13.1-py2.py3-none-manylinux_2_28_x86_64.whl (1.3 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.3/1.3 MB 793.0 kB/s  0:00:01
+Downloading cffi-2.0.0-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (215 kB)
+Downloading soxr-1.0.0-cp311-cp311-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (242 kB)
+Downloading spacy-3.8.7-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (33.0 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 33.0/33.0 MB 1.1 MB/s  0:00:31
+Downloading catalogue-2.0.10-py3-none-any.whl (17 kB)
+Downloading cymem-2.0.11-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (218 kB)
+Downloading langcodes-3.5.0-py3-none-any.whl (182 kB)
+Downloading murmurhash-1.0.13-cp311-cp311-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl (123 kB)
+Downloading preshed-3.0.10-cp311-cp311-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl (842 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 842.9/842.9 kB 1.1 MB/s  0:00:00
+Downloading spacy_legacy-3.0.12-py2.py3-none-any.whl (29 kB)
+Downloading spacy_loggers-1.0.5-py3-none-any.whl (22 kB)
+Downloading srsly-2.5.1-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (1.1 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.1/1.1 MB 1.2 MB/s  0:00:00
+Downloading thinc-8.3.4-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (3.9 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 3.9/3.9 MB 1.4 MB/s  0:00:02
+Downloading blis-1.2.1-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (11.7 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 11.7/11.7 MB 1.1 MB/s  0:00:11
+Downloading confection-0.1.5-py3-none-any.whl (35 kB)
+Downloading tqdm-4.67.1-py3-none-any.whl (78 kB)
+Downloading typer-0.17.4-py3-none-any.whl (46 kB)
+Downloading wasabi-1.1.3-py3-none-any.whl (27 kB)
+Downloading weasel-0.4.1-py3-none-any.whl (50 kB)
+Downloading cloudpathlib-0.22.0-py3-none-any.whl (61 kB)
+Downloading smart_open-7.3.1-py3-none-any.whl (61 kB)
+Downloading language_data-1.3.0-py3-none-any.whl (5.4 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 5.4/5.4 MB 1.4 MB/s  0:00:03
+Downloading marisa_trie-1.3.1-cp311-cp311-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl (1.3 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.3/1.3 MB 437.1 kB/s  0:00:02
+Downloading rich-14.1.0-py3-none-any.whl (243 kB)
+Downloading pygments-2.19.2-py3-none-any.whl (1.2 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.2/1.2 MB 1.3 MB/s  0:00:00
+Downloading markdown_it_py-4.0.0-py3-none-any.whl (87 kB)
+Downloading mdurl-0.1.2-py3-none-any.whl (10.0 kB)
+Downloading shellingham-1.5.4-py2.py3-none-any.whl (9.8 kB)
+Downloading sudachidict_core-20250825-py3-none-any.whl (72.2 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 72.2/72.2 MB 1.9 MB/s  0:00:36
+Downloading SudachiPy-0.6.10-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (1.7 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.7/1.7 MB 1.3 MB/s  0:00:01
+Downloading threadpoolctl-3.6.0-py3-none-any.whl (18 kB)
+Downloading torch-2.8.0-cp311-cp311-manylinux_2_28_x86_64.whl (888.1 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 888.1/888.1 MB 1.1 MB/s  0:09:37
+Downloading nvidia_cublas_cu12-12.8.4.1-py3-none-manylinux_2_27_x86_64.whl (594.3 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━╸━━━━━━━━━━━ 42
+
+
+
+   Got it 👍 thanks for sharing the full logs.
+
+Here’s the core issue:
+
+* Your **Coqui TTS** package (`TTS`) is pulling **PyTorch ≥ 2.1**,
+* but your **Wav2Lip Docker** requires **PyTorch 1.7.1**.
+
+These **cannot coexist in the same environment**, since each package installs a different torch version.
+
+### ✅ Solution
+
+You need **two separate environments**:
+
+1. **Virtualenv (venv)** → for your **FastAPI + TTS (torch 2.x)**
+2. **Docker container** → for your **Wav2Lip (torch 1.7.1)**
+
+They should talk to each other via **HTTP APIs** or function calls through subprocesses, instead of sharing the same Python interpreter.
+
+---
+
+### How to fix your current problem
+
+1. **Stay inside your venv** (as you did).
+
+2. Install **TTS** but pin dependencies to avoid conflicts:
+
+   ```bash
+   pip install TTS==0.22.0 --extra-index-url https://download.pytorch.org/whl/cpu
+   ```
+
+   (That way, you get CPU torch if GPU is not needed in FastAPI.)
+
+   OR, if you want GPU acceleration for TTS, install with CUDA:
+
+   ```bash
+   pip install TTS==0.22.0 torch==2.1.2+cu121 torchaudio==2.1.2+cu121 --extra-index-url https://download.pytorch.org/whl/cu121
+   ```
+
+3. Keep your **Docker container for Wav2Lip unchanged** (torch 1.7.1 stays inside Docker).
+
+---
+
+### How to connect them
+
+* FastAPI (venv) calls Wav2Lip container using `subprocess.run()` or an HTTP request.
+* Example:
+
+```python
+import subprocess
+
+def run_wav2lip(audio_path, face_path, output_path):
+    cmd = [
+        "docker", "exec", "wav2lip_container",
+        "python3", "inference.py",
+        "--checkpoint_path", "checkpoints/wav2lip_gan.pth",
+        "--face", face_path,
+        "--audio", audio_path,
+        "--outfile", output_path
+    ]
+    subprocess.run(cmd, check=True)
+    return output_path
+```
+
+---
+
+👉 This way:
+
+* **venv torch 2.x** is used only for **TTS**
+* **docker torch 1.7.1** is used only for **Wav2Lip**
+* No conflicts 🔥
+
+---
+
+Do you want me to write you a **clear project structure** (with Docker + venv + FastAPI endpoints) so everything stays isolated but works together?
+
+
+
+
+#####################################################################3
+
+
+loading nvidia_cublas_cu12-12.8.4.1-py3-none-manylinux_2_27_x86_64.whl (594.3 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 594.3/594.3 MB 1.3 MB/s  0:06:07
+Downloading nvidia_cuda_cupti_cu12-12.8.90-py3-none-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (10.2 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 10.2/10.2 MB 2.7 MB/s  0:00:03
+Downloading nvidia_cuda_nvrtc_cu12-12.8.93-py3-none-manylinux2010_x86_64.manylinux_2_12_x86_64.whl (88.0 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 88.0/88.0 MB 1.6 MB/s  0:00:50
+Downloading nvidia_cuda_runtime_cu12-12.8.90-py3-none-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (954 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 954.8/954.8 kB 1.5 MB/s  0:00:00
+Downloading nvidia_cudnn_cu12-9.10.2.21-py3-none-manylinux_2_27_x86_64.whl (706.8 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 706.8/706.8 MB 1.3 MB/s  0:07:39
+Downloading nvidia_cufft_cu12-11.3.3.83-py3-none-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (193.1 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 193.1/193.1 MB 2.1 MB/s  0:01:32
+Downloading nvidia_cufile_cu12-1.13.1.3-py3-none-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (1.2 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.2/1.2 MB 2.2 MB/s  0:00:00
+Downloading nvidia_curand_cu12-10.3.9.90-py3-none-manylinux_2_27_x86_64.whl (63.6 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 63.6/63.6 MB 2.6 MB/s  0:00:24
+Downloading nvidia_cusolver_cu12-11.7.3.90-py3-none-manylinux_2_27_x86_64.whl (267.5 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 267.5/267.5 MB 2.6 MB/s  0:01:43
+Downloading nvidia_cusparse_cu12-12.5.8.93-py3-none-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (288.2 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 288.2/288.2 MB 2.7 MB/s  0:01:54
+Downloading nvidia_cusparselt_cu12-0.7.1-py3-none-manylinux2014_x86_64.whl (287.2 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 287.2/287.2 MB 1.3 MB/s  0:02:41
+Downloading nvidia_nccl_cu12-2.27.3-py3-none-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (322.4 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╸━━━━━━━ 265.0/322.4 MB 1.9 MB/s eta 0:00:31
+** Why tts downloading all of this for nvidia and cuda
+
+
+
+Great catch 🚨 — here’s why you’re seeing **all those giant `nvidia_*` CUDA wheels** when installing `TTS`:
+
+* `TTS` depends on **PyTorch**.
+* By default, when you install PyTorch with `pip`, it tries to give you the **CUDA-enabled build** (with GPU acceleration).
+* That brings in **hundreds of MBs of NVIDIA libraries** (`cublas`, `cudnn`, `cusolver`, `cusparse`, etc.) so Torch can use your GPU.
+* Even if you don’t want GPU acceleration, pip doesn’t know — so it downloads them anyway.
+
+---
+
+⚡ If you don’t plan to use **GPU acceleration for TTS** (just CPU), you can avoid this bloat by uninstalling and reinstalling **CPU-only Torch**:
+
+```bash
+pip uninstall torch torchvision torchaudio -y
+pip install torch==2.2.2+cpu torchvision==0.17.2+cpu torchaudio==2.2.2+cpu -f https://download.pytorch.org/whl/torch_stable.html
+```
+
+That installs the **CPU-only wheels** (much smaller, no CUDA libs).
+
+---
+
+✅ To summarize:
+
+* **Keep GPU Torch** (with all those `nvidia_*` wheels) only if you want to run TTS on GPU.
+* **Switch to CPU Torch** if you’re okay running slower but lighter — and save \~5–6 GB of space.
+
+---
+
+👉 Since you’re already running **Wav2Lip in Docker with Torch 1.7.1 (CPU or GPU depending on image)**, you don’t *need* GPU Torch inside this venv unless you explicitly want GPU TTS.
+
+Do you want me to give you the clean **steps to switch your venv to CPU-only Torch** so you stop pulling all these huge CUDA packages?
+
+
+
+
+
+###################################################################################
+####################################################################################
+
+ Stored in directory: /home/hazem-elbatawy/.cache/pip/wheels/ac/60/cf/538a1f183409caf1fc136b5d2c2dee329001ef6da2c5084bef
+Successfully built gruut gruut-ipa gruut_lang_de gruut_lang_en gruut_lang_es gruut_lang_fr docopt encodec bnnumerizer jieba
+Installing collected packages: sudachipy, pytz, nvidia-cusparselt-cu12, mpmath, jieba, jamo, hangul-romanize, gruut_lang_fr, gruut_lang_es, gruut_lang_en, gruut_lang_de, docopt, cymem, bnunicodenormalizer, bnnumerizer, bangla, wrapt, wasabi, unidecode, tzlocal, typeguard, triton, tqdm, threadpoolctl, tensorboard-data-server, sympy, sudachidict_core, spacy-loggers, spacy-legacy, six, shellingham, safetensors, regex, pyyaml, python-crfsuite, pysbd, pypinyin, pyparsing, pygments, pycparser, psutil, protobuf, propcache, platformdirs, pillow, packaging, nvidia-nvtx-cu12, nvidia-nvjitlink-cu12, nvidia-nccl-cu12, nvidia-curand-cu12, nvidia-cufile-cu12, nvidia-cuda-runtime-cu12, nvidia-cuda-nvrtc-cu12, nvidia-cuda-cupti-cu12, nvidia-cublas-cu12, numpy, num2words, networkx, murmurhash, multidict, msgpack, more_itertools, mdurl, markupsafe, markdown, marisa-trie, llvmlite, kiwisolver, joblib, itsdangerous, hf-xet, gruut-ipa, grpcio, fsspec, frozenlist, fonttools, filelock, einops, decorator, cython, cycler, coqpit, cloudpathlib, catalogue, blinker, Babel, audioread, attrs, anyascii, aiohappyeyeballs, absl-py, yarl, werkzeug, srsly, soxr, smart-open, scipy, python-dateutil, preshed, pooch, nvidia-cusparse-cu12, nvidia-cufft-cu12, nvidia-cudnn-cu12, numba, nltk, markdown-it-py, lazy_loader, language-data, jsonlines, jinja2, inflect, huggingface-hub, contourpy, cffi, blis, aiosignal, tokenizers, tensorboard, soundfile, scikit-learn, rich, pandas, nvidia-cusolver-cu12, matplotlib, langcodes, g2pkk, flask, dateparser, confection, aiohttp, typer, transformers, torch, thinc, pynndescent, librosa, gruut, weasel, umap-learn, trainer, torchaudio, spacy, encodec, TTS
+   ━━━╺━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━  12/144 [cymem]
+** So i think i am about to finish or not
+
+
+Yep 🚀 — you’re almost done.
+
+That log shows `pip` is in the **final install phase** (actually building and linking packages after downloads). You can see `TTS` listed at the end of `Installing collected packages`, which means it already pulled in all dependencies (Torch, CUDA, gruut, transformers, etc.), and now it’s just unpacking and finishing the install.
+
+🔍 What’s left:
+
+* `pip` will finish unpacking the \~144 packages in the list.
+* Then you’ll see:
+
+  ```
+  Successfully installed <big list>
+  ```
+* At that point, your venv has `TTS` ready to import.
+
+👉 You’re *past the heavy download stage* (the multi-GB CUDA libs are already cached), so now it’s just I/O and CPU time.
+
+If you want to check progress in another terminal while this one runs, you can run:
+
+```bash
+du -sh ~/Downloads/vox-estate-agent/backend/realestate_agent/venv
+```
+
+to see how big the venv is growing (it’ll probably be \~6–8 GB with all that CUDA junk).
+
+Do you want me to give you the cleanup instructions **right after this finishes** so you can strip out the CUDA bloat and re-pin to a lean CPU-only setup without breaking TTS?
+
+
+
+
+
+
+  Stored in directory: /home/hazem-elbatawy/.cache/pip/wheels/b4/a4/88/480018a664e58ca7ce6708759193ee51b017b3b72aa3df8a85
+Successfully built gruut encodec
+Installing collected packages: yarl, werkzeug, soxr, smart-open, scipy, python-dateutil, preshed, nvidia-cusparse-cu12, nvidia-cufft-cu12, nvidia-cudnn-cu12, numba, nltk, markdown-it-py, lazy_loader, language-data, jsonlines, jinja2, cython, cycler, coqpit, contourpy, cloudpathlib, cffi, catalogue, blis, blinker, Babel, audioread, attrs, anyascii, aiosignal, aiohappyeyeballs, absl-py, tensorboard, srsly, soundfile, scikit-learn, rich, pooch, pandas, nvidia-cusolver-cu12, matplotlib, langcodes, inflect, huggingface-hub, g2pkk, flask, dateparser, aiohttp, typer, torch, tokenizers, pynndescent, librosa, gruut, confection, weasel, umap-learn, transformers, trainer, torchaudio, thinc, spacy, encodec, TTS
+Successfully installed Babel-2.17.0 TTS-0.22.0 absl-py-2.3.1 aiohappyeyeballs-2.6.1 aiohttp-3.12.15 aiosignal-1.4.0 anyascii-0.3.3 attrs-25.3.0 audioread-3.0.1 blinker-1.9.0 blis-1.2.1 catalogue-2.0.10 cffi-2.0.0 cloudpathlib-0.22.0 confection-0.1.5 contourpy-1.3.3 coqpit-0.0.17 cycler-0.12.1 cython-3.1.3 dateparser-1.1.8 encodec-0.1.1 flask-3.1.2 g2pkk-0.1.2 gruut-2.2.3 huggingface-hub-0.34.4 inflect-7.5.0 jinja2-3.1.6 jsonlines-1.2.0 langcodes-3.5.0 language-data-1.3.0 lazy_loader-0.4 librosa-0.11.0 markdown-it-py-4.0.0 matplotlib-3.10.6 nltk-3.9.1 numba-0.61.2 nvidia-cudnn-cu12-9.10.2.21 nvidia-cufft-cu12-11.3.3.83 nvidia-cusolver-cu12-11.7.3.90 nvidia-cusparse-cu12-12.5.8.93 pandas-1.5.3 pooch-1.8.2 preshed-3.0.10 pynndescent-0.5.13 python-dateutil-2.9.0.post0 rich-14.1.0 scikit-learn-1.7.2 scipy-1.16.2 smart-open-7.3.1 soundfile-0.13.1 soxr-1.0.0 spacy-3.8.7 srsly-2.5.1 tensorboard-2.20.0 thinc-8.3.4 tokenizers-0.22.0 torch-2.8.0 torchaudio-2.8.0 trainer-0.0.36 transformers-4.56.1 typer-0.17.4 umap-learn-0.5.9.post2 weasel-0.4.1 werkzeug-3.1.3 yarl-1.20.1
+(venv) hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/vox-estate-agent/backend/realestate_agent$ 
+
+
+
+
+nc, pynndescent, librosa, gruut, weasel, umap-learn, trainer, torchaudio, spacy, encodec, TTS
+   ━━━━━━━━━━━━━━━━━━━━━╸━━━━━━━━━━━━━━━━━━  78/144 [decorator]ERROR: Could not install packages due to an OSError: [Errno 28] No space left on device
+
+
+
+   Ah, I see what happened 😬
+
+That error:
+
+```
+ERROR: Could not install packages due to an OSError: [Errno 28] No space left on device
+```
+
+means your disk filled up **in the middle of the TTS install**. Pip writes temp build files and wheels into `/tmp` and your venv, and since `/` hit 100%, the install failed.
+
+⚡ The good news:
+
+* You don’t need to start from the beginning.
+* Pip will just **resume/reinstall the missing packages** once you free enough space.
+
+👉 Here’s what you should do step by step:
+
+1. **Free at least \~10–15 GB** (safe targets we saw earlier):
+
+   * Clean `~/Downloads` → likely several GB.
+
+     ```bash
+     rm -rf ~/Downloads/*
+     ```
+   * If you can, archive or delete unused **Unity** projects (biggest hog at 18 GB).
+   * You already freed `.cache`, good move.
+
+2. **Clear pip’s cache (can be huge, multiple GB):**
+
+   ```bash
+   pip cache purge
+   ```
+
+3. **Re-run install (pip will only fetch what’s missing):**
+
+   ```bash
+   pip install TTS
+   ```
+
+That should resume and complete without starting from zero.
+
+⚠️ Pro tip for production: if disk space is always this tight, set pip to avoid caching large wheels by default:
+
+```bash
+pip install --no-cache-dir TTS
+```
+
+That way, it won’t dump hundreds of MB into `~/.cache/pip`.
+
+---
+
+Do you want me to draft you a **cleanup script** that will automatically free the safe space (Downloads, pip cache, Unity temp files) so you don’t run into this again during installs?
+
+
+
+###########################################################################
+##############################################3
+
+

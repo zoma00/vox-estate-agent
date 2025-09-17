@@ -1,0 +1,54 @@
+To integrate your D-ID agent with your Python application (using FastAPI), you need to use the D-ID API, not just the share link. The share link is for viewing the agent in a browser, but API integration allows you to programmatically generate videos or interact with the agent from your app.
+
+Here’s how to proceed:
+
+1. Get D-ID API Access:
+- Sign up at https://www.d-id.com/ and get API credentials (API key/secret).
+
+2. Review D-ID API Docs:
+- See: https://docs.d-id.com/reference/overview
+- The API allows you to send text and an avatar image (or agent ID) and receive a video or stream URL in response.
+
+3. Integrate with FastAPI:
+- In your FastAPI app, create an endpoint that takes user input, sends it to the D-ID API, and returns the video URL or stream.
+
+Example FastAPI integration (simplified):
+
+```python
+from fastapi import FastAPI, Request
+import requests
+
+app = FastAPI()
+
+DID_API_KEY = "YOUR_DID_API_KEY"
+AGENT_ID = "v2_agt_NY84CG6e"  # Your agent ID
+
+@app.post("/talk")
+async def talk(request: Request):
+    data = await request.json()
+    user_text = data["text"]
+
+    # D-ID API endpoint for talking agent
+    url = f"https://api.d-id.com/agents/{AGENT_ID}/talks"
+    headers = {
+        "Authorization": f"Bearer {DID_API_KEY}",
+        "Content-Type": "application/json"
+    }
+    payload = {
+        "script": {
+            "type": "text",
+            "input": user_text,
+            "provider": {"type": "microsoft", "voice_id": "en-US-JennyNeural"}
+        }
+    }
+    response = requests.post(url, headers=headers, json=payload)
+    return response.json()  # Contains video/stream URL
+
+# You can now POST {"text": "Your message"} to /talk and get a video response
+```
+
+Replace `YOUR_DID_API_KEY` with your actual API key.
+
+4. Use the returned video/stream URL in your frontend or app.
+
+Let me know if you want a full working example, help with authentication, or details for a specific use case!

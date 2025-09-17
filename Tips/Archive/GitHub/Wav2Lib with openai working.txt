@@ -1,0 +1,61 @@
+Here’s a clear, context-rich commit message for your changes:
+
+```
+Switch Wav2Lip pipeline to CPU-only Docker, update requirements, and improve CLI
+
+- Added Dockerfile.cpu for CPU-only Wav2Lip container (removed CUDA dependency)
+- Updated requirements.txt for compatibility (torch==1.7.1, torchvision==0.8.2, librosa==0.7.0, numba==0.48.0, etc.)
+- Revised cli_avatar.py to use wav2lip-cpu image and OpenAI integration only (Ollama code commented for future use)
+- Updated workflow docs and guides
+- Removed old CUDA Dockerfile
+- Minor: updated input.txt and added new helper scripts
+```
+
+You can use this with:
+
+```bash
+git add .
+git commit -m "Switch Wav2Lip pipeline to CPU-only Docker, update requirements, and improve CLI
+
+- Added Dockerfile.cpu for CPU-only Wav2Lip container (removed CUDA dependency)
+- Updated requirements.txt for compatibility (torch==1.7.1, torchvision==0.8.2, librosa==0.7.0, numba==0.48.0, etc.)
+- Revised cli_avatar.py to use wav2lip-cpu image and OpenAI integration only (Ollama code commented for future use)
+- Updated workflow docs and guides
+- Removed old CUDA Dockerfile
+- Minor: updated input.txt and added new helper scripts
+"
+git push
+```
+
+Let me know if you want a shorter or more focused message!
+
+
+Bash
+(venv) hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/Multi Agent /realestate_agent$ git add .
+git commit -m "Switch Wav2Lip pipeline to CPU-only Docker, update requirements, and improve CLI
+
+- Added Dockerfile.cpu for CPU-only Wav2Lip container (removed CUDA dependency)
+- Updated requirements.txt for compatibility (torch==1.7.1, torchvision==0.8.2, librosa==0.7.0, numba==0.48.0, etc.)
+- Revised cli_avatar.py to use wav2lip-cpu image and OpenAI integration only (Ollama code commented for future use)
+- Updated workflow docs and guides
+- Removed old CUDA Dockerfile
+- Minor: updated input.txt and added new helper scripts
+"
+git push
+[main f899cd0d] Switch Wav2Lip pipeline to CPU-only Docker, update requirements, and improve CLI
+ 7 files changed, 312 insertions(+), 37 deletions(-)
+ create mode 100644 AI_Avatar_Workflow.md
+ create mode 100644 CLI_Guide.md
+ rename Wav2Lip/{Dockerfile => Dockerfile.cpu} (59%)
+ create mode 100644 cli_avatar.py
+ create mode 100644 ollama_llm.py
+Enumerating objects: 14, done.
+Counting objects: 100% (14/14), done.
+Delta compression using up to 8 threads
+Compressing objects: 100% (10/10), done.
+Writing objects: 100% (10/10), 4.91 KiB | 2.45 MiB/s, done.
+Total 10 (delta 2), reused 0 (delta 0), pack-reused 0
+remote: Resolving deltas: 100% (2/2), completed with 2 local objects.
+To github.com:zoma00/vox-estate-agent.git
+   93b39634..f899cd0d  main -> main
+(venv) hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/Multi Agent /realestate_agent$ 

@@ -1,0 +1,12 @@
+The main differences:
+------------------------
+
+- Codex is a chat-based coding agent from OpenAI, designed for interactive code generation, 
+editing, and automation. It can handle larger, multi-step coding tasks and lets you delegate 
+jobs to the cloud.
+- Copilot (powered by GPT-4.1) is an inline code completion tool from GitHub, giving you real-time 
+code suggestions as you type in your editor.
+- Codex offers a dedicated panel for conversations and task management, while Copilot works directly 
+in your code files.
+- Both use advanced AI models, but their user experience and workflows are different: Codex is for
+ chat and complex tasks, Copilot is for quick, inline code help.

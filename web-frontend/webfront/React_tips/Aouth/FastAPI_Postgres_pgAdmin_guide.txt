@@ -1,0 +1,97 @@
+# FastAPI + PostgreSQL + pgAdmin Integration Guide
+
+## Overview
+This guide explains how to connect your FastAPI backend to a PostgreSQL database, and manage the database using pgAdmin. You can use this setup on your local machine or a VPS.
+
+---
+
+## 1. Install Dependencies
+
+**FastAPI:**
+```bash
+pip install fastapi[all] psycopg2-binary sqlalchemy
+```
+
+**PostgreSQL:**
+- Install PostgreSQL server on your VPS or use a managed service.
+- Install pgAdmin on your local machine or access it via web.
+
+---
+
+## 2. Example Connection String
+```
+postgresql://username:password@host:port/dbname
+```
+- `username`: Your PostgreSQL user
+- `password`: Your PostgreSQL password
+- `host`: Database server IP or hostname (use `localhost` for local)
+- `port`: Default is `5432`
+- `dbname`: Your database name
+
+---
+
+## 3. FastAPI Database Setup Example
+
+```python
+from sqlalchemy import create_engine, Column, Integer, String
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
+import os
+
+DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://user:pass@localhost:5432/mydb")
+engine = create_engine(DATABASE_URL)
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+Base = declarative_base()
+
+class User(Base):
+    __tablename__ = "users"
+    id = Column(Integer, primary_key=True, index=True)
+    username = Column(String, unique=True, index=True)
+    hashed_password = Column(String)
+
+# Create tables
+Base.metadata.create_all(bind=engine)
+```
+
+---
+
+## 4. Using pgAdmin
+- pgAdmin is a GUI for managing PostgreSQL databases.
+- You can create users, tables, and run queries.
+- It does not affect FastAPI’s ability to connect; it’s just a management tool.
+
+---
+
+## 5. Connecting FastAPI on VPS to PostgreSQL
+- Set your `DATABASE_URL` in `.env` or config file on the VPS.
+- Make sure PostgreSQL is accessible from your VPS (check firewall and network settings).
+- Use the same connection string in your FastAPI code.
+
+---
+
+## 6. Security Tips
+- Use strong passwords for your database users.
+- Restrict database access to only necessary IPs.
+- Never commit your database credentials to version control.
+
+---
+
+## 7. Troubleshooting
+- If FastAPI cannot connect, check:
+  - Connection string format
+  - Database server is running
+  - Network/firewall settings
+  - User permissions
+- Use pgAdmin to verify database status and user access.
+
+---
+
+## Summary
+- FastAPI connects to PostgreSQL using a driver (psycopg2, asyncpg, etc.)
+- pgAdmin is a GUI for managing the database
+- Connection string is set in your FastAPI config
+- You can use this setup locally or on a VPS
+
+For more help, see the official docs:
+- [FastAPI SQL Databases](https://fastapi.tiangolo.com/tutorial/sql-databases/)
+- [pgAdmin Documentation](https://www.pgadmin.org/docs/)

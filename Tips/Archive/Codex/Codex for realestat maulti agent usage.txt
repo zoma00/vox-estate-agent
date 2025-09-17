@@ -1,0 +1,16 @@
+You can use either Codex or Copilot for a project like this. 
+Codex is helpful if you want interactive, chat-based coding assistance, 
+need to generate or edit large code blocks, or want to automate 
+multi-step tasks. 
+Copilot is better for quick, inline code suggestions as you write.
+
+For building a creative digital campaign with AI agents, Codex can help you:
+-------------------------------------------------------------------------------
+
+- Generate code for web apps, social media automation, or avatar creation.
+- Edit and refactor scripts for your campaign.
+- Brainstorm and implement features through chat.
+
+Choose Codex if you prefer a conversational, task-oriented workflow. Use Copilot for fast, 
+inline code help as you develop. Both can support your project, but Codex offers more flexibility
+ for complex, multi-step coding tasks.

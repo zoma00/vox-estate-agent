@@ -1,0 +1,4 @@
+https://github.com/coqui-ai/tts/releases
+https://github.com/Rudrabha/Wav2Lip
+https://thispersondoesnotexist.com/
+https://huggingface.co/Nekochu/Wav2Lip/blob/main/wav2lip.pth?utm_source=chatgpt.com

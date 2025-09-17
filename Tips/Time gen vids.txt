@@ -1,0 +1,405 @@
+ | > fft_size:1024
+ | > power:1.5
+ | > preemphasis:0.0
+ | > griffin_lim_iters:60
+ | > signal_norm:True
+ | > symmetric_norm:True
+ | > mel_fmin:50.0
+ | > mel_fmax:7600.0
+ | > pitch_fmin:0.0
+ | > pitch_fmax:640.0
+ | > spec_gain:1.0
+ | > stft_pad_mode:reflect
+ | > max_norm:4.0
+ | > clip_norm:True
+ | > do_trim_silence:True
+ | > trim_db:60
+ | > do_sound_norm:False
+ | > do_amp_to_db_linear:True
+ | > do_amp_to_db_mel:True
+ | > do_rms_norm:False
+ | > db_level:None
+ | > stats_path:/home/hazem-elbatawy/snap/code/206/.local/share/tts/vocoder_models--en--ljspeech--multiband-melgan/scale_stats.npy
+ | > base:10
+ | > hop_length:256
+ | > win_length:1024
+ > Generator Model: multiband_melgan_generator
+ > Discriminator Model: melgan_multiscale_discriminator
+ > Text splitted to sentences.
+['Hello!', 'How can I help you today?']
+ > Processing time: 4.486790180206299
+ > Real-time factor: 1.3601754767040928
+INFO:     127.0.0.1:34354 - "POST /agent/tts HTTP/1.1" 200 OK
+ > tts_models/en/ljspeech/glow-tts is already downloaded.
+ > vocoder_models/en/ljspeech/multiband-melgan is already downloaded.
+ > Using model: glow_tts
+ > Setting up Audio Processor...
+ | > sample_rate:22050
+ | > resample:False
+ | > num_mels:80
+ | > log_func:np.log10
+ | > min_level_db:-100
+ | > frame_shift_ms:None
+ | > frame_length_ms:None
+ | > ref_level_db:0
+ | > fft_size:1024
+ | > power:1.1
+ | > preemphasis:0.0
+ | > griffin_lim_iters:60
+ | > signal_norm:False
+ | > symmetric_norm:True
+ | > mel_fmin:50.0
+ | > mel_fmax:7600.0
+ | > pitch_fmin:1.0
+ | > pitch_fmax:640.0
+ | > spec_gain:1.0
+ | > stft_pad_mode:reflect
+ | > max_norm:1.0
+ | > clip_norm:True
+ | > do_trim_silence:True
+ | > trim_db:60
+ | > do_sound_norm:False
+ | > do_amp_to_db_linear:True
+ | > do_amp_to_db_mel:True
+ | > do_rms_norm:False
+ | > db_level:None
+ | > stats_path:None
+ | > base:10
+ | > hop_length:256
+ | > win_length:1024
+ > Vocoder Model: multiband_melgan
+ > Setting up Audio Processor...
+ | > sample_rate:22050
+ | > resample:False
+ | > num_mels:80
+ | > log_func:np.log10
+ | > min_level_db:-100
+ | > frame_shift_ms:None
+ | > frame_length_ms:None
+ | > ref_level_db:0
+ | > fft_size:1024
+ | > power:1.5
+ | > preemphasis:0.0
+ | > griffin_lim_iters:60
+ | > signal_norm:True
+ | > symmetric_norm:True
+ | > mel_fmin:50.0
+ | > mel_fmax:7600.0
+ | > pitch_fmin:0.0
+ | > pitch_fmax:640.0
+ | > spec_gain:1.0
+ | > stft_pad_mode:reflect
+ | > max_norm:4.0
+ | > clip_norm:True
+ | > do_trim_silence:True
+ | > trim_db:60
+ | > do_sound_norm:False
+ | > do_amp_to_db_linear:True
+ | > do_amp_to_db_mel:True
+ | > do_rms_norm:False
+ | > db_level:None
+ | > stats_path:/home/hazem-elbatawy/snap/code/206/.local/share/tts/vocoder_models--en--ljspeech--multiband-melgan/scale_stats.npy
+ | > base:10
+ | > hop_length:256
+ | > win_length:1024
+ > Generator Model: multiband_melgan_generator
+ > Discriminator Model: melgan_multiscale_discriminator
+ > Text splitted to sentences.
+['Hello!', "I'm just a computer program, so I don't have feelings or emotions, but I'm here to help you.", 'How can I assist you today?']
+aɪm d͡ʒʌst ə kəmpjutɚ pɹoʊɡɹæm, soʊ aɪ doʊnt hæv filɪŋz ɔɹ ɪmoʊʃənz, bʌt aɪm hɪɹ tə hɛlp ju.
+ [!] Character '͡' not found in the vocabulary. Discarding it.
+ > Processing time: 1.4449892044067383
+ > Real-time factor: 0.13965746176611518
+INFO:     127.0.0.1:35144 - "POST /agent/tts HTTP/1.1" 200 OK
+
+ *  History restored 
+
+hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/vox-estate-agent/backend/realestate_agent$ 
+
+
+
+#######################################################
+
+To investigate and test the processing time for your video generation (TTS and related pipeline), you should set up a unit test that measures execution time and asserts it is within an acceptable range. Since your codebase is Python, I recommend using `pytest` for this.
+
+Here’s the file tree structure for adding a basic timing test:
+
+#############################################
+
+
+
+Apply Changes
+
+
+
+**Terminal commands to install pytest:**
+```sh
+pip install pytest
+```
+
+**To run your tests:**
+```sh
+pytest backend/realestate_agent/tts/
+```
+
+
+
+Your logs show that the TTS (text-to-speech) and related video generation pipeline is taking several seconds per request (e.g., 4.49s and 1.44s for different sentences). This is a common concern with deep learning-based TTS and video generation, especially on CPUs or with large models.
+
+Here are some targeted suggestions to speed up your pipeline:
+
+1. **Check Hardware Acceleration**:  
+   - Are you running on CPU or GPU? Deep learning TTS and video models are much faster on GPU. If you have a GPU, ensure your code and dependencies (PyTorch, CUDA) are using it.
+
+2. **Batch Processing**:  
+   - If you are processing multiple sentences, batch them together if your model supports it. This can reduce overhead.
+
+3. **Model Choice**:  
+   - Some TTS/vocoder models are much faster than others. For example, MelGAN and Multiband-MelGAN are faster than WaveGlow or HiFi-GAN. You are using Multiband-MelGAN, which is good, but check if you can use an even lighter model.
+
+4. **Profiling**:  
+   - Profile your code to see which step is slowest: text splitting, TTS, vocoder, or video generation. Use Python’s `time` or `cProfile` modules.
+
+5. **Reduce Output Quality (if acceptable)**:  
+   - Lower sample rate, fewer mel bins, or shorter audio can speed up processing.
+
+6. **Optimize Pre/Post-Processing**:  
+   - Ensure that audio and video pre/post-processing steps are efficient (e.g., avoid unnecessary conversions or file I/O).
+
+7. **Parallelization**:  
+   - If generating multiple videos, use multiprocessing or threading to parallelize jobs.
+
+Would you like help with a profiling script to pinpoint the bottleneck, or do you want to focus on GPU acceleration or code optimization first? Let me know your hardware setup and priorities for 
+the next step.
+
+#############################################
+
+** Check my laptop specs from Ubuntu terminal(provide the command)?
+i am running CPU not GPU because my Dell vostro nvidia Gforce card
+ is too weak for handle tts , wav2lip, uvicorn server 
+** Check my model for batching sentences if you can?
+
+
+
+Here are answers to your questions:
+
+1. **Check laptop specs from Ubuntu terminal:**  
+Run this command to get a summary of your CPU, RAM, and system info:
+```sh
+inxi -Fxz
+```
+If inxi is not installed, you can install it with:
+```sh
+sudo apt install inxi
+```
+Alternatively, for basic info:
+```sh
+lscpu
+free -h
+lsb_release -a
+```
+
+2. **Check your model for batching sentences:**  
+You are using the TTS model: glow-tts with vocoder: multiband-melgan.  
+Glow-TTS supports batching, but it depends on how you call the inference function. If you pass a list of sentences to the TTS model’s inference method (not one at a time), it can process them in a batch, which is faster than looping over sentences.  
+Check your code where you call the TTS model—if you see a loop over sentences, try to replace it with a single call passing the list of sentences. If you share the relevant code, I can help you modify it for batching.
+
+Would you like help finding and editing the batching code in your project?
+
+
+
+
+
+
+
+
+############################################################
+
+Using "Apply Patch"
+
+
+```
+
+```
+The imports for numpy and scipy have been moved to the top of your file, following best practices.
+ You may see "could not be resolved" errors if these packages are not installed in your environment. 
+ To fix this, run:
+
+```sh
+pip install numpy scipy TTS
+```
+
+Your batching code is now clean and ready for use! If you want, I can also 
+update the function signature 
+
+
+to reflect that it accepts both str and list of str for clarity. Let me know
+ if you'd like that change.
+
+Made changes.
+
+
+
+
+
+######################################################
+
+You may see "could not be resolved" errors
+** so for that you had put them earilier in the middle of code under the function.
+
+Correct! Sometimes, imports are placed inside a function to avoid errors if the required packages are not installed, or to reduce memory usage and startup time when the function is not always called. This can be useful for optional dependencies or rarely used features.
+
+However, for core dependencies like numpy and scipy in your TTS pipeline, it's best to keep them at the 
+top and ensure your environment has them installed. This makes errors more visible and your code cleaner. 
+If you want to handle missing packages gracefully, you can add try/except around the imports, but for most
+ projects, top-level imports are preferred.
+
+
+
+
+ ##################################
+ It is best practice in Python to place all imports at the top of the file, unless you have a specific reason (such as avoiding circular imports, reducing startup time, or importing only when needed). For your code, you should move the imports for numpy and scipy to the top of the file for clarity and efficiency.
+
+Would you like me to update your file to move these imports to the top?
+
+###################################
+
+yes update import reloacate them
+
+Using "Apply Patch"
+
+
+```
+
+```
+The imports for numpy and scipy have been moved to the top of your file, following best practices. You may see "could not be resolved" errors if these packages are not installed in your environment. To fix this, run:
+
+```sh
+pip install numpy scipy TTS
+```
+
+Your batching code is now clean and ready for use! If you want, I can also update the function signature to reflect that it accepts both str and list of str for clarity. Let me know if you'd like that change.
+
+Made changes.
+
+####################################
+
+
+You may see "could not be resolved" errors
+** so for that you had put them earilier in the middle of code under the function.
+
+
+
+
+Correct! Sometimes, imports are placed inside a function to avoid errors if the required packages are not installed, or to reduce memory usage and startup time when the function is not always called. This can be useful for optional dependencies or rarely used features.
+
+However, for core dependencies like numpy and scipy in your TTS pipeline, it's best to keep them at the top and ensure your environment has them installed. This makes errors more visible and your code cleaner. If you want to handle missing packages gracefully, you can add try/except around the imports, but for most projects, top-level imports are preferred.
+
+########################################
+
+
+Using "Apply Patch"
+
+Using "Apply Patch"
+
+
+```
+
+```
+The function signature and type hints are now updated: generate_tts_audio
+ accepts both str and list of str for the text parameter. Your code is now 
+ clearer and type-safe for batching.
+
+If you still see "could not be resolved" errors for TTS, numpy, or scipy,
+ make sure your virtual environment is activated and the packages are installed.
+  Let me know if you need further help!
+
+Made changes.
+
+
+
+
+#######################################################
+
+
+**still taking too much time about 4:30 mins and specially that wav2lip
+is running inside docker.
+# Install with: pip install TTS numpy scipy
+from TTS.api import TTS
+import numpy as np
+from scipy.io.wavfile import write
+from typing import Union, List
+** Check imports issues for :
+TTS.api , scipy.io.eavfile
+
+
+pip install numpy scipy TTS (This model is installed at my venv)
+
+d/realestate_agent$ pip show TTS numpy
+Name: TTS
+Version: 0.22.0
+Summary: Deep learning for Text to Speech by Coqui.
+Home-page: https://github.com/coqui-ai/TTS
+Author: Eren Gölge
+Author-email: egolge@coqui.ai
+License: MPL-2.0
+Location: /home/hazem-elbatawy/Downloads/vox-estate-agent/backend/realestate_agent/venv/lib/python3.11/site-packages
+Requires: aiohttp, anyascii, bangla, bnnumerizer, bnunicodenormalizer, coqpit, cython, einops, encodec, flask, fsspec, g2pkk, gruut, hangul-romanize, inflect, jamo, jieba, librosa, matplotlib, nltk, num2words, numba, numpy, packaging, pandas, pypinyin, pysbd, pyyaml, scikit-learn, scipy, soundfile, spacy, torch, torchaudio, tqdm, trainer, transformers, umap-learn, unidecode
+Required-by: 
+---
+Name: numpy
+Version: 1.26.4
+Summary: Fundamental package for array computing in Python
+Home-page: https://numpy.org
+Author: Travis E. Oliphant et al.
+Author-email: 
+
+
+
+-----------------------------
+
+
+Here’s a summary and answers to your issues:
+
+### 1. **Imports Issues**
+- Your installed packages are correct and in your venv:  
+  - `TTS` is installed at `/venv/lib/python3.11/site-packages`
+  - `numpy` and `scipy` are also installed.
+- Your import statements are correct:
+  ```python
+  from TTS.api import TTS
+  import numpy as np
+  from scipy.io.wavfile import write
+  from typing import Union, List
+  ```
+- If you see "could not be resolved" errors in your editor, but `pip show` confirms the packages are installed, it is likely a VS Code or Python environment misconfiguration.  
+  - Make sure your VS Code Python interpreter is set to your venv:  
+    python
+  - You can set this in VS Code by clicking the Python version in the status bar and selecting the correct interpreter.
+
+### 2. **scipy.io.eavfile Typo**
+- Your code should use:
+  ```python
+  from scipy.io.wavfile import write
+  ```
+  not `scipy.io.eavfile` (which is a typo).
+
+### 3. **Performance (4:30 mins for Wav2Lip in Docker)**
+- This is expected on CPU, especially inside Docker, and with Wav2Lip (which is heavy).
+- For significant speedup, you need a better GPU, or optimize your pipeline (reduce video resolution, use faster models, or run outside Docker if possible).
+
+### 4. **Summary**
+- Your imports are correct.
+- Your environment is set up, but make sure your editor uses the right Python interpreter.
+- The slow speed is due to hardware and model limitations, not import or code issues.
+
+If you want, I can help you:
+- Add a check in your code to print which Python interpreter and package paths are being used (to debug VS Code issues).
+- Suggest further optimizations for running Wav2Lip or TTS on CPU.
+
+Let me know which you’d like to do next!
+
+
+
+
+###############################

@@ -1,0 +1,180 @@
+ent$ python -m uvicorn app.main:app --host 0.0.0.0 --port 8000
+INFO:     Started server process [154996]
+INFO:     Waiting for application startup.
+2025-09-17 02:29:04,227 - app.main - INFO - Application startup: Created necessary directories
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+2025-09-17 02:30:20,399 - app.agent_pipeline - INFO - Sending request to OpenAI with model: gpt-3.5-turbo
+2025-09-17 02:30:22,749 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-09-17 02:30:22,768 - app.agent_pipeline - INFO - Successfully generated response with 84 characters
+2025-09-17 02:30:34,254 - app.agent_pipeline - INFO - Generating TTS audio for 84 characters in en
+2025-09-17 02:30:34,255 - tts.tts_coqui - INFO - Initializing TTS model for language: en
+ > tts_models/multilingual/multi-dataset/xtts_v2 is already downloaded.
+ > Using model: xtts
+2025-09-17 02:31:14,405 - tts.tts_coqui - INFO - Generating audio for 1 text chunks
+2025-09-17 02:31:14,405 - tts.tts_coqui - INFO - Available speakers: ['Claribel Dervla', 'Daisy Studious', 'Gracie Wise', 'Tammie Ema', 'Adam']
+2025-09-17 02:31:14,405 - tts.tts_coqui - INFO - Is multi-speaker: True
+2025-09-17 02:31:14,405 - tts.tts_coqui - INFO - Using speaker: Claribel Dervla
+ > Text splitted to sentences.
+['Hello!', 'How can I assist you today with real estate-related questions or information?']
+ > Processing time: 22.428979635238647
+ > Real-time factor: 3.772264774202253
+2025-09-17 02:31:36,893 - tts.tts_coqui - INFO - Successfully generated TTS audio at: temp/output_20250917_023034_02055943.wav
+2025-09-17 02:31:37,043 - app.agent_pipeline - INFO - TTS audio generated successfully at temp/output_20250917_023034_02055943.wav
+INFO:     127.0.0.1:48212 - "POST /api/chat HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33832 - "GET /temp/output_20250917_023034_02055943.wav HTTP/1.1" 404 Not Found
+
+** React :
+Uncaught runtime errors:
+×
+ERROR
+The element has no supported sources.
+Compiled with warnings.
+
+[eslint] 
+src/App.js
+  Line 14:7:   'agentImg' is assigned a value but never used           no-unused-vars
+  Line 21:10:  'loading' is assigned a value but never used            no-unused-vars
+  Line 51:9:   'handleInputChange' is assigned a value but never used  no-unused-vars
+  Line 52:9:   'handleKeyDown' is assigned a value but never used      no-unused-vars
+
+Search for the keywords to learn more about each warning.
+To ignore, add // eslint-disable-next-line to the line before.
+
+WARNING in [eslint] 
+src/App.js
+  Line 14:7:   'agentImg' is assigned a value but never used           no-unused-vars
+  Line 21:10:  'loading' is assigned a value but never used            no-unused-vars
+  Line 51:9:   'handleInputChange' is assigned a value but never used  no-unused-vars
+  Line 52:9:   'handleKeyDown' is assigned a value but never used      no-unused-vars
+
+webpack compiled with 1 warning
+
+I see the issue - the frontend can't find the generated audio file. The problem is that the backend is serving files from the temp directory, but the frontend can't access it directly. Let's fix this by:
+
+Creating a static file route in the FastAPI backend to serve the audio files
+Updating the frontend to use the correct URL
+Let me check the FastAPI app's main file first.
+
+Let me check the main FastAPI application file to add a static file route for serving audio files.
+
+I noticed that the FastAPI app is set up to serve static files from the "static" directory, but the audio files are being saved to the "temp" directory. Let's update the code to serve files from the correct directory.
+
+I'll update the code to ensure the audio files are saved in the correct directory and properly served. Here's what needs to be done:
+
+Create a static directory for audio files if it doesn't exist
+Update the audio file path to use the static directory
+Return the correct URL for the frontend
+Let me make these changes:
+
+agent_pipeline.py
++33
+-11
+Let's update the FastAPI main file to ensure it properly serves the static files:
+
+main.py
++4
+-3
+Let's update the frontend to use the new audio URL. I'll locate the React component that handles the audio playback.
+
+Let me check the App.js file to update the audio handling.
+
+Let me check the SpeakChat component to update the audio handling.
+
+Let me check the SpeakChat component to update the audio handling.
+
+I'll update the SpeakChat component to use the new audio_url field from the API response. Here's the fix:
+
+SpeakChat.jsx
++36
+-7
+I've made several important changes to fix the audio file serving issue:
+
+Backend Changes:
+Updated the audio file storage to use static/audio directory
+Fixed the audio URL generation to use the correct path
+Added proper error handling and logging
+Ensured the static directory is properly mounted in FastAPI
+Frontend Changes:
+Updated the SpeakChat component to handle the new audio_url field
+Added better error handling and logging for audio playback
+Added a debug view that shows the audio URL for troubleshooting
+Improved the audio player with error handling
+File Structure:
+Audio files are now stored in backend/realestate_agent/static/audio/
+The files are served at /static/audio/filename.wav
+To test the changes:
+
+Restart your FastAPI server to apply the backend changes
+The frontend should now be able to access the audio files at http://localhost:8000/static/audio/filename.wav
+If you still encounter issues, check the browser's developer console for any error messages. The debug view in the UI will also show the exact URL being used for the audio file, which can help with troubleshooting.
+
+Let me know if you need any adjustments or run into any other issues!
+
+Feedback submitted
+
+4hs ago
+anh ago
+2m ago
+Sep 16, 10:23 PM
+from fastapi import UploadFile
+from typing import Optional
+from tts.tts_coqui import generate_tts_audio as coqui_generate_tts_audio
+import openai  # Make sure openai is installed: pip install openai
+import re
+import webbrowser
+import os
+import dotenv
+dotenv.load_dotenv()  # Loads variables from .env if present
+print("Loaded OpenAI key:", os.getenv("OPENAI_API_KEY"))
+
+
+# Placeholder for AI response generation (e.g., OpenAI GPT)
+def generate_ai_response(user_text: str) -> str:
+    
+    client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+    try:
+        response = client.chat.completions.create(
+            model="gpt-3.5-turbo",
+            messages=[{"role": "user", "content": user_text}]
+        )
+        ai_text = response.choices[0].message.content
+        print(f"AI response: {ai_text}")
+        # Find URLs in the response
+        urls = re.findall(r'https?://[^\s]+', ai_text)
+        for url in urls:
+            print(f"Opening: {url}")
+            webbrowser.open(url)
+        return ai_text
+    except Exception as e:
+        print(f"OpenAI error: {e}")
+        return "Sorry, I couldn't generate a response."
+
+
+
+# Placeholder for TTS audio generation
+def generate_tts_audio(text: str, voice: Optional[str] = None) -> str:
+    # Use the real Coqui TTS implementation
+    output_path = "tts_output.wav"
+    try:
+        return coqui_generate_tts_audio(text, output_path=output_path)
+    except Exception as e:
+        # Log or handle error as needed
+        print(f"TTS generation failed: {e}")
+        return ""
+
+
+# Placeholder for avatar animation (talking head video)
+def animate_avatar(image_path: str, audio_path: str) -> str:
+    # TODO: Integrate with SadTalker/Wav2Lip, return path to video file
+    return "path/to/generated_video.mp4"
+** This will parse the response api and will open the links automatically
+
+Press enter again to interrupt and send a new message
+
+
+
+
+Code
+
+SWE-1

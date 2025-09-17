@@ -1,0 +1,58 @@
+# XTTS v2 Model Guide: Location, Usage, and VPS Transfer
+
+## What is XTTS v2?
+XTTS v2 is a multilingual speech synthesis model from Coqui TTS. It supports many languages, including Arabic, and is used for generating high-quality voice output in your AI agent project.
+
+## Where is the Model Stored?
+When you download XTTS v2 using Coqui TTS, it is saved outside your main project directory, typically in your user's local data folder:
+
+```
+/home/<your-username>/snap/code/206/.local/share/tts/tts_models--multilingual--multi-dataset--xtts_v2/
+```
+- Main model file: `model.pth`
+- License agreement: `tos_agreed.txt`
+
+This location is managed by Coqui TTS and is not inside your project workspace (e.g., not in `backend/realestate_agent`).
+
+## Why is it Stored Outside the Project?
+- Keeps your codebase clean and lightweight
+- Allows sharing the model across multiple projects
+- Avoids version control issues with large files
+
+## How to Copy the Model to a VPS
+If you want to use XTTS v2 on a remote server (VPS), you can transfer the model directory to avoid re-downloading:
+
+### 1. Find the Model Directory
+```
+/home/<your-username>/snap/code/206/.local/share/tts/tts_models--multilingual--multi-dataset--xtts_v2/
+```
+
+### 2. Transfer Using SCP or RSYNC
+Replace `<your-vps-user>` and `<your-vps-ip>` with your VPS credentials.
+
+**Using SCP:**
+```bash
+scp -r /home/<your-username>/snap/code/206/.local/share/tts/tts_models--multilingual--multi-dataset--xtts_v2 <your-vps-user>@<your-vps-ip>:/home/<your-vps-user>/.local/share/tts/
+```
+
+**Using RSYNC:**
+```bash
+rsync -avz /home/<your-username>/snap/code/206/.local/share/tts/tts_models--multilingual--multi-dataset--xtts_v2 <your-vps-user>@<your-vps-ip>:/home/<your-vps-user>/.local/share/tts/
+```
+
+### 3. On the VPS
+- Ensure the directory structure matches what Coqui TTS expects.
+- The model should be in `/home/<your-vps-user>/.local/share/tts/tts_models--multilingual--multi-dataset--xtts_v2/`
+- Your TTS code will automatically find the model if the environment and TTS library are set up correctly.
+
+## Notes
+- Make sure Python, Coqui TTS, and dependencies are installed on the VPS.
+- Check your license terms for non-commercial or commercial use.
+- If you use a different username or home directory on the VPS, adjust the paths accordingly.
+
+## Troubleshooting
+- If TTS cannot find the model, check the path and permissions.
+- Re-run the TTS download command if needed, or verify the transfer.
+
+---
+For more help, ask GitHub Copilot or see the Coqui TTS documentation: https://coqui.ai/

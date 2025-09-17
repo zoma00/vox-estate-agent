@@ -1,0 +1,15 @@
+This approach is useful for building scalable, cost-efficient AI systems—especially when you use expensive GPU resources.
+
+Key benefits:
+- Resource efficiency: Only AI-heavy tasks (like LLM, Whisper, TTS) use the GPU, and only when needed. Your API, database, and other services run on CPU, saving GPU memory and cost.
+- Cost savings: In the cloud, you pay for GPU time only when containers are running. Locally, you free up GPU for other tasks.
+- Scalability: You can spin up multiple GPU containers on demand for heavy workloads, then shut them down when done.
+- Isolation: Each AI service runs in its own container, avoiding dependency conflicts and making updates safer.
+
+When is this useful?
+- If you want to run multiple AI services (LLM, TTS, STT) but only need GPU for short bursts.
+- If you want to minimize GPU costs on cloud providers (RunPod, Lambda Labs, Vast.ai, etc.).
+- If you want to keep your API and database always available, but only use GPU for actual AI inference.
+
+Summary:
+This strategy is ideal for production AI systems where GPU is expensive or limited, and you want to maximize efficiency and flexibility.

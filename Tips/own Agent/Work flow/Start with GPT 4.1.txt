@@ -1,0 +1,10 @@
+You can start this project with my help—I can guide you step-by-step, 
+generate code, and help you debug and architect your solution. Codex (the OpenAI coding agent) is also helpful, especially for generating and editing larger code blocks or
+ automating multi-step tasks, but you do not need Codex 
+ to begin.
+
+If you want a conversational, interactive coding assistant,
+ use me (GitHub Copilot). If you want a dedicated coding
+  panel and cloud delegation, Codex is a good addition.
+   Both can support your project, but you can achieve your 
+   goals with my assistance alone.

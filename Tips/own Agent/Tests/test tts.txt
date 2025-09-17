@@ -1,0 +1,1509 @@
+let us continue our project :
+Test the tts_coqui.py script with a sample text to ensure everything works.
+Once confirmed, you can integrate TTS into your FastAPI pipeline.
+Let me know if you want a test command or help with the next integration step!
+** do it
+
+
+
+
+
+#################
+
+Run test 
+Erorr:
+################
+(venv) hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/Multi Agent /realestate_agent$ python tts/test_tts.py
+Traceback (most recent call last):
+  File "/home/hazem-elbatawy/Downloads/Multi Agent /realestate_agent/tts/test_tts.py", line 1, in <module>
+
+
+
+
+
+##############
+Answer:
+################
+Summarized conversation historyThis error happens because Python cannot find the `tts` module when running your script directly. This is a common issue with relative imports in Python projects that use a package structure.
+
+### Why?
+- When you run `python tts/test_tts.py`, Python sets the script's directory (`tts/`) as the working directory, so it doesn't see `tts` as a package at the top level.
+- The import `from tts.tts_coqui import generate_tts_audio` only works if you run Python from the project root and use the `-m` flag.
+
+---
+
+## How to Fix
+
+### 1. Run the test as a module from the project root:
+From the realestate_agent directory, run:
+```bash
+python -m tts.test_tts
+```
+This tells Python to treat `tts` as a package, so the import works.
+
+---
+
+### 2. Alternative: Change the import in `test_tts.py`
+If you want to run the script directly, change the import to:
+```python
+from tts_coqui import generate_tts_audio
+```
+But this is not recommended for package-based projects.
+
+---
+
+### 3. (Best Practice) Always run tests as modules from the project root:
+- Use `python -m tts.test_tts` from realestate_agent.
+
+---
+
+Would you like to try running the test with the `-m` flag, or do you want to adjust the import?
+
+
+
+
+
+######################Bug Model tts not found#####################################
+
+##########################Bash######################################
+
+
+
+(venv) hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/Multi Agent /realestate_agent$ python -m tts.test_tts
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/home/hazem-elbatawy/Downloads/Multi Agent /realestate_agent/tts/test_tts.py", line 1, in <module>
+    from tts.tts_coqui import generate_tts_audio
+  File "/home/hazem-elbatawy/Downloads/Multi Agent /realestate_agent/tts/tts_coqui.py", line 3, in <module>
+    from TTS.api import TTS
+ModuleNotFoundError: No module named 'TTS'
+(venv) hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/Multi Agent /realestate_agent$ 
+
+
+Answr:
+--------
+
+The error `ModuleNotFoundError: No module named 'TTS'` means your virtual environment does not see the TTS package, even though pip said it was installed.
+
+This usually happens because:
+- The virtual environment you are using to run Python is not the same one where you installed the package.
+- Or, the package was installed globally or in a different environment.
+
+---
+
+## How to Fix
+
+1. Make sure you are in the correct virtual environment:
+```bash
+which python
+which pip
+pip show TTS
+```
+All should point to your virtual environment paths.
+
+2. If `pip show TTS` shows nothing, install TTS again in your active venv:
+```bash
+pip install TTS
+```
+
+3. If you see multiple Python versions, always use the venv’s pip:
+```bash
+venv/bin/pip install TTS
+```
+or
+```bash
+python -m pip install TTS
+```
+
+---
+
+Would you like me to check your environment and guide you step by step? If so, please run:
+```bash
+which python
+which pip
+pip show TTS
+```
+and share the output.
+
+
+
+
+
+########################### Two venv confusion  ###################################
+
+
+(venv) hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/Multi Agent /realestate_agent$ which python
+which pip
+pip show TTS
+/home/hazem-elbatawy/Downloads/Multi Agent /venv/bin/python
+/home/hazem-elbatawy/Downloads/Multi Agent /venv/bin/pip
+WARNING: Package(s) not found: TTS
+(venv) hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/Multi Agent /realestate_agent$ python --version
+Python 3.12.3
+(venv) hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/Multi Agent /realestate_agent$ 
+** i realized why this happen . I have 2 venv on is 
+home = /usr/bin
+include-system-site-packages = false
+version = 3.11.13
+executable = /usr/bin/python3.11
+command = /home/hazem-elbatawy/Downloads/Multi Agent /realestate_agent/venv/bin/python3.11 -m venv /home/hazem-elbatawy/Downloads/Multi Agent /realestate_agent/venv
+
+** And  the second one is :
+home = /usr/bin
+include-system-site-packages = false
+version = 3.12.3
+executable = /usr/bin/python3.12
+command = /usr/bin/python3 -m venv /home/hazem-elbatawy/Downloads/Multi Agent /venv
+
+** And not i am on the second venv 3.12.3 by default so i need to deactivate this venv and activate the first one python 3.11.13  
+** Even i want to delete the second venv to remove confusion and it is not compatible python 3.12 with coqui TTS.
+** So help me
+
+
+##################################      Fix     ##################################
+
+You are correct: you have two virtual environments, and you are currently using the one at `/home/hazem-elbatawy/Downloads/Multi Agent /venv` (Python 3.12.3), which is not compatible with Coqui TTS. You want to:
+1. Deactivate the current venv.
+2. Activate the correct venv at `/home/hazem-elbatawy/Downloads/Multi Agent /realestate_agent/venv` (Python 3.11.13).
+3. Delete the wrong venv to avoid confusion.
+
+Here are the exact steps:
+
+---
+
+### 1. Deactivate the current venv
+```bash
+deactivate
+```
+
+---
+
+### 2. Activate the correct venv (Python 3.11.13)
+```bash
+source "/home/hazem-elbatawy/Downloads/Multi Agent /realestate_agent/venv/bin/activate"
+```
+
+---
+
+### 3. (Optional but recommended) Delete the wrong venv
+Make sure you are NOT inside the `/home/hazem-elbatawy/Downloads/Multi Agent /venv` directory before deleting:
+```bash
+rm -rf "/home/hazem-elbatawy/Downloads/Multi Agent /venv"
+```
+
+---
+
+### 4. Verify Python version and TTS installation
+```bash
+python --version
+pip show TTS
+```
+You should see Python 3.11.13 and TTS installed.
+
+---
+
+After this, you can run your TTS test script and it should work.  
+Would you like me to proceed with these commands for you?
+
+
+#############################   Bash    #$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+
+(venv) hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/Multi Agent /realestate_agent$ python --version
+Python 3.11.13
+(venv) hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/Multi Agent /realestate_agent$ rm -rf "/home/hazem-elbatawy/Downloads/Multi Agent /venv"
+(venv) hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/Multi Agent /realestate_agent$ cd ..
+(venv) hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/Multi Agent $ rm -rf "/home/hazem-elbatawy/Downloads/Multi Agent /venv"
+(venv) hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/Multi Agent $ python --version
+Python 3.11.13
+(venv) hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/Multi Agent $ python --version
+pip show TTS
+Python 3.11.13
+
+
+#############################################################################
+
+You are now using the correct virtual environment (Python 3.11.13), and the extra (wrong) venv has been deleted. However, you still need to check if the TTS package is installed in this environment.
+
+Please run:
+```bash
+pip show TTS
+```
+If it says "WARNING: Package(s) not found: TTS", install it with:
+```bash
+pip install TTS
+```
+
+After installation, verify again:
+```bash
+pip show TTS
+```
+
+Once TTS is installed, you can run your test script:
+```bash
+cd /home/hazem-elbatawy/Downloads/Multi Agent /realestate_agent
+python -m tts.test_tts
+```
+
+Let me know if you see any errors or if the test runs successfully!
+
+
+
+
+#########################   Bash    #########################################
+###################################################################
+
+(venv) hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/Multi Agent $ pip show TTS
+Name: TTS
+Version: 0.22.0
+Summary: Deep learning for Text to Speech by Coqui.
+Home-page: https://github.com/coqui-ai/TTS
+Author: Eren Gölge
+Author-email: egolge@coqui.ai
+License: MPL-2.0
+Location: /home/hazem-elbatawy/Downloads/Multi Agent /realestate_agent/venv/lib/python3.11/site-packages
+Requires: aiohttp, anyascii, bangla, bnnumerizer, bnunicodenormalizer, coqpit, cython, einops, encodec, flask, fsspec, g2pkk, gruut, hangul-romanize, 
+inflect, jamo, jieba, librosa, matplotlib, nltk, num2words, numba, numpy, packaging, pandas, pypinyin, pysbd, pyyaml, scikit-learn, scipy, soundfile, spacy, torch, torchaudio, tqdm, trainer, transformers, umap-learn, unidecode
+
+
+
+###################Bash################################################################
+##############          Be patient First test takes several minutes     ##############
+######################################################################################
+
+(venv) hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/Multi Agent /realestate_agent$ python -m tts.test_tts
+^CTraceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/home/hazem-elbatawy/Downloads/Multi Agent /realestate_agent/tts/test_tts.py", line 1, in <module>
+    from tts.tts_coqui import generate_tts_audio
+  File "/home/hazem-elbatawy/Downloads/Multi Agent /realestate_agent/tts/tts_coqui.py", line 3, in <module>
+    from TTS.api import TTS
+  File "/home/hazem-elbatawy/Downloads/Multi Agent /realestate_agent/venv/lib/python3.11/site-packages/TTS/api.py", line 11, in <module>
+    from TTS.utils.synthesizer import Synthesizer
+  File "/home/hazem-elbatawy/Downloads/Multi Agent /realestate_agent/venv/lib/python3.11/site-packages/TTS/utils/synthesizer.py", line 11, in <module>
+    from TTS.tts.configs.vits_config import VitsConfig
+  File "/home/hazem-elbatawy/Downloads/Multi Agent /realestate_agent/venv/lib/python3.11/site-packages/TTS/tts/configs/vits_config.py", line 5, in <module>
+    from TTS.tts.models.vits import VitsArgs, VitsAudioConfig
+  File "/home/hazem-elbatawy/Downloads/Multi Agent /realestate_agent/venv/lib/python3.11/site-packages/TTS/tts/models/vits.py", line 27, in <module>
+    from TTS.tts.models.base_tts import BaseTTS
+  File "/home/hazem-elbatawy/Downloads/Multi Agent /realestate_agent/venv/lib/python3.11/site-packages/TTS/tts/models/base_tts.py", line 19, in <module>
+    from TTS.tts.utils.visual import plot_alignment, plot_spectrogram
+  File "/home/hazem-elbatawy/Downloads/Multi Agent /realestate_agent/venv/lib/python3.11/site-packages/TTS/tts/utils/visual.py", line 3, in <module>
+    import matplotlib.pyplot as plt
+  File "/home/hazem-elbatawy/Downloads/Multi Agent /realestate_agent/venv/lib/python3.11/site-packages/matplotlib/pyplot.py", line 57, in <module>
+    import matplotlib.colorbar
+  File "/home/hazem-elbatawy/Downloads/Multi Agent /realestate_agent/venv/lib/python3.11/site-packages/matplotlib/colorbar.py", line 19, in <module>
+    from matplotlib import _api, cbook, collections, cm, colors, contour, ticker
+  File "/home/hazem-elbatawy/Downloads/Multi Agent /realestate_agent/venv/lib/python3.11/site-packages/matplotlib/contour.py", line 15, in <module>
+    from matplotlib.backend_bases import MouseButton
+  File "/home/hazem-elbatawy/Downloads/Multi Agent /realestate_agent/venv/lib/python3.11/site-packages/matplotlib/backend_bases.py", line 49, in <module>
+    from matplotlib import (
+  File "/home/hazem-elbatawy/Downloads/Multi Agent /realestate_agent/venv/lib/python3.11/site-packages/matplotlib/text.py", line 16, in <module>
+    from .font_manager import FontProperties
+  File "/home/hazem-elbatawy/Downloads/Multi Agent /realestate_agent/venv/lib/python3.11/site-packages/matplotlib/font_manager.py", line 1643, in <module>
+    fontManager = _load_fontmanager()
+                  ^^^^^^^^^^^^^^^^^^^
+  File "/home/hazem-elbatawy/Downloads/Multi Agent /realestate_agent/venv/lib/python3.11/site-packages/matplotlib/font_manager.py", line 1637, in _load_fontmanager
+    fm = FontManager()
+         ^^^^^^^^^^^^^
+  File "/home/hazem-elbatawy/Downloads/Multi Agent /realestate_agent/venv/lib/python3.11/site-packages/matplotlib/font_manager.py", line 1103, in __init__
+    self.addfont(path)
+  File "/home/hazem-elbatawy/Downloads/Multi Agent /realestate_agent/venv/lib/python3.11/site-packages/matplotlib/font_manager.py", line 1132, in addfont
+    font = _afm.AFM(fh)
+           ^^^^^^^^^^^^
+  File "/home/hazem-elbatawy/Downloads/Multi Agent /realestate_agent/venv/lib/python3.11/site-packages/matplotlib/_afm.py", line 362, in __init__
+    self._header = _parse_header(fh)
+                   ^^^^^^^^^^^^^^^^^
+  File "/home/hazem-elbatawy/Downloads/Multi Agent /realestate_agent/venv/lib/python3.11/site-packages/matplotlib/_afm.py", line 136, in _parse_header
+    line = line.rstrip()
+           ^^^^^^^^^^^^^
+KeyboardInterrupt
+
+############    Answer  ###################
+##################      #############################
+
+Your test script started running, but you interrupted it (Ctrl+C), which means it was likely stuck or taking too long to load models or fonts. This is common the first time you run Coqui TTS, as it may need to download models and initialize dependencies like matplotlib.
+
+### What happened?
+- The traceback shows the code was loading matplotlib fonts, which can be slow on first run.
+- No actual error occurred—just a long initialization.
+
+---
+
+## What to do next
+
+1. **Be patient:** The first run can take several minutes as models and fonts are downloaded and cached.
+2. **Try again:** Run the test again and let it finish:
+   ```bash
+   python -m tts.test_tts
+   ```
+3. **Monitor output:** If it still hangs for more than 5–10 minutes, let me know. If you see any error messages, copy them here.
+
+---
+
+If you want to speed up matplotlib font cache initialization, you can run:
+```bash
+python -c "import matplotlib.pyplot as plt"
+```
+Let it finish once, then try your TTS test again.
+
+Would you like to proceed with another test run, or do you want to optimize font loading first?
+
+
+####################    Bash #################################
+
+ > Downloading model to /home/hazem-elbatawy/snap/code/205/.local/share/tts/tts_models--en--ljspeech--tacotron2-DDC
+ What is this?
+
+ This message means Coqui TTS is downloading a pre-trained speech synthesis model (in this case, tacotron2-DDC for English, LJSpeech dataset) to your local machine. This is normal and only happens the first time you use a new TTS model.
+
+- The model is saved in tts_models--en--ljspeech--tacotron2-DDC
+- Next time, it will load from this cache and start much faster.
+- You do not need to do anything—just let the download finish.
+
+Once the download is complete, your TTS script will generate audio as expected.  
+Let me know when it finishes or if you see any errors!
+
+###########################################################################
+#############################################################################
+bash error
+
+(venv) hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/Multi Agent /realestate_agent$ python -m tts.test_tts
+ > Downloading model to /home/hazem-elbatawy/snap/code/205/.local/share/tts/tts_models--en--ljspeech--tacotron2-DDC
+ > Failed to download the model file to /home/hazem-elbatawy/snap/code/205/.local/share/tts/tts_models--en--ljspeech--tacotron2-DDC
+Traceback (most recent call last):
+  File "/home/hazem-elbatawy/Downloads/Multi Agent /realestate_agent/venv/lib/python3.11/site-packages/urllib3/response.py", line 779, in _error_catcher
+    yield
+  File "/home/hazem-elbatawy/Downloads/Multi Agent /realestate_agent/venv/lib/python3.11/site-packages/urllib3/response.py", line 925, in _raw_read
+    raise IncompleteRead(self._fp_bytes_read, self.length_remaining)
+urllib3.exceptions.IncompleteRead: IncompleteRead(62914560 bytes read, 49770007 more expected)
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/hazem-elbatawy/Downloads/Multi Agent /realestate_agent/venv/lib/python3.11/site-packages/requests/models.py", line 820, in generate
+    yield from self.raw.stream(chunk_size, decode_content=True)
+  File "/home/hazem-elbatawy/Downloads/Multi Agent /realestate_agent/venv/lib/python3.11/site-packages/urllib3/response.py", line 1091, in stream
+    data = self.read(amt=amt, decode_content=decode_content)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hazem-elbatawy/Downloads/Multi Agent /realestate_agent/venv/lib/python3.11/site-packages/urllib3/response.py", line 980, in read
+    data = self._raw_read(amt)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/home/hazem-elbatawy/Downloads/Multi Agent /realestate_agent/venv/lib/python3.11/site-packages/urllib3/response.py", line 903, in _raw_read
+    with self._error_catcher():
+  File "/usr/lib/python3.11/contextlib.py", line 158, in __exit__
+    self.gen.throw(typ, value, traceback)
+  File "/home/hazem-elbatawy/Downloads/Multi Agent /realestate_agent/venv/lib/python3.11/site-packages/urllib3/response.py", line 803, in _error_catcher
+    raise ProtocolError(arg, e) from e
+urllib3.exceptions.ProtocolError: ('Connection broken: IncompleteRead(62914560 bytes read, 49770007 more expected)', IncompleteRead(62914560 bytes read, 49770007 more expected))
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/home/hazem-elbatawy/Downloads/Multi Agent /realestate_agent/tts/test_tts.py", line 5, in <module>
+    audio_path = generate_tts_audio(text)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hazem-elbatawy/Downloads/Multi Agent /realestate_agent/tts/tts_coqui.py", line 7, in generate_tts_audio
+    tts = TTS(model_name="tts_models/en/ljspeech/tacotron2-DDC", progress_bar=False, gpu=False)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hazem-elbatawy/Downloads/Multi Agent /realestate_agent/venv/lib/python3.11/site-packages/TTS/api.py", line 74, in __init__
+    self.load_tts_model_by_name(model_name, gpu)
+  File "/home/hazem-elbatawy/Downloads/Multi Agent /realestate_agent/venv/lib/python3.11/site-packages/TTS/api.py", line 171, in load_tts_model_by_name
+    model_path, config_path, vocoder_path, vocoder_config_path, model_dir = self.download_model_by_name(
+                                                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hazem-elbatawy/Downloads/Multi Agent /realestate_agent/venv/lib/python3.11/site-packages/TTS/api.py", line 129, in download_model_by_name
+    model_path, config_path, model_item = self.manager.download_model(model_name)
+                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hazem-elbatawy/Downloads/Multi Agent /realestate_agent/venv/lib/python3.11/site-packages/TTS/utils/manage.py", line 411, in download_model
+    self.create_dir_and_download_model(model_name, model_item, output_path)
+  File "/home/hazem-elbatawy/Downloads/Multi Agent /realestate_agent/venv/lib/python3.11/site-packages/TTS/utils/manage.py", line 352, in create_dir_and_download_model
+    raise e
+  File "/home/hazem-elbatawy/Downloads/Multi Agent /realestate_agent/venv/lib/python3.11/site-packages/TTS/utils/manage.py", line 345, in create_dir_and_download_model
+    self._download_github_model(model_item, output_path)
+  File "/home/hazem-elbatawy/Downloads/Multi Agent /realestate_agent/venv/lib/python3.11/site-packages/TTS/utils/manage.py", line 233, in _download_github_model
+    self._download_zip_file(model_item["github_rls_url"], output_path, self.progress_bar)
+  File "/home/hazem-elbatawy/Downloads/Multi Agent /realestate_agent/venv/lib/python3.11/site-packages/TTS/utils/manage.py", line 540, in _download_zip_file
+    for data in r.iter_content(block_size):
+  File "/home/hazem-elbatawy/Downloads/Multi Agent /realestate_agent/venv/lib/python3.11/site-packages/requests/models.py", line 822, in generate
+    raise ChunkedEncodingError(e)
+requests.exceptions.ChunkedEncodingError: ('Connection broken: IncompleteRead(62914560 bytes read, 49770007 more expected)', IncompleteRead(62914560 bytes read, 49770007 more expected))
+(venv) hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/Multi Agent /realestate_agent$ 
+
+
+
+The error means the model download was interrupted or incomplete due to a network issue (connection broken: IncompleteRead). This is common with large files and unstable connections.
+
+**How to fix:**
+
+1. Delete the incomplete model folder:
+```bash
+rm -rf /home/hazem-elbatawy/snap/code/205/.local/share/tts/tts_models--en--ljspeech--tacotron2-DDC
+```
+
+2. Try running your test again:
+```bash
+python -m tts.test_tts
+```
+Let it re-download the model. Make sure your internet connection is stable and has enough free disk space.
+
+**Tips:**
+- If your connection is slow or unreliable, try using a download manager to fetch the model manually (Coqui TTS model releases are on GitHub).
+- If you see the same error repeatedly, let me know and I can guide you through a manual download and placement.
+
+Let me know if the re-download works or if you need help with a manual model download!
+
+
+
+############################    Manually download TTS GIT   ######################
+
+The Coqui TTS model files are large (hundreds of MBs), and slow downloads can happen due to:
+- Slow or unstable internet connection
+- GitHub rate limits or regional throttling
+- Snap/VS Code sandboxing affecting file access
+
+### What you can do:
+
+#### 1. Check your internet speed and stability.
+- If your connection is slow, the download will take a long time.
+
+#### 2. Download the model manually (recommended for slow/unstable connections):
+
+- Go to the official Coqui TTS model releases:  
+  https://github.com/coqui-ai/tts/releases
+
+- Find the model:  
+  `tts_models/en/ljspeech/tacotron2-DDC`  
+  (Look for a file like `tts_models--en--ljspeech--tacotron2-DDC.zip`)
+
+- Download the zip file using your browser or a download manager.
+
+- After download, extract the zip file to:  
+  tts_models--en--ljspeech--tacotron2-DDC
+
+  (Create the directory if it does not exist.)
+
+#### 3. Retry your script after manual extraction.
+
+---
+
+**If you want, I can give you the exact download link and extraction steps. Would you like that?**
+
+#########################   help to find the model in the browser   #################
+
+
+Here’s how to manually download the `tacotron2-DDC` English model for Coqui TTS from the official releases:
+
+---
+
+### 1. Go to the releases page:
+[https://github.com/coqui-ai/tts/releases](https://github.com/coqui-ai/tts/releases)
+
+---
+
+### 2. Find the correct model
+
+- Look for a release titled **"Pretrained Models"** or search for **"ljspeech"** or **"tacotron2-DDC"** on the page (use Ctrl+F).
+- The model you want is usually named:
+  ```
+  tts_models--en--ljspeech--tacotron2-DDC.zip
+  ```
+- The direct link (as of now) is often:
+  ```
+  https://github.com/coqui-ai/tts/releases/download/tts_models--en--ljspeech--tacotron2-DDC/tts_models--en--ljspeech--tacotron2-DDC.zip
+  ```
+  (If this link is broken, use the search method above.)
+
+---
+
+### 3. Download the zip file
+
+- Click the link or use wget:
+  ```bash
+  wget https://github.com/coqui-ai/tts/releases/download/tts_models--en--ljspeech--tacotron2-DDC/tts_models--en--ljspeech--tacotron2-DDC.zip
+  ```
+
+---
+
+### 4. Extract the zip file
+
+- Create the target directory if it doesn’t exist:
+  ```bash
+  mkdir -p /home/hazem-elbatawy/snap/code/205/.local/share/tts/tts_models--en--ljspeech--tacotron2-DDC
+  ```
+- Unzip:
+  ```bash
+  unzip tts_models--en--ljspeech--tacotron2-DDC.zip -d /home/hazem-elbatawy/snap/code/205/.local/share/tts/tts_models--en--ljspeech--tacotron2-DDC
+  ```
+
+---
+
+### 5. Run your test again
+
+Let me know if you need the exact link for a different model, or if you have trouble finding the file!
+
+
+
+
+################### bash####################3
+
+(venv) hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/Multi Agent /realestate_agent$ wget https://huggingface.co/coqui/tts_models/resolve/main/en/ljspeech/tacotron2-DDC/model.pth.tar -P ~/.local/share/tts/tts_models/en/ljspeech/tacotron2-DDC/
+--2025-09-09 02:14:21--  https://huggingface.co/coqui/tts_models/resolve/main/en/ljspeech/tacotron2-DDC/model.pth.tar
+Resolving huggingface.co (huggingface.co)... 3.175.196.124, 3.175.196.23, 3.175.196.57, ...
+Connecting to huggingface.co (huggingface.co)|3.175.196.124|:443... connected.
+HTTP request sent, awaiting response... 401 Unauthorized
+
+Username/Password Authentication Failed.
+
+
+
+###################################################
+
+
+Got it ✅ — you’re running
+
+```bash
+python -m tts.test_tts
+```
+
+and it’s downloading the **Tacotron2 DDC model** from `coqui-tts`, but it’s stuck for 30+ minutes.
+That’s not normal — the file is only a few hundred MB.
+
+Here’s what’s happening and how to fix it:
+
+---
+
+### 🔍 Why it’s stuck
+
+1. **Slow mirror / network issue** – Coqui models are hosted on HuggingFace or mirrors; sometimes they throttle.
+2. **Snap confinement** – You’re running VS Code via **snap** (`/home/hazem-elbatawy/snap/code/...`). Snap apps sometimes have limited permissions and may slow downloads.
+3. **Resume issues** – If the connection breaks, the downloader restarts from scratch instead of resuming.
+
+---
+
+### ⚡ Fixes
+
+#### 1. Download manually from HuggingFace
+
+* Open: [Tacotron2-DDC on HuggingFace](https://huggingface.co/coqui/tts_models/resolve/main/en/ljspeech/tacotron2-DDC/).
+* Download the `.zip` (or `.pth.tar`) file via browser or `wget`. For example:
+
+  ```bash
+  wget https://huggingface.co/coqui/tts_models/resolve/main/en/ljspeech/tacotron2-DDC/model.pth.tar -P ~/.local/share/tts/tts_models/en/ljspeech/tacotron2-DDC/
+  ```
+* Make sure the path matches what `TTS` expects:
+
+  ```
+  ~/.local/share/tts/tts_models/en/ljspeech/tacotron2-DDC/
+  ```
+
+  (you might need to create the folders).
+
+#### 2. Run outside snap (preferred)
+
+Instead of launching from VS Code snap, run from your terminal:
+
+```bash
+cd ~/Downloads/Multi\ Agent/realestate_agent
+source venv/bin/activate
+python -m tts.test_tts
+```
+
+This avoids snap’s restricted environment.
+
+#### 3. Use a different model (lighter/faster)
+
+For testing, try a small model:
+
+```bash
+tts --text "Hello, world" --model_name tts_models/en/ljspeech/glow-tts
+```
+
+Glow-TTS is faster and downloads smaller.
+
+---
+
+👉 Question for you:
+Do you want me to give you the **exact wget command** with the correct directory structure for your machine so you can skip the 30-minute stuck download and run it right away?
+
+
+
+##################  Another lighter model #############################
+
+Perfect thinking 👍 — the **Tacotron2-DDC** one is big and slow to download. Let’s try a **lighter / faster model** so you don’t get stuck.
+
+Coqui TTS has many available models. For a quick test, you can use **Glow-TTS + HiFi-GAN** (much faster & smaller).
+
+---
+
+### 🔹 Option 1: Run Glow-TTS directly
+
+```bash
+tts --text "Hello, I am testing a faster TTS model" --model_name tts_models/en/ljspeech/glow-tts --out_path output.wav
+```
+
+---
+
+### 🔹 Option 2: Update your Python code
+
+In your `tts_coqui.py`, replace:
+
+```python
+tts = TTS(model_name="tts_models/en/ljspeech/tacotron2-DDC", progress_bar=False, gpu=False)
+```
+
+with:
+
+```python
+tts = TTS(model_name="tts_models/en/ljspeech/glow-tts", progress_bar=False, gpu=False)
+```
+
+Then run:
+
+```bash
+python -m tts.test_tts
+```
+
+---
+
+### 🔹 Option 3: Manually download the lighter model
+
+If you want to avoid auto-downloading, you can fetch it directly:
+
+```bash
+mkdir -p ~/.local/share/tts/tts_models/en/ljspeech/glow-tts
+wget https://huggingface.co/coqui/tts_models/resolve/main/en/ljspeech/glow-tts/model.pth.tar -P ~/.local/share/tts/tts_models/en/ljspeech/glow-tts/
+wget https://huggingface.co/coqui/tts_models/resolve/main/en/ljspeech/glow-tts/config.json -P ~/.local/share/tts/tts_models/en/ljspeech/glow-tts/
+```
+
+---
+
+⚡ Question: Do you want me to give you a **list of the smallest English TTS models** from Coqui so you can pick the absolute fastest one for testing?
+
+
+
+################### Working light model tts --text "Hello, world" ####################
+
+(venv) hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/Multi Agent /realestate_agent$ tts --text "Hello, world" --model_name tts_models/en/ljspeech/glow-tts
+ > Downloading model to /home/hazem-elbatawy/snap/code/205/.local/share/tts/tts_models--en--ljspeech--glow-tts
+100%|█████████████████████████████████████████████████████████▉| 344M/344M [02:11<00:00, 2.11MiB/s] > Model's license - MPL
+ > Check https://www.mozilla.org/en-US/MPL/2.0/ for more info.
+ > Downloading model to /home/hazem-elbatawy/snap/code/205/.local/share/tts/vocoder_models--en--ljspeech--multiband-melgan
+100%|██████████████████████████████████████████████████████████| 344M/344M [02:15<00:00, 2.55MiB/s]
+  0%|                                                                                          | 0.00/82.8M [00:00<?, ?iB/s > Model's license - MPL██████████████████████████████████████████████████████████████▊| 82.7M/82.8M [00:43<00:00, 1.91MiB/s]
+ > Check https://www.mozilla.org/en-US/MPL/2.0/ for more info.
+ > Using model: glow_tts
+ > Setting up Audio Processor...
+ | > sample_rate:22050
+ | > resample:False
+ | > num_mels:80
+ | > log_func:np.log10
+ | > min_level_db:-100
+ | > frame_shift_ms:None
+ | > frame_length_ms:None
+ | > ref_level_db:0
+ | > fft_size:1024
+ | > power:1.1
+ | > preemphasis:0.0
+ | > griffin_lim_iters:60
+ | > signal_norm:False
+ | > symmetric_norm:True
+ | > mel_fmin:50.0
+ | > mel_fmax:7600.0
+ | > pitch_fmin:1.0
+ | > pitch_fmax:640.0
+ | > spec_gain:1.0
+ | > stft_pad_mode:reflect
+ | > max_norm:1.0
+ | > clip_norm:True
+ | > do_trim_silence:True
+ | > trim_db:60
+ | > do_sound_norm:False
+ | > do_amp_to_db_linear:True
+ | > do_amp_to_db_mel:True
+ | > do_rms_norm:False
+ | > db_level:None
+ | > stats_path:None
+ | > base:10
+ | > hop_length:256
+ | > win_length:1024
+ > Vocoder Model: multiband_melgan
+ > Setting up Audio Processor...
+ | > sample_rate:22050
+ | > resample:False
+ | > num_mels:80
+ | > log_func:np.log10
+ | > min_level_db:-100
+ | > frame_shift_ms:None
+ | > frame_length_ms:None
+ | > ref_level_db:0
+ | > fft_size:1024
+ | > power:1.5
+ | > preemphasis:0.0
+ | > griffin_lim_iters:60
+ | > signal_norm:True
+ | > symmetric_norm:True
+ | > mel_fmin:50.0
+ | > mel_fmax:7600.0
+ | > pitch_fmin:0.0
+ | > pitch_fmax:640.0
+ | > spec_gain:1.0
+ | > stft_pad_mode:reflect
+ | > max_norm:4.0
+ | > clip_norm:True
+ | > do_trim_silence:True
+ | > trim_db:60
+ | > do_sound_norm:False
+ | > do_amp_to_db_linear:True
+ | > do_amp_to_db_mel:True
+ | > do_rms_norm:False
+ | > db_level:None
+ | > stats_path:/home/hazem-elbatawy/snap/code/205/.local/share/tts/vocoder_models--en--ljspeech--multiband-melgan/scale_stats.npy
+ | > base:10
+ | > hop_length:256
+ | > win_length:1024
+ > Generator Model: multiband_melgan_generator
+ > Discriminator Model: melgan_multiscale_discriminator
+ > Text: Hello, world
+ > Text splitted to sentences.
+['Hello, world']
+ > Processing time: 2.326829195022583
+ > Real-time factor: 1.5061820030016426
+ > Saving output to tts_output.wav
+100%|█████████████████████████████████████████████████████████████████████████████████| 82.8M/82.8M [00:49<00:00, 1.66MiB/s]
+(venv) hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/Multi Agent /realestate_agent$ 
+
+
+
+Great news—your TTS system is working!  
+The command successfully downloaded the Glow-TTS and Multiband-MelGAN models, synthesized speech, and saved the output as `tts_output.wav`.
+
+**What this means:**
+- Your environment and Coqui TTS installation are correct.
+- Model downloads and audio generation work.
+- You can now play `tts_output.wav` to hear the result.
+
+---
+
+## Next Steps
+
+1. **Play the output audio:**
+   ```bash
+   aplay tts_output.wav
+   ```
+   or use any audio player (e.g., VLC, Audacity).
+
+2. **Integrate TTS into your FastAPI pipeline**  
+   Now that TTS works, you can proceed to connect it to your backend.
+
+3. **(Optional) Try other models**  
+   If you want to use Tacotron2-DDC, try again later or stick with Glow-TTS (which is high quality and fast).
+
+---
+
+Would you like help integrating TTS into your FastAPI backend, or do you want to test more TTS features first?
+
+
+
+
+
+######################## More tests TTS ##############################
+
+
+you want to test more TTS features first?
+
+
+Here are some useful TTS features you can test with Coqui TTS:
+
+1. **Change the voice/model:**  
+Try different models for different voices or languages. Example:
+```bash
+tts --text "This is a different voice." --model_name tts_models/en/ljspeech/tacotron2-DDC
+```
+or
+```bash
+tts --list_models
+```
+to see all available models.
+
+2. **Adjust speed, speaker, or emotion (if supported):**  
+Some models support options like `--speed`, `--speaker_idx`, or `--emotion`.
+
+Example (if supported by the model):
+```bash
+tts --text "Faster speech." --model_name tts_models/en/ljspeech/glow-tts --speed 1.2
+```
+
+3. **Synthesize to a specific file:**
+```bash
+tts --text "Saving to a custom file." --model_name tts_models/en/ljspeech/glow-tts --out_path custom_output.wav
+```
+
+4. **Batch synthesis from a text file:**
+```bash
+tts --text_file input.txt --model_name tts_models/en/ljspeech/glow-tts
+```
+
+5. **Try multi-speaker models:**  
+Some models support multiple speakers (see model card for details).
+
+---
+
+Would you like to try any of these features, or do you want to move on to integrating TTS into your FastAPI backend?
+
+
+################
+                     Bash tests Logs
+            ##################################################
+
+ File "/home/hazem-elbatawy/Downloads/Multi Agent /realestate_agent/venv/lib/python3.11/site-packages/TTS/utils/manage.py", line 442, in _find_files
+    raise ValueError(" [!] Model file not found in the output path")
+ValueError:  [!] Model file not found in the output path
+(venv) hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/Multi Agent /realestate_agent$ tts --list_models
+
+ Name format: type/language/dataset/model
+ 1: tts_models/multilingual/multi-dataset/xtts_v2
+ 2: tts_models/multilingual/multi-dataset/xtts_v1.1
+ 3: tts_models/multilingual/multi-dataset/your_tts
+ 4: tts_models/multilingual/multi-dataset/bark
+ 5: tts_models/bg/cv/vits
+ 6: tts_models/cs/cv/vits
+ 7: tts_models/da/cv/vits
+ 8: tts_models/et/cv/vits
+ 9: tts_models/ga/cv/vits
+ 10: tts_models/en/ek1/tacotron2
+ 11: tts_models/en/ljspeech/tacotron2-DDC [already downloaded]
+ 12: tts_models/en/ljspeech/tacotron2-DDC_ph
+ 13: tts_models/en/ljspeech/glow-tts [already downloaded]
+ 14: tts_models/en/ljspeech/speedy-speech
+ 15: tts_models/en/ljspeech/tacotron2-DCA
+ 16: tts_models/en/ljspeech/vits
+ 17: tts_models/en/ljspeech/vits--neon
+ 18: tts_models/en/ljspeech/fast_pitch
+ 19: tts_models/en/ljspeech/overflow
+ 20: tts_models/en/ljspeech/neural_hmm
+ 21: tts_models/en/vctk/vits
+ 22: tts_models/en/vctk/fast_pitch
+ 23: tts_models/en/sam/tacotron-DDC
+ 24: tts_models/en/blizzard2013/capacitron-t2-c50
+ 25: tts_models/en/blizzard2013/capacitron-t2-c150_v2
+ 26: tts_models/en/multi-dataset/tortoise-v2
+ 27: tts_models/en/jenny/jenny
+ 28: tts_models/es/mai/tacotron2-DDC
+ 29: tts_models/es/css10/vits
+ 30: tts_models/fr/mai/tacotron2-DDC
+ 31: tts_models/fr/css10/vits
+ 32: tts_models/uk/mai/glow-tts
+ 33: tts_models/uk/mai/vits
+ 34: tts_models/zh-CN/baker/tacotron2-DDC-GST
+ 35: tts_models/nl/mai/tacotron2-DDC
+ 36: tts_models/nl/css10/vits
+ 37: tts_models/de/thorsten/tacotron2-DCA
+ 38: tts_models/de/thorsten/vits
+ 39: tts_models/de/thorsten/tacotron2-DDC
+ 40: tts_models/de/css10/vits-neon
+ 41: tts_models/ja/kokoro/tacotron2-DDC
+ 42: tts_models/tr/common-voice/glow-tts
+ 43: tts_models/it/mai_female/glow-tts
+ 44: tts_models/it/mai_female/vits
+ 45: tts_models/it/mai_male/glow-tts
+ 46: tts_models/it/mai_male/vits
+ 47: tts_models/ewe/openbible/vits
+ 48: tts_models/hau/openbible/vits
+ 49: tts_models/lin/openbible/vits
+ 50: tts_models/tw_akuapem/openbible/vits
+ 51: tts_models/tw_asante/openbible/vits
+ 52: tts_models/yor/openbible/vits
+ 53: tts_models/hu/css10/vits
+ 54: tts_models/el/cv/vits
+ 55: tts_models/fi/css10/vits
+ 56: tts_models/hr/cv/vits
+ 57: tts_models/lt/cv/vits
+ 58: tts_models/lv/cv/vits
+ 59: tts_models/mt/cv/vits
+ 60: tts_models/pl/mai_female/vits
+ 61: tts_models/pt/cv/vits
+ 62: tts_models/ro/cv/vits
+ 63: tts_models/sk/cv/vits
+ 64: tts_models/sl/cv/vits
+ 65: tts_models/sv/cv/vits
+ 66: tts_models/ca/custom/vits
+ 67: tts_models/fa/custom/glow-tts
+ 68: tts_models/bn/custom/vits-male
+ 69: tts_models/bn/custom/vits-female
+ 70: tts_models/be/common-voice/glow-tts
+
+ Name format: type/language/dataset/model
+ 1: vocoder_models/universal/libri-tts/wavegrad
+ 2: vocoder_models/universal/libri-tts/fullband-melgan
+ 3: vocoder_models/en/ek1/wavegrad
+ 4: vocoder_models/en/ljspeech/multiband-melgan [already downloaded]
+ 5: vocoder_models/en/ljspeech/hifigan_v2
+ 6: vocoder_models/en/ljspeech/univnet
+ 7: vocoder_models/en/blizzard2013/hifigan_v2
+ 8: vocoder_models/en/vctk/hifigan_v2
+ 9: vocoder_models/en/sam/hifigan_v2
+ 10: vocoder_models/nl/mai/parallel-wavegan
+ 11: vocoder_models/de/thorsten/wavegrad
+ 12: vocoder_models/de/thorsten/fullband-melgan
+ 13: vocoder_models/de/thorsten/hifigan_v1
+ 14: vocoder_models/ja/kokoro/hifigan_v1
+ 15: vocoder_models/uk/mai/multiband-melgan
+ 16: vocoder_models/tr/common-voice/hifigan
+ 17: vocoder_models/be/common-voice/hifigan
+
+ Name format: type/language/dataset/model
+ 1: voice_conversion_models/multilingual/vctk/freevc24
+(venv) hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/Multi Agent /realestate_agent$ 
+
+
+####################
+        EX If support the model error
+                ###############################################
+
+(venv) hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/Multi Agent /realestate_agent$ tts --text "Faster speech." --model_name tts_models/en/ljspeech/glow-tts --speed 1.2
+usage: tts [-h] [--list_models [LIST_MODELS]] [--model_info_by_idx MODEL_INFO_BY_IDX]
+           [--model_info_by_name MODEL_INFO_BY_NAME] [--text TEXT] [--model_name MODEL_NAME]
+           [--vocoder_name VOCODER_NAME] [--config_path CONFIG_PATH] [--model_path MODEL_PATH]
+           [--out_path OUT_PATH] [--use_cuda USE_CUDA] [--device DEVICE]
+           [--vocoder_path VOCODER_PATH] [--vocoder_config_path VOCODER_CONFIG_PATH]
+           [--encoder_path ENCODER_PATH] [--encoder_config_path ENCODER_CONFIG_PATH]
+           [--pipe_out [PIPE_OUT]] [--speakers_file_path SPEAKERS_FILE_PATH]
+           [--language_ids_file_path LANGUAGE_IDS_FILE_PATH] [--speaker_idx SPEAKER_IDX]
+           [--language_idx LANGUAGE_IDX] [--speaker_wav SPEAKER_WAV [SPEAKER_WAV ...]]
+           [--gst_style GST_STYLE] [--capacitron_style_wav CAPACITRON_STYLE_WAV]
+           [--capacitron_style_text CAPACITRON_STYLE_TEXT]
+           [--list_speaker_idxs [LIST_SPEAKER_IDXS]] [--list_language_idxs [LIST_LANGUAGE_IDXS]]
+           [--save_spectogram SAVE_SPECTOGRAM] [--reference_wav REFERENCE_WAV]
+           [--reference_speaker_idx REFERENCE_SPEAKER_IDX] [--progress_bar PROGRESS_BAR]
+           [--source_wav SOURCE_WAV] [--target_wav TARGET_WAV] [--voice_dir VOICE_DIR]
+tts: error: unrecognized arguments: --speed 1.2
+
+
+#################################
+                Synthesize to specific file
+                    #################################
+
+
+(venv) hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/Multi Agent /realestate_agent$ tts --text "Saving to a custom file." --model_name tts_models/en/ljspeech/glow-tts --out_path custom_output.wav
+ > tts_models/en/ljspeech/glow-tts is already downloaded.
+ > vocoder_models/en/ljspeech/multiband-melgan is already downloaded.
+ > Using model: glow_tts
+ > Setting up Audio Processor...
+ | > sample_rate:22050
+ | > resample:False
+ | > num_mels:80
+ | > log_func:np.log10
+ | > min_level_db:-100
+ | > frame_shift_ms:None
+ | > frame_length_ms:None
+ | > ref_level_db:0
+ | > fft_size:1024
+ | > power:1.1
+ | > preemphasis:0.0
+ | > griffin_lim_iters:60
+ | > signal_norm:False
+ | > symmetric_norm:True
+ | > mel_fmin:50.0
+ | > mel_fmax:7600.0
+ | > pitch_fmin:1.0
+ | > pitch_fmax:640.0
+ | > spec_gain:1.0
+ | > stft_pad_mode:reflect
+ | > max_norm:1.0
+ | > clip_norm:True
+ | > do_trim_silence:True
+ | > trim_db:60
+ | > do_sound_norm:False
+ | > do_amp_to_db_linear:True
+ | > do_amp_to_db_mel:True
+ | > do_rms_norm:False
+ | > db_level:None
+ | > stats_path:None
+ | > base:10
+ | > hop_length:256
+ | > win_length:1024
+ > Vocoder Model: multiband_melgan
+ > Setting up Audio Processor...
+ | > sample_rate:22050
+ | > resample:False
+ | > num_mels:80
+ | > log_func:np.log10
+ | > min_level_db:-100
+ | > frame_shift_ms:None
+ | > frame_length_ms:None
+ | > ref_level_db:0
+ | > fft_size:1024
+ | > power:1.5
+ | > preemphasis:0.0
+ | > griffin_lim_iters:60
+ | > signal_norm:True
+ | > symmetric_norm:True
+ | > mel_fmin:50.0
+ | > mel_fmax:7600.0
+ | > pitch_fmin:0.0
+ | > pitch_fmax:640.0
+ | > spec_gain:1.0
+ | > stft_pad_mode:reflect
+ | > max_norm:4.0
+ | > clip_norm:True
+ | > do_trim_silence:True
+ | > trim_db:60
+ | > do_sound_norm:False
+ | > do_amp_to_db_linear:True
+ | > do_amp_to_db_mel:True
+ | > do_rms_norm:False
+ | > db_level:None
+ | > stats_path:/home/hazem-elbatawy/snap/code/205/.local/share/tts/vocoder_models--en--ljspeech--multiband-melgan/scale_stats.npy
+ | > base:10
+ | > hop_length:256
+ | > win_length:1024
+ > Generator Model: multiband_melgan_generator
+ > Discriminator Model: melgan_multiscale_discriminator
+ > Text: Saving to a custom file.
+ > Text splitted to sentences.
+['Saving to a custom file.']
+ > Processing time: 0.5631239414215088
+ > Real-time factor: 0.2365300767362136
+ > Saving output to custom_output.wav
+(venv) hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/Multi Agent /realestate_agent$ 
+
+
+
+########################
+            4. Batch synthesis from a text file:
+
+###################################################################
+
+(venv) hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/Multi Agent /realestate_agent$ tts --text_file input.txt --model_name tts_models/en/ljspeech/glow-tts
+usage: tts [-h] [--list_models [LIST_MODELS]] [--model_info_by_idx MODEL_INFO_BY_IDX]
+           [--model_info_by_name MODEL_INFO_BY_NAME] [--text TEXT] [--model_name MODEL_NAME]
+           [--vocoder_name VOCODER_NAME] [--config_path CONFIG_PATH] [--model_path MODEL_PATH]
+           [--out_path OUT_PATH] [--use_cuda USE_CUDA] [--device DEVICE]
+           [--vocoder_path VOCODER_PATH] [--vocoder_config_path VOCODER_CONFIG_PATH]
+           [--encoder_path ENCODER_PATH] [--encoder_config_path ENCODER_CONFIG_PATH]
+           [--pipe_out [PIPE_OUT]] [--speakers_file_path SPEAKERS_FILE_PATH]
+           [--language_ids_file_path LANGUAGE_IDS_FILE_PATH] [--speaker_idx SPEAKER_IDX]
+           [--language_idx LANGUAGE_IDX] [--speaker_wav SPEAKER_WAV [SPEAKER_WAV ...]]
+           [--gst_style GST_STYLE] [--capacitron_style_wav CAPACITRON_STYLE_WAV]
+           [--capacitron_style_text CAPACITRON_STYLE_TEXT]
+           [--list_speaker_idxs [LIST_SPEAKER_IDXS]] [--list_language_idxs [LIST_LANGUAGE_IDXS]]
+           [--save_spectogram SAVE_SPECTOGRAM] [--reference_wav REFERENCE_WAV]
+           [--reference_speaker_idx REFERENCE_SPEAKER_IDX] [--progress_bar PROGRESS_BAR]
+           [--source_wav SOURCE_WAV] [--target_wav TARGET_WAV] [--voice_dir VOICE_DIR]
+tts: error: unrecognized arguments: --text_file input.txt
+
+
+#####################################################################
+#######################################################################
+
+Would you like to try any of these features, or do you want to move on to integrating TTS into your FastAPI backend?
+
+Your TTS command with --text_file failed (exit code 2), likely because input.txt does not exist or is not in the correct format.
+
+If you want to try more TTS features, I can help you create a sample input.txt and run the batch synthesis.  
+If you’re ready, I can guide you step-by-step to integrate TTS into your FastAPI backend.
+
+Would you like to:
+1. Test more TTS features (e.g., batch synthesis, different voices)?
+2. Move on to integrating TTS into your FastAPI backend?
+
+Let me know your preference!
+
+
+############################################
+
+
+ I can help you create a sample input.txt and run the batch synthesis.
+
+
+ Here’s how to create a sample input.txt and run batch TTS synthesis:
+
+---
+
+### 1. Create input.txt with sample lines
+
+Each line will be synthesized to a separate audio file.
+
+```plaintext
+Welcome to the real estate AI agent demo.
+This is a second test sentence.
+How can I help you today?
+```
+
+---
+
+### 2. Save this as input.txt in your current directory:
+```bash
+echo "Welcome to the real estate AI agent demo.
+This is a second test sentence.
+How can I help you today?" > input.txt
+```
+
+---
+
+### 3. Run batch synthesis:
+```bash
+tts --text_file input.txt --model_name tts_models/en/ljspeech/glow-tts
+```
+
+This will generate audio files like `input_0.wav`, `input_1.wav`, etc.
+
+---
+
+Let me know if you want to customize the text or need help with the output!
+
+
+##############
+
+bash
+###########3
+
+(venv) hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/Multi Agent /realestate_agent$ tts --text_file input.txt --model_name tts_models/en/ljspeech/glow-tts
+usage: tts [-h] [--list_models [LIST_MODELS]] [--model_info_by_idx MODEL_INFO_BY_IDX]
+           [--model_info_by_name MODEL_INFO_BY_NAME] [--text TEXT] [--model_name MODEL_NAME]
+           [--vocoder_name VOCODER_NAME] [--config_path CONFIG_PATH] [--model_path MODEL_PATH]
+           [--out_path OUT_PATH] [--use_cuda USE_CUDA] [--device DEVICE]
+           [--vocoder_path VOCODER_PATH] [--vocoder_config_path VOCODER_CONFIG_PATH]
+           [--encoder_path ENCODER_PATH] [--encoder_config_path ENCODER_CONFIG_PATH]
+           [--pipe_out [PIPE_OUT]] [--speakers_file_path SPEAKERS_FILE_PATH]
+           [--language_ids_file_path LANGUAGE_IDS_FILE_PATH] [--speaker_idx SPEAKER_IDX]
+           [--language_idx LANGUAGE_IDX] [--speaker_wav SPEAKER_WAV [SPEAKER_WAV ...]]
+           [--gst_style GST_STYLE] [--capacitron_style_wav CAPACITRON_STYLE_WAV]
+           [--capacitron_style_text CAPACITRON_STYLE_TEXT]
+           [--list_speaker_idxs [LIST_SPEAKER_IDXS]] [--list_language_idxs [LIST_LANGUAGE_IDXS]]
+           [--save_spectogram SAVE_SPECTOGRAM] [--reference_wav REFERENCE_WAV]
+           [--reference_speaker_idx REFERENCE_SPEAKER_IDX] [--progress_bar PROGRESS_BAR]
+           [--source_wav SOURCE_WAV] [--target_wav TARGET_WAV] [--voice_dir VOICE_DIR]
+tts: error: unrecognized arguments: --text_file input.txt
+
+
+
+
+
+#################################
+
+
+
+The error `unrecognized arguments: --text_file input.txt` means your version of Coqui TTS CLI does not support the --text_file option.
+
+### How to batch synthesize with your TTS version
+
+#### 1. Use a simple shell loop:
+You can synthesize each line in your input.txt with a bash loop:
+
+```bash
+n=0
+while IFS= read -r line; do
+  tts --text "$line" --model_name tts_models/en/ljspeech/glow-tts --out_path "input_$n.wav"
+  n=$((n+1))
+done < input.txt
+```
+
+This will create input_0.wav, input_1.wav, etc., for each line.
+
+---
+
+Let me know if you want to try this, or if you want to move on to FastAPI integration!
+
+
+
+#########################
+    bash        #########################
+
+
+
+
+(venv) hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/Multi Agent /realestate_agent$ n=0
+while IFS= read -r line; do
+  tts --text "$line" --model_name tts_models/en/ljspeech/glow-tts --out_path "input_$n.wav"
+  n=$((n+1))
+done < input.txt
+ > tts_models/en/ljspeech/glow-tts is already downloaded.
+ > vocoder_models/en/ljspeech/multiband-melgan is already downloaded.
+ > Using model: glow_tts
+ > Setting up Audio Processor...
+ | > sample_rate:22050
+ | > resample:False
+ | > num_mels:80
+ | > log_func:np.log10
+ | > min_level_db:-100
+ | > frame_shift_ms:None
+ | > frame_length_ms:None
+ | > ref_level_db:0
+ | > fft_size:1024
+ | > power:1.1
+ | > preemphasis:0.0
+ | > griffin_lim_iters:60
+ | > signal_norm:False
+ | > symmetric_norm:True
+ | > mel_fmin:50.0
+ | > mel_fmax:7600.0
+ | > pitch_fmin:1.0
+ | > pitch_fmax:640.0
+ | > spec_gain:1.0
+ | > stft_pad_mode:reflect
+ | > max_norm:1.0
+ | > clip_norm:True
+ | > do_trim_silence:True
+ | > trim_db:60
+ | > do_sound_norm:False
+ | > do_amp_to_db_linear:True
+ | > do_amp_to_db_mel:True
+ | > do_rms_norm:False
+ | > db_level:None
+ | > stats_path:None
+ | > base:10
+ | > hop_length:256
+ | > win_length:1024
+ > Vocoder Model: multiband_melgan
+ > Setting up Audio Processor...
+ | > sample_rate:22050
+ | > resample:False
+ | > num_mels:80
+ | > log_func:np.log10
+ | > min_level_db:-100
+ | > frame_shift_ms:None
+ | > frame_length_ms:None
+ | > ref_level_db:0
+ | > fft_size:1024
+ | > power:1.5
+ | > preemphasis:0.0
+ | > griffin_lim_iters:60
+ | > signal_norm:True
+ | > symmetric_norm:True
+ | > mel_fmin:50.0
+ | > mel_fmax:7600.0
+ | > pitch_fmin:0.0
+ | > pitch_fmax:640.0
+ | > spec_gain:1.0
+ | > stft_pad_mode:reflect
+ | > max_norm:4.0
+ | > clip_norm:True
+ | > do_trim_silence:True
+ | > trim_db:60
+ | > do_sound_norm:False
+ | > do_amp_to_db_linear:True
+ | > do_amp_to_db_mel:True
+ | > do_rms_norm:False
+ | > db_level:None
+ | > stats_path:/home/hazem-elbatawy/snap/code/205/.local/share/tts/vocoder_models--en--ljspeech--multiband-melgan/scale_stats.npy
+ | > base:10
+ | > hop_length:256
+ | > win_length:1024
+ > Generator Model: multiband_melgan_generator
+ > Discriminator Model: melgan_multiscale_discriminator
+ > Text: Welcome to the real estate AI agent demo.
+ > Text splitted to sentences.
+['Welcome to the real estate AI agent demo.']
+wɛlkəm tə ðə ɹil ɪsteɪt aɪ eɪd͡ʒənt dɛmoʊ.
+ [!] Character '͡' not found in the vocabulary. Discarding it.
+ > Processing time: 0.7570652961730957
+ > Real-time factor: 0.23706671467587992
+ > Saving output to input_0.wav
+ > tts_models/en/ljspeech/glow-tts is already downloaded.
+ > vocoder_models/en/ljspeech/multiband-melgan is already downloaded.
+ > Using model: glow_tts
+ > Setting up Audio Processor...
+ | > sample_rate:22050
+ | > resample:False
+ | > num_mels:80
+ | > log_func:np.log10
+ | > min_level_db:-100
+ | > frame_shift_ms:None
+ | > frame_length_ms:None
+ | > ref_level_db:0
+ | > fft_size:1024
+ | > power:1.1
+ | > preemphasis:0.0
+ | > griffin_lim_iters:60
+ | > signal_norm:False
+ | > symmetric_norm:True
+ | > mel_fmin:50.0
+ | > mel_fmax:7600.0
+ | > pitch_fmin:1.0
+ | > pitch_fmax:640.0
+ | > spec_gain:1.0
+ | > stft_pad_mode:reflect
+ | > max_norm:1.0
+ | > clip_norm:True
+ | > do_trim_silence:True
+ | > trim_db:60
+ | > do_sound_norm:False
+ | > do_amp_to_db_linear:True
+ | > do_amp_to_db_mel:True
+ | > do_rms_norm:False
+ | > db_level:None
+ | > stats_path:None
+ | > base:10
+ | > hop_length:256
+ | > win_length:1024
+ > Vocoder Model: multiband_melgan
+ > Setting up Audio Processor...
+ | > sample_rate:22050
+ | > resample:False
+ | > num_mels:80
+ | > log_func:np.log10
+ | > min_level_db:-100
+ | > frame_shift_ms:None
+ | > frame_length_ms:None
+ | > ref_level_db:0
+ | > fft_size:1024
+ | > power:1.5
+ | > preemphasis:0.0
+ | > griffin_lim_iters:60
+ | > signal_norm:True
+ | > symmetric_norm:True
+ | > mel_fmin:50.0
+ | > mel_fmax:7600.0
+ | > pitch_fmin:0.0
+ | > pitch_fmax:640.0
+ | > spec_gain:1.0
+ | > stft_pad_mode:reflect
+ | > max_norm:4.0
+ | > clip_norm:True
+ | > do_trim_silence:True
+ | > trim_db:60
+ | > do_sound_norm:False
+ | > do_amp_to_db_linear:True
+ | > do_amp_to_db_mel:True
+ | > do_rms_norm:False
+ | > db_level:None
+ | > stats_path:/home/hazem-elbatawy/snap/code/205/.local/share/tts/vocoder_models--en--ljspeech--multiband-melgan/scale_stats.npy
+ | > base:10
+ | > hop_length:256
+ | > win_length:1024
+ > Generator Model: multiband_melgan_generator
+ > Discriminator Model: melgan_multiscale_discriminator
+ > Text: This is a second test sentence.
+ > Text splitted to sentences.
+['This is a second test sentence.']
+ > Processing time: 0.6420853137969971
+ > Real-time factor: 0.22942022895423556
+ > Saving output to input_1.wav
+ > tts_models/en/ljspeech/glow-tts is already downloaded.
+ > vocoder_models/en/ljspeech/multiband-melgan is already downloaded.
+ > Using model: glow_tts
+ > Setting up Audio Processor...
+ | > sample_rate:22050
+ | > resample:False
+ | > num_mels:80
+ | > log_func:np.log10
+ | > min_level_db:-100
+ | > frame_shift_ms:None
+ | > frame_length_ms:None
+ | > ref_level_db:0
+ | > fft_size:1024
+ | > power:1.1
+ | > preemphasis:0.0
+ | > griffin_lim_iters:60
+ | > signal_norm:False
+ | > symmetric_norm:True
+ | > mel_fmin:50.0
+ | > mel_fmax:7600.0
+ | > pitch_fmin:1.0
+ | > pitch_fmax:640.0
+ | > spec_gain:1.0
+ | > stft_pad_mode:reflect
+ | > max_norm:1.0
+ | > clip_norm:True
+ | > do_trim_silence:True
+ | > trim_db:60
+ | > do_sound_norm:False
+ | > do_amp_to_db_linear:True
+ | > do_amp_to_db_mel:True
+ | > do_rms_norm:False
+ | > db_level:None
+ | > stats_path:None
+ | > base:10
+ | > hop_length:256
+ | > win_length:1024
+ > Vocoder Model: multiband_melgan
+ > Setting up Audio Processor...
+ | > sample_rate:22050
+ | > resample:False
+ | > num_mels:80
+ | > log_func:np.log10
+ | > min_level_db:-100
+ | > frame_shift_ms:None
+ | > frame_length_ms:None
+ | > ref_level_db:0
+ | > fft_size:1024
+ | > power:1.5
+ | > preemphasis:0.0
+ | > griffin_lim_iters:60
+ | > signal_norm:True
+ | > symmetric_norm:True
+ | > mel_fmin:50.0
+ | > mel_fmax:7600.0
+ | > pitch_fmin:0.0
+ | > pitch_fmax:640.0
+ | > spec_gain:1.0
+ | > stft_pad_mode:reflect
+ | > max_norm:4.0
+ | > clip_norm:True
+ | > do_trim_silence:True
+ | > trim_db:60
+ | > do_sound_norm:False
+ | > do_amp_to_db_linear:True
+ | > do_amp_to_db_mel:True
+ | > do_rms_norm:False
+ | > db_level:None
+ | > stats_path:/home/hazem-elbatawy/snap/code/205/.local/share/tts/vocoder_models--en--ljspeech--multiband-melgan/scale_stats.npy
+ | > base:10
+ | > hop_length:256
+ | > win_length:1024
+ > Generator Model: multiband_melgan_generator
+ > Discriminator Model: melgan_multiscale_discriminator
+ > Text: How can I help you today?
+ > Text splitted to sentences.
+['How can I help you today?']
+ > Processing time: 0.5474116802215576
+ > Real-time factor: 0.25205536979797327
+ > Saving output to input_2.wav
+(venv) hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/Multi Agent /realestate_agent$ 
+
+
+
+
+#######################
+                        successfully
+                                    #####################
+                        
+Batch TTS synthesis was successful!  
+You now have input_0.wav, input_1.wav, and input_2.wav audio files, each corresponding to a line in your input.txt.
+
+**What you accomplished:**
+- Tested batch synthesis using a shell loop.
+- Verified that Coqui TTS can process multiple lines and save separate audio files.
+
+---
+
+## Next Steps
+
+Would you like to:
+1. Play and review the generated audio files?
+2. Try more advanced TTS features (e.g., different models, voices, or settings)?
+3. Move on to integrating TTS into your FastAPI backend?
+
+Let me know how you want to proceed!
+
+
+#########################################################################
+
+Would you like to: 1. Play and review the generated audio files?
+
+To play and review your generated audio files, use the following command for each file:
+
+```bash
+aplay input_0.wav
+aplay input_1.wav
+aplay input_2.wav
+```
+
+Or, you can use any audio player (like VLC, Audacity, or your file manager) to open and listen to them.
+
+Let me know if the audio sounds correct or if you want to adjust anything!
+

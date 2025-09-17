@@ -1,0 +1,262 @@
+Yes, your analysis is correct:  
+---------------------------------
+
+**Running Ollama locally with Wav2Lip and other heavy processes is overloading your system and causing GNOME to crash.**  
+Switching to the OpenAI API is the best and most stable solution for your workflow.
+
+---
+
+## ✅ Steps to Clean Up and Switch to OpenAI API
+
+### 1. **Uninstall Ollama and Free Resources**
+
+```bash
+sudo rm -rf ~/.ollama
+sudo systemctl stop ollama
+sudo systemctl disable ollama
+```
+
+---
+
+### 2. **Replace Ollama LLM Calls with OpenAI API**
+
+You can use the `openai` Python package.  
+Here’s a sample wrapper that lets you switch between OpenAI and Ollama with a config flag:
+
+````python
+import os
+import requests
+
+def call_openai_llm(prompt, api_key=None, model="gpt-3.5-turbo"):
+    import openai
+    openai.api_key = api_key or os.getenv("OPENAI_API_KEY")
+    response = openai.ChatCompletion.create(
+        model=model,
+        messages=[{"role": "user", "content": prompt}],
+        max_tokens=512,
+        temperature=0.7,
+    )
+    return response.choices[0].message.content.strip()
+
+def call_ollama_llm(prompt, model="llama3"):
+    url = "http://localhost:11434/api/generate"
+    data = {"model": model, "prompt": prompt, "stream": False}
+    try:
+        response = requests.post(url, json=data, timeout=120)
+        response.raise_for_status()
+        return response.json()["response"]
+    except Exception as e:
+        print(f"Ollama LLM call failed: {e}")
+        return "[LLM error]"
+
+def call_llm(prompt, use_openai=True, **kwargs):
+    if use_openai:
+        return call_openai_llm(prompt, **kwargs)
+    else:
+        return call_ollama_llm(prompt, **kwargs)
+````
+
+---
+
+### 3. **Update Your CLI to Use the Wrapper**
+
+Replace your import with:
+
+```python
+from llm_wrapper import call_llm
+
+# Then in your code:
+ai_response = call_llm(user_text, use_openai=True)  # Set to False if you ever want to use Ollama again
+```
+
+---
+
+### 4. **Set Your OpenAI API Key**
+
+Export your key before running your script:
+
+```bash
+export OPENAI_API_KEY=sk-...
+```
+
+Or pass it directly as a parameter.
+
+---
+
+## ⚡ Bonus: Dual Backend Support
+
+With this wrapper, you can easily switch between OpenAI and Ollama by changing a flag.
+
+---
+
+**Let me know if you want a full patch for your CLI, or if you need help installing the OpenAI Python package!**
+
+
+
+
+#####################################################
+
+(venv) hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/Multi Agent /realestate_agent$ python cli_avatar.py
+Traceback (most recent call last):
+  File "/home/hazem-elbatawy/Downloads/Multi Agent /realestate_agent/cli_avatar.py", line 49, in <module>
+    OUTPUT_DIR = os.path.join(WAV2LIP_DIR, "results")  # Where output videos are saved
+                 ^^
+NameError: name 'os' is not defined
+(venv) hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/Multi Agent /realestate_agent$ 
+
+
+The error NameError: name 'os' is not defined means the import os statement is missing or was accidentally removed from your cli_avatar.py.
+
+To fix this, add the following line near the top of your file (with the other imports):
+
+```python
+import os
+```
+
+Make sure it appears before any code that uses os. Let me know if you want me to patch this automatically!
+
+
+
+
+```
+
+
+Made changes.
+
+
+```
+The import os statement has been added to your cli_avatar.py, fixing the NameError.
+
+You still have some missing imports (requests, sys, subprocess, time, openai, dotenv). Make sure all these are imported at the top of your script. Let me know if you want me to patch all missing imports for you!
+
+
+
+te_agent$ python cli_avatar.py
+Traceback (most recent call last):
+  File "/home/hazem-elbatawy/Downloads/Multi Agent /realestate_agent/cli_avatar.py", line 53, in <module>
+    timestamp = time.strftime("%Y%m%d_%H%M%S")
+                ^^^^
+NameError: name 'time' is not defined
+(venv) hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/Multi Agent /realestate_agent$ 
+
+
+
+
+#########################################333
+
+
+ameError: name 'time' is not defined
+(venv) hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/Multi Agent /realestate_agent$ python cli_avatar.py
+=== AI Avatar CLI ===
+You: hello gpt can you help me find my new house?
+Traceback (most recent call last):
+  File "/home/hazem-elbatawy/Downloads/Multi Agent /realestate_agent/cli_avatar.py", line 150, in <module>
+    main()
+  File "/home/hazem-elbatawy/Downloads/Multi Agent /realestate_agent/cli_avatar.py", line 81, in main
+    ai_response = call_llm(user_text, use_openai=True)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hazem-elbatawy/Downloads/Multi Agent /realestate_agent/cli_avatar.py", line 45, in call_llm
+    return call_openai_llm(prompt, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hazem-elbatawy/Downloads/Multi Agent /realestate_agent/cli_avatar.py", line 24, in call_openai_llm
+    response = openai.ChatCompletion.create(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hazem-elbatawy/Downloads/Multi Agent /realestate_agent/venv/lib/python3.11/site-packages/openai/lib/_old_api.py", line 39, in __call__
+    raise APIRemovedInV1(symbol=self._symbol)
+openai.lib._old_api.APIRemovedInV1: 
+
+You tried to access openai.ChatCompletion, but this is no longer supported in openai>=1.0.0 - see the README at https://github.com/openai/openai-python for the API.
+
+You can run `openai migrate` to automatically upgrade your codebase to use the 1.0.0 interface. 
+
+Alternatively, you can pin your installation to the old version, e.g. `pip install openai==0.28`
+
+A detailed migration guide is available here: https://github.com/openai/openai-python/discussions/742
+
+(venv) hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/Multi Agent /realestate_agent$ 
+
+
+\
+```
+
+
+Made changes.
+
+
+```
+The function call_ollama_llm has been removed, and your call_openai_llm function is now updated for the latest OpenAI Python API (openai>=1.0.0).
+
+To finish cleanup, you should also remove or update any code that references call_ollama_llm or tries to use Ollama, since it is no longer defined. Let me know if you want me to remove all Ollama-related code and options from your CLI!
+
+
+
+##################################################################
+
+
+system crash again:
+my sys crach again after running the cli script and i monitored the process on the htop terminal and i
+ can see it craches when it reached for
+ wav2lip path for generating the vids.
+** Why is that happen. Is my laptop is not powerfull enough to handle the open ai  server and wav2lip 
+generation and vs code extiention and the uvicorn server
+
+
+#############################################################################
+#####################################################
+
+                                            analysis
+
+                                            ################################################################
+                                            ################################################
+
+Your analysis is correct:  
+----------------------------
+
+**The crash is not caused by OpenAI API or Ollama. It is caused by Wav2Lip
+ video generation, which is extremely resource-intensive.**
+
+### Why does your system crash?
+- **Wav2Lip** uses a lot of CPU and RAM (and GPU if available) for video synthesis.
+- If you run Wav2Lip, VS Code, Uvicorn, and other apps together, your system can run out of RAM or GPU memory, causing GNOME (your desktop environment) to crash and log you out.
+- This is confirmed by your htop screenshot:
+ Wav2Lip processes are using huge amounts of memory and CPU.
+
+### Is your laptop powerful enough?
+- **Wav2Lip** is designed for machines with a dedicated GPU (NVIDIA CUDA).
+ On CPU-only systems, it is very slow and uses a lot of RAM.
+- Even with 16–32GB RAM, running Wav2Lip + other heavy apps can crash your desktop 
+session if memory is exhausted.
+- OpenAI API itself is very lightweight (just network calls), 
+so it is not the problem.
+
+---
+
+## **How to avoid system crashes**
+-------------------------------------
+
+1. **Run Wav2Lip in a separate TTY or tmux/screen session**
+---------------------------------------------------------------
+
+   - Press `Ctrl+Alt+F3` to open a new TTY, log in, and run your script there.
+   - If GNOME crashes, your process keeps running.
+
+2. **Close all unnecessary apps**
+   - Shut down browsers, VS Code, and other heavy apps before running Wav2Lip.
+
+3. **Reduce Wav2Lip input size**
+   - Use lower resolution images and shorter audio to reduce memory usage.
+
+4. **Add more swap space**
+   - This can help, but is not a full solution for heavy RAM use.
+
+5. **Use a machine with a dedicated GPU**
+   - If possible, run Wav2Lip on a server or cloud VM with an NVIDIA GPU.
+
+---
+
+## **Summary**
+- Your laptop is struggling with Wav2Lip, not OpenAI.
+- Try running Wav2Lip alone, or on a more powerful machine.
+- For development, you can comment out the Wav2Lip part and test only the LLM and TTS pipeline.
+
+Let me know if you want a code patch to skip Wav2Lip for testing, or tips for running heavy jobs safely!

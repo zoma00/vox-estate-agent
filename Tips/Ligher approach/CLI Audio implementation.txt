@@ -1,0 +1,463 @@
+The file cli_audio.py is a more advanced CLI script for audio-only TTS. It allows you to:
+
+- Enter text via command line argument, file, or prompt.
+- Specify the TTS API endpoint URL and output file name.
+- Optionally play the audio after generation.
+- Includes error handling and flexible options.
+
+It is useful if you want more control over how you input text, where you send requests, and how you handle output, compared to the very simple `cli_audio_simple.py`.
+
+**Summary:**
+- `cli_audio_simple.py`: Minimal, direct text-to-speech.
+- `cli_audio_openai.py`: OpenAI chat + TTS.
+- cli_audio.py: Advanced CLI with more options and flexibility.
+
+You can keep all three for different use cases!
+
+
+
+
+# Audio CLI Guide
+
+This guide explains how to use the audio-only CLI tools for generating speech from text and interacting with OpenAI in your terminal.
+
+## Prerequisites
+- Python 3.11+
+- Activate your virtual environment: `source venv/bin/activate`
+- Install required packages:
+  ```sh
+  pip install requests python-dotenv openai
+  ```
+- Ensure your FastAPI TTS server is running:
+  ```sh
+  python -m uvicorn app.main:app --host 0.0.0.0 --port 8000
+  ```
+
+## Basic Audio CLI: `cli_audio_simple.py`
+1. Run the script:
+   ```sh
+   python cli_audio_simple.py
+   ```
+2. Enter text when prompted.
+3. The script will generate a WAV file and play it back using `aplay`.
+
+## OpenAI Interactive Audio CLI: `cli_audio_openai.py`
+1. Make sure your `.env` file contains your OpenAI API key:
+   ```env
+   OPENAI_API_KEY=sk-...
+   ```
+2. Run the script:
+   ```sh
+   python cli_audio_openai.py
+   ```
+3. Type your prompt in the terminal.
+4. The script will:
+   - Send your prompt to OpenAI (ChatGPT)
+   - Print the AI's response
+   - Synthesize the response to audio and play it back
+   - Save each audio file with a timestamped filename
+
+## Troubleshooting
+- If you see errors about missing packages, run `pip install` as above.
+- If you hear no sound, check your system volume and confirm the WAV file is not silent (open in Audacity).
+- If you get connection errors, make sure your FastAPI server is running and accessible at `localhost:8000`.
+
+## Customization
+- You can change the TTS API URL in the script if your server runs on a different host/port.
+- Audio files are saved with timestamps for easy organization.
+
+---
+For further help, see the code comments or ask GitHub Copilot for assistance.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+so we can create another cli for audio or just use the test_tts api to gen
+ audio for production. 
+i mean that i have integration with open ai and uvicorn!!
+
+
+You can use your existing test_tts_api.py as a base for production audio generation, or create a more 
+robust CLI script for audio-only output. Since you already have integration with OpenAI and Uvicorn, 
+you can:
+----------
+
+- Expose an API endpoint (as you do now) for TTS audio generation.
+- Use or adapt test_tts_api.py as a CLI tool for local or automated audio generation.
+- Integrate the TTS API with your OpenAI-driven backend, so responses are synthesized to audio on demand.
+
+For production, you may want to:
+-----------------------------------
+
+- Add error handling, logging, and configuration options to your CLI/API.
+- Ensure your API can handle concurrent requests if used in a web service.
+
+In summary:  
+-----------
+
+You can use your current test script for production, or refactor it for more features and robustness as needed. 
+Your architecture is already well-suited for audio-only TTS with OpenAI and Uvicorn integration.
+
+
+
+################################################################
+
+yes implement this approach step by step . And create a new CLI for audio separate from CLI avatar
+ that i have already?
+
+ answer:
+ -----------
+ Created 3 todos
+
+We'll proceed step by step:
+
+1. Design a new CLI for audio-only TTS (separate from your CLI avatar).
+2. Implement the CLI script (e.g., cli_audio.py) to generate and play audio from text.
+3. Test and document the new CLI for production/demo use.
+
+I'll start by designing the structure for the new CLI script.
+
+###################################################################
+Start:  Design
+############################################################
+
+Starting (1/3) *Design new CLI for audio-only TTS*
+
+Here’s the planned structure for your new CLI audio script (to be placed in backend/realestate_agent/cli_audio.py):
+
+- Accept text input (from command line argument, file, or prompt)
+- Send the text to your TTS API endpoint 
+(e.g., http://localhost:8000/agent/tts)
+- Save the returned audio as a .wav file
+- Optionally play the audio (using aplay or another player)
+- Add error handling and clear output messages
+
+Next, I’ll implement this script in the correct location.
+
+
+###########################################################
+###############################################################
+backend/realestate_agent/cli_audio.py
+
+
+
+#!/usr/bin/env python3
+"""
+CLI script for audio chat:
+- User enters text
+- ChatGPT (OpenAI) generates a response
+- TTS API generates audio from the response
+- Audio is saved and played back
+"""
+import os
+import sys
+import requests
+import subprocess
+from dotenv import load_dotenv
+import openai
+
+load_dotenv()
+
+def call_openai_llm(prompt, api_key=None, model="gpt-3.5-turbo"):
+    client = openai.OpenAI(api_key=api_key or os.getenv("OPENAI_API_KEY"))
+    response = client.chat.completions.create(
+        model=model,
+        messages=[{"role": "user", "content": prompt}],
+        max_tokens=512,
+        temperature=0.7,
+    )
+    return response.choices[0].message.content.strip()
+
+def main():
+    print("=== Audio Chat CLI ===")
+    user_text = input("You: ").strip()
+    if not user_text:
+        print("No input provided. Exiting.")
+        return
+
+    # Get AI response from OpenAI
+    ai_response = call_openai_llm(user_text)
+    print(f"AI: {ai_response}")
+
+    # Call TTS API to generate audio
+    tts_api_url = os.getenv("TTS_API_URL", "http://localhost:8000/agent/tts")
+    tts_wav_name = "tts_audio_chat.wav"
+    try:
+        response = requests.post(tts_api_url, data={"text": ai_response})
+        response.raise_for_status()
+        with open(tts_wav_name, "wb") as f:
+            f.write(response.content)
+        print(f"Audio saved to {tts_wav_name}")
+        # Play the audio
+        try:
+            subprocess.run(["aplay", tts_wav_name], check=True)
+        except Exception as e:
+            print(f"Could not play audio: {e}")
+    except Exception as e:
+        print(f"TTS API call failed: {e}")
+        sys.exit(1)
+
+if __name__ == "__main__":
+    main()
+
+
+
+
+
+
+
+play what i want you to create udio cli like avatart that i prompt in the treminal and chatgpt answer 
+me then tts gen text and audio and record then play.
+** Check this file:
+backend/realestate_agent/cli_avatar.py
+
+To match your avatar CLI flow but for audio only, your new CLI should:
+
+1. Prompt you for input in the terminal.
+2. Send your input to ChatGPT (OpenAI API) and get the AI's response.
+3. Send the AI's response to your TTS API to generate audio.
+4. Save and play the audio automatically.
+
+I'll implement a new CLI script (e.g., `cli_audio_chat.py`) in realestate_agent that follows this flow, 
+using your OpenAI integration and TTS API, but skipping all video/Wav2Lip steps. 
+
+Created [](file:///home/hazem-elbatawy/Downloads/vox-estate-agent/backend/realestate_agent/cli_audio_chat.py)
+
+A new CLI script, cli_audio_chat.py, has been created in backend/realestate_agent/. It prompts you for input, 
+gets a ChatGPT response, generates TTS audio, saves it, and plays it back—just like your avatar CLI, but 
+audio-only.
+
+If you see "could not be resolved" errors for dotenv or openai, install them with:
+```sh
+pip install python-dotenv openai
+```
+
+You can now run this script for a full audio chat experience in your terminal! Let me know if you want usage
+ instructions or further customization.
+
+Made changes.
+
+#################################33
+
+d/realestate_agent$ python cli_audio_chat.py
+=== Audio Chat CLI ===
+You: hellp gpt
+AI: Hello! How can I assist you today?
+Audio saved to tts_audio_chat.wav
+Playing raw data 'tts_audio_chat.wav' : Unsigned 8 bit, Rate 8000 Hz, Mono
+(venv) hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/vox-estate-agent/backend/realestate_agent$ 
+i want to play that sound audio!!
+
+Answer:
+--------
+
+
+Your CLI script is working and has generated the audio file `tts_audio_chat.wav`.  
+However, the playback message ("Unsigned 8 bit, Rate 8000 Hz, Mono") suggests the audio format may not be compatible with your system or player.
+
+**To play the sound:**
+- Try using a different player, such as `ffplay` (from ffmpeg) or `mpv`:
+  ```sh
+  ffplay tts_audio_chat.wav
+  ```
+  or
+  ```sh
+  mpv tts_audio_chat.wav
+  ```
+- If you still hear no sound, check that your TTS API is generating audio in a standard format (e.g., 16-bit PCM, 22050 Hz or 44100 Hz).
+
+**If you want to convert the audio to a more standard format:**
+```sh
+ffmpeg -i tts_audio_chat.wav -ar 22050 -ac 1 -sample_fmt s16 tts_audio_chat_fixed.wav
+ffplay tts_audio_chat_fixed.wav
+```
+
+Let me know if you need help with audio format conversion or troubleshooting playback!
+
+
+############################### Batch error     ################################
+
+ljspeech--multiband-melgan/scale_stats.npy
+ | > base:10
+ | > hop_length:256
+ | > win_length:1024
+ > Generator Model: multiband_melgan_generator
+ > Discriminator Model: melgan_multiscale_discriminator
+TTS generation failed: 'TTS' object has no attribute 'tts_batch'
+INFO:     127.0.0.1:58480 - "POST /agent/tts HTTP/1.1" 200 OK
+
+The error is clear:  
+`TTS generation failed: 'TTS' object has no attribute 'tts_batch'`
+
+**Cause:**  
+The Coqui TTS API version you have installed does not support the `tts_batch` method.  
+You are calling `tts.tts_batch(texts)` in your code, but your version only supports `tts_to_file` and `tts` for single sentences.
+
+**How to fix:**  
+- Replace the batch call with a loop that calls `tts.tts` for each sentence, then concatenate the results.
+- Or, if you only need single-sentence TTS, use `tts.tts_to_file(text, file_path=output_path)`.
+
+**Example fix for batching:**
+```python
+wavs = [tts.tts(sentence) for sentence in texts]
+```
+Then concatenate as before.
+
+Would you like me to update your `generate_tts_audio` function to fix this?
+
+
+Using "Apply Patch"
+
+
+```
+
+```
+Your `generate_tts_audio` function now loops over sentences and uses `tts.tts` for each, instead of the unsupported `tts_batch`. This should resolve the TTS generation error and allow your API to produce valid WAV audio.
+
+Test your TTS API and CLI again. If you encounter further issues, share the error message and I'll help you debug!
+
+Made changes.
+
+
+
+
+d/realestate_agent$ python cli_audio_chat.py
+=== Audio Chat CLI ===
+You: i am going for a picnic 
+AI: That sounds like a lovely idea! Picnics can be a great way to enjoy the outdoors and have a relaxing time with friends or family. Make sure to pack some delicious food, drinks, and maybe some games or activities to enjoy during your picnic. Have a great time!
+TTS API response headers: {'date': 'Mon, 15 Sep 2025 22:02:25 GMT', 'server': 'uvicorn', 'content-length': '34', 'content-type': 'application/json'}
+First 32 bytes of response: b'{"error":"TTS generation failed.'
+TTS API did not return valid WAV audio. Check API implementation and response.
+Response text: {"error":"TTS generation failed."}
+(venv) hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/vox-estate-agent/backend/realestate_agent$ 
+
+
+
+
+d/realestate_agent$ python cli_audio_chat.py
+=== Audio Chat CLI ===
+You: how the weather today
+AI: I'm sorry, I do not have real-time information on the current weather. You can check your local weather forecast for the most up-to-date information.
+TTS API response headers: {'date': 'Mon, 15 Sep 2025 22:04:25 GMT', 'server': 'uvicorn', 'content-type': 'audio/wav', 'accept-ranges': 'bytes', 'content-disposition': 'attachment; filename="tts_output.wav"', 'content-length': '1859898', 'last-modified': 'Mon, 15 Sep 2025 22:04:34 GMT', 'etag': '"8397d8c99e4d11b85f308d2857da52f1"'}
+First 32 bytes of response: b'RIFF2a\x1c\x00WAVEfmt \x12\x00\x00\x00\x03\x00\x01\x00"V\x00\x00\x10\xb1\x02\x00'
+Audio saved to tts_audio_chat.wav
+aplay: test_wavefile:1159:  can't play WAVE-files with sample 64 bits wide
+Could not play audio: Command '['aplay', 'tts_audio_chat.wav']' returned non-zero exit status 1.
+
+-ljspeech--multiband-melgan/scale_stats.npy
+ | > base:10
+ | > hop_length:256
+ | > win_length:1024
+ > Generator Model: multiband_melgan_generator
+ > Discriminator Model: melgan_multiscale_discriminator
+ > Text splitted to sentences.
+["I'm sorry, I do not have real-time information on the current weather.", 'You can check your local weather forecast for the most up-to-date information.']
+ju kən t͡ʃɛk jʊɹ loʊkəl wɛðɚ fɔɹkæst fɚ ðə moʊst ʌp tə deɪt ɪnfɔɹmeɪʃən.
+ [!] Character '͡' not found in the vocabulary. Discarding it.
+ > Processing time: 5.543217658996582
+ > Real-time factor: 0.5257568366348703
+
+
+
+
+ Your TTS API is now working and returning a valid WAV file (`RIFF` header, `Content-Type: audio/wav`).  
+However, the error is:  
+`aplay: test_wavefile:1159:  can't play WAVE-files with sample 64 bits wide`
+
+**Cause:**  
+The generated WAV file uses a sample width (bit depth) of 64 bits, which is not supported by most audio players (standard is 16 bits).
+
+**How to fix:**  
+Update your TTS code to ensure the output WAV uses 16-bit samples.  
+In your tts_coqui.py, change the write line to:
+```python
+write(output_path, sample_rate, combined.astype(np.int16))
+```
+This will convert the audio to 16-bit PCM, which is compatible with most players.
+
+Would you like me to update your code for this?
+
+
+backend/realestate_agent/tts/tts_coqui.py
+Using "Apply Patch"
+
+
+```
+
+```
+Your code now saves the WAV file as 16-bit PCM, which is compatible with standard audio players like aplay, ffplay, and mpv.
+
+Try generating and playing audio again—this should resolve the playback error! Let me know if it works or if you need further help.
+
+Made changes.
+
+
+d/realestate_agent$ python cli_audio_chat.py
+=== Audio Chat CLI ===
+You: what is the time now
+AI: I'm sorry, but I do not have access to real-time information. Please check the time on your device or ask a voice assistant like Siri or Google Assistant for the current time.
+TTS API response headers: {'date': 'Mon, 15 Sep 2025 22:07:56 GMT', 'server': 'uvicorn', 'content-type': 'audio/wav', 'accept-ranges': 'bytes', 'content-disposition': 'attachment; filename="tts_output.wav"', 'content-length': '583788', 'last-modified': 'Mon, 15 Sep 2025 22:08:01 GMT', 'etag': '"62ea6e9561c87c087601206be410d146"'}
+First 32 bytes of response: b'RIFFd\xe8\x08\x00WAVEfmt \x10\x00\x00\x00\x01\x00\x01\x00"V\x00\x00D\xac\x00\x00'
+Audio saved to tts_audio_chat.wav
+Playing WAVE 'tts_audio_chat.wav' : Signed 16 bit Little Endian, Rate 22050 Hz, Mono
+(venv) hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/vox-estate-agent/backend/realestate_agent$ 
+
+
+
+
+Searched for files matching `**/batch_tts.sh`, 2 matches
+
+Read [](file:///home/hazem-elbatawy/Downloads/vox-estate-agent/backend/realestate_agent/batch_tts.sh)
+
+Read [](file:///home/hazem-elbatawy/Downloads/vox-estate-agent/backend/realestate_agent/cli_avatar.py#1-1), lines 1 to 60
+
+Read [](file:///home/hazem-elbatawy/Downloads/vox-estate-agent/backend/realestate_agent/cli_avatar.py#61-61), lines 61 to 141
+
+Here’s a comparison of your TTS workflows:
+
+**1. Wav2Lip/Avatar Pipeline:**
+- Uses FastAPI TTS endpoint (`/agent/tts`) to generate audio.
+- The audio is saved as a WAV file and passed to Wav2Lip for video generation.
+- The TTS API uses your Python backend (likely `generate_tts_audio` from tts_coqui.py).
+
+**2. CLI Audio/Batch Script:**
+- The batch script (batch_tts.sh) uses the Coqui TTS CLI directly:
+  ```
+  tts --text "$line" --model_name tts_models/en/ljspeech/glow-tts --out_path "input_$n.wav"
+  ```
+- Your CLI audio scripts use the FastAPI TTS endpoint, which calls the same backend as the avatar pipeline.
+
+**Key Parameters:**
+- Both use the same TTS model: `tts_models/en/ljspeech/glow-tts`.
+- The batch script may use different default normalization, scaling, or output settings compared to your Python API.
+
+**Possible Differences:**
+- The Coqui TTS CLI (`tts` command) may apply normalization or scaling automatically.
+- Your Python API (`generate_tts_audio`) may not normalize or scale the output, resulting in silent or quiet audio.
+
+**Recommendation:**
+- Add normalization to your Python TTS output before saving:
+  ```python
+  # Normalize audio to -1.0 to 1.0 range before converting to int16
+  max_val = np.max(np.abs(combined))
+  if max_val > 0:
+      combined = combined / max_val
+  write(output_path, sample_rate, (combined * 32767).astype(np.int16))
+  ```
+- This will ensure your audio is loud and clear, matching the CLI output.
+
+Would you like me to update your TTS code to include normalization?
+
+
+
+

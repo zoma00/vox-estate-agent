@@ -1,0 +1,26 @@
+This happened because your remote GitHub repo already had commits (like a README or .gitignore created on GitHub), while your local repo also had its own initial commit. When you tried to push, Git saw that the remote and local histories had diverged, so it rejected the push to prevent overwriting remote changes.
+
+### How to avoid this in the future:
+
+1. **Start with an empty remote repo**  
+   - When creating a new repo on GitHub, choose “Initialize this repository with: None” (no README, .gitignore, or license).
+   - Then push your local code as the first commit.
+
+2. **If you must use a pre-initialized remote (with README, etc.):**  
+   - Clone the remote repo to your machine first.
+   - Add your project files into the cloned folder.
+   - Stage, commit, and push.
+
+3. **If you already have a local project and want to connect to a pre-initialized remote:**  
+   - Add the remote.
+   - Pull from the remote before your first push:
+     ```bash
+     git pull origin main --allow-unrelated-histories
+     ```
+   - Resolve any merge conflicts, then push.
+
+**Summary:**  
+- Always sync your local and remote histories before pushing.
+- Prefer starting with an empty remote, or always pull first if the remote isn’t empty.
+
+Let me know if you want a step-by-step “best practice” workflow for new projects!

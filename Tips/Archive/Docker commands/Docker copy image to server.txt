@@ -1,0 +1,14 @@
+You are correct:  
+If you pull the project from Git to a new server, you will need to rebuild the Docker image on that server using:
+
+```bash
+cd Wav2Lip
+sudo docker build -t wav2lip-cpu -f Dockerfile.cpu .
+```
+
+This is because Docker images are not stored in your Git repository—only the Dockerfile and code are.  
+Copying the image from your local machine to the server is possible (using `docker save`/`docker load` or a registry), but rebuilding is usually simpler and more reliable for most workflows.
+
+**Summary:**  
+- On a new server: always rebuild the Docker image after pulling the code.
+- On your local machine: only rebuild if you change the Dockerfile or dependencies.

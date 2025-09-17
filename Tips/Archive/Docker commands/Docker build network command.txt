@@ -1,0 +1,22 @@
+
+```
+
+
+Made changes.
+
+
+```
+The build failed due to a network timeout while downloading a large package (torch). This is not a dependency or Dockerfile error—just a slow or interrupted internet connection.
+
+**How to fix:**
+- Simply re-run the build command:
+  ```bash
+  sudo docker build -t wav2lip .
+  ```
+- If your connection is slow, you can add the `--network=host` option to Docker to help with networking:
+  ```bash
+  sudo docker build --network=host -t wav2lip .
+  ```
+- Make sure your internet connection is stable during the build.
+
+If you keep hitting timeouts, let me know and I can suggest ways to pre-download wheels or use a requirements cache. For most users, a simple re-run works!

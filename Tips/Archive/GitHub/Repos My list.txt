@@ -1,0 +1,48 @@
+    "url": "https://api.github.com/repos/zoma00/APKAnalyzer-Appium",
+    "url": "https://api.github.com/repos/zoma00/Basic-Laravel-Ecommerce-pro",
+    "url": "https://api.github.com/repos/zoma00/Battle-Simulation-Program",
+    "url": "https://api.github.com/repos/zoma00/Burger-to-Buy-Challenge",
+    "url": "https://api.github.com/repos/zoma00/Connect-Four",
+    "url": "https://api.github.com/repos/zoma00/Descriptive-statistics-Analysis-",
+    "issue_events_url": "https://api.github.com/repos/zoma00/Developer-portfo/issues/events{/number}",
+    "contributors_url": "https://api.github.com/repos/zoma00/Django-notifications/contributors",
+    "keys_url": "https://api.github.com/repos/zoma00/django-users-vehicle-forms-api/keys{/key_id}",
+    "git_commits_url": "https://api.github.com/repos/zoma00/Django-WebPage-Acess-Record-Deployment-on-AWS-EC2/git/commits{/sha}",
+    "statuses_url": "https://api.github.com/repos/zoma00/E-commerce-s-emi.netlify-Site/statuses/{sha}",
+    "url": "https://api.github.com/repos/zoma00/FastAPI-Bookstore",
+    "url": "https://api.github.com/repos/zoma00/FastAPI-Todo-Application",
+    "url": "https://api.github.com/repos/zoma00/GitHub-Fetcher",
+    "url": "https://api.github.com/repos/zoma00/global-covid19-trends",
+    "blobs_url": "https://api.github.com/repos/zoma00/Hazem-s-SQL-Bridge-for-MATLAB/git/blobs{/sha}",
+    "url": "https://api.github.com/repos/zoma00/HGM-Real-Estate",
+    "forks_url": "https://api.github.com/repos/zoma00/Horse-Power-Challenge/forks",
+    "url": "https://api.github.com/repos/zoma00/JavaScript-Classes-and-Objects",
+    "url": "https://api.github.com/repos/zoma00/Machine-Learning-for-Profit-Estimation-Insights-from-Analyzing-1-000-Companies",
+    "url": "https://api.github.com/repos/zoma00/Music-Recommendation-System-python",
+    "url": "https://api.github.com/repos/zoma00/Password-Security-Checker",
+    "url": "https://api.github.com/repos/zoma00/pgvector",
+    "url": "https://api.github.com/repos/zoma00/portfo", flask
+        "forks_url": "https://api.github.com/repos/zoma00/PostgreSQL-Facility-Management-Queries/forks",
+    "url": "https://api.github.com/repos/zoma00/Predicting-Heart-Attack-Risk-Using-Machine-Learning",
+    "url": "https://api.github.com/repos/zoma00/Products_similarity", python streamlite 
+        "url": "https://api.github.com/repos/zoma00/React-portal-theme",
+    "url": "https://api.github.com/repos/zoma00/React-Smile",
+    "url": "https://api.github.com/repos/zoma00/Reactify", all react tricks learned from gpt 4.1
+    "url": "https://api.github.com/repos/zoma00/realestate_demo", fast api open ai facebook graph integrations api 
+        "url": "https://api.github.com/repos/zoma00/Restaurant-Menu-Analyzer-Python-",
+     "url": "https://api.github.com/repos/zoma00/Revenue-by-Order-Country-Presentation", excel and powerbi
+         "url": "https://api.github.com/repos/zoma00/Soccer-Salaries-Python-", pandas Analysis
+             "url": "https://api.github.com/repos/zoma00/Static-Formulas-", from my data science course 60 hours ML python.
+    "url": "https://api.github.com/repos/zoma00/tech-news-scraper", scrapy splash docker python spider
+    "deployments_url": "https://api.github.com/repos/zoma00/Tin-dog/deployments", basic css flex and html5 development.
+        "url": "https://api.github.com/repos/zoma00/Users-Vehicle-Forms",
+    "url": "https://api.github.com/repos/zoma00/Vehicle-Prices-Per-Shape-Specs", JavaScript classes 
+
+    "url": "https://api.github.com/repos/zoma00/Weather-Data-Analysis", Ml prediction
+    "url": "https://api.github.com/repos/zoma00/WooCommerce-Dynamic-Data-Fetcher-for-Google-Apps-Script",
+    "url": "https://api.github.com/repos/zoma00/WooCommerce-Google-Looker-Studio-Integration",
+
+
+
+
+

@@ -1,0 +1,43 @@
+successfully cli worked:
+---------------------------------------------------------
+
+(venv) hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/Multi Agent /realestate_agent$ python cli_avatar.py
+=== AI Avatar CLI ===
+Enter text for the avatar to speak: yes i want it
+[1/3] Generating speech audio with TTS (FastAPI)...
+[2/3] Generating talking video with Wav2Lip (Docker)...
+[3/3] Done! Video saved at: Wav2Lip/results/result_voice.mp4
+Play it with: mpv Wav2Lip/results/result_voice.mp4
+(venv) hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/Multi Agent /realestate_agent$  
+
+
+#########################
+Second try:
+---------------
+
+(venv) hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/Multi Agent /realestate_agent$ python cli_avatar.py
+=== AI Avatar CLI ===
+Enter text for the avatar to speak: How wish you were here we just tow real fish ball here yere                           year after year running on the same of ground then how we found say no fear with you were here
+[1/3] Generating speech audio with TTS (FastAPI)...
+[2/3] Generating talking video with Wav2Lip (Docker)...
+[3/3] Done! Video saved at: Wav2Lip/results/result_voice.mp4
+Play it with: mpv Wav2Lip/results/result_voice.mp4
+(venv) hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/Multi Agent /realestate_agent$  
+
+
+##############################################################
+** The new file voice mp4  generated overwritten the old one 
+** I want to not override i want to keep all files?
+
+
+
+```
+
+
+Made changes.
+
+
+```
+Your CLI script now generates unique filenames for each run (using a timestamp) for both the TTS WAV and the output video. All generated videos will be kept and not overwritten.
+
+You’ll find each new video in `Wav2Lip/results/` with a unique name like `avatar_YYYYMMDD_HHMMSS.mp4`. Let me know if you want to further customize the naming or add more features!

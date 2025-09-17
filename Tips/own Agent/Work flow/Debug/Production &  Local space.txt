@@ -1,0 +1,66 @@
+  Stored in directory: /home/hazem-elbatawy/.cache/pip/wheels/b4/a4/88/480018a664e58ca7ce6708759193ee51b017b3b72aa3df8a85
+Successfully built gruut encodec
+Installing collected packages: yarl, werkzeug, soxr, smart-open, scipy, python-dateutil, preshed, nvidia-cusparse-cu12, nvidia-cufft-cu12, nvidia-cudnn-cu12, numba, nltk, markdown-it-py, lazy_loader, language-data, jsonlines, jinja2, cython, cycler, coqpit, contourpy, cloudpathlib, cffi, catalogue, blis, blinker, Babel, audioread, attrs, anyascii, aiosignal, aiohappyeyeballs, absl-py, tensorboard, srsly, soundfile, scikit-learn, rich, pooch, pandas, nvidia-cusolver-cu12, matplotlib, langcodes, inflect, huggingface-hub, g2pkk, flask, dateparser, aiohttp, typer, torch, tokenizers, pynndescent, librosa, gruut, confection, weasel, umap-learn, transformers, trainer, torchaudio, thinc, spacy, encodec, TTS
+Successfully installed Babel-2.17.0 TTS-0.22.0 absl-py-2.3.1 aiohappyeyeballs-2.6.1 aiohttp-3.12.15 aiosignal-1.4.0 anyascii-0.3.3 attrs-25.3.0 audioread-3.0.1 blinker-1.9.0 blis-1.2.1 catalogue-2.0.10 cffi-2.0.0 cloudpathlib-0.22.0 confection-0.1.5 contourpy-1.3.3 coqpit-0.0.17 cycler-0.12.1 cython-3.1.3 dateparser-1.1.8 encodec-0.1.1 flask-3.1.2 g2pkk-0.1.2 gruut-2.2.3 huggingface-hub-0.34.4 inflect-7.5.0 jinja2-3.1.6 jsonlines-1.2.0 langcodes-3.5.0 language-data-1.3.0 lazy_loader-0.4 librosa-0.11.0 markdown-it-py-4.0.0 matplotlib-3.10.6 nltk-3.9.1 numba-0.61.2 nvidia-cudnn-cu12-9.10.2.21 nvidia-cufft-cu12-11.3.3.83 nvidia-cusolver-cu12-11.7.3.90 nvidia-cusparse-cu12-12.5.8.93 pandas-1.5.3 pooch-1.8.2 preshed-3.0.10 pynndescent-0.5.13 python-dateutil-2.9.0.post0 rich-14.1.0 scikit-learn-1.7.2 scipy-1.16.2 smart-open-7.3.1 soundfile-0.13.1 soxr-1.0.0 spacy-3.8.7 srsly-2.5.1 tensorboard-2.20.0 thinc-8.3.4 tokenizers-0.22.0 torch-2.8.0 torchaudio-2.8.0 trainer-0.0.36 transformers-4.56.1 typer-0.17.4 umap-learn-0.5.9.post2 weasel-0.4.1 werkzeug-3.1.3 yarl-1.20.1
+(venv) hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/vox-estate-agent/backend/realestate_agent$ 
+** Successefully installed . but i have low desk space i think we should remove uinty since i will install react app dom and native expo so i will still need memory space for the project. or just install the react app on the remote server.
+hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/vox-estate-agent$ df -h
+Filesystem      Size  Used Avail Use% Mounted on
+tmpfs           2.0G  2.6M  2.0G   1% /run
+/dev/sda4       117G  109G  2.7G  98% /
+tmpfs           9.7G  240M  9.5G   3% /dev/shm
+tmpfs           5.0M  8.0K  5.0M   1% /run/lock
+efivarfs        374K  213K  157K  58% /sys/firmware/efi/efivars
+/dev/sda1       871M   69M  803M   8% /boot/efi
+tmpfs           2.0G  124K  2.0G   1% /run/user/1000
+
+
+
+
+🔥 Nice — `TTS` is finally installed successfully!
+
+But yeah, you’re in **danger zone** right now:
+
+```
+/dev/sda4       117G  109G  2.7G  98% /
+```
+
+With only **2.7 GB left**, things will break again if you try:
+
+* installing more dependencies (React/Expo needs Node, npm, cache, etc., which can easily be >3 GB).
+* running heavy models (Torch checkpoints, wav2lip results).
+
+---
+
+### Your Options:
+
+**Option 1: Free space locally**
+
+* The **Unity folder (18 GB)** you showed earlier is a huge win:
+
+  ```bash
+  rm -rf ~/Unity
+  ```
+
+  That alone would free **\~18GB** and give you breathing room.
+* You can also safely clean `~/Downloads` if you don’t need old archives.
+
+**Option 2: Offload React app to remote server**
+
+* If you’re planning deployment anyway, it’s smarter to:
+
+  * Run FastAPI + TTS backend on your **remote server**.
+  * Create the React app (frontend + Expo) on the remote too.
+* Keeps your laptop light, avoids filling disk.
+
+**Option 3: Hybrid**
+
+* Keep backend (FastAPI + TTS + Docker/Wav2Lip) locally.
+* Only scaffold React app remotely (via `npx create-react-app` or `npx create-expo-app`).
+* That way, you save space locally but can still test backend code.
+
+---
+
+👉 If your plan is **serious production**, I’d strongly recommend **Option 2 (move frontend to remote)** and keep your local machine for dev/testing only.
+
+Do you want me to give you a **safe cleanup command set** to instantly free \~20GB without touching your project/venv?

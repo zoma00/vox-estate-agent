@@ -1,0 +1,53 @@
+In Python, you can use the **`venv`** module to create a virtual environment (isolated Python environment).
+
+The basic command is:
+
+```bash
+python -m venv <name_of_virtual_environment>
+```
+
+### Example:
+
+```bash
+python -m venv venv
+```
+
+This will create a folder named `venv` in your current directory, containing a standalone Python environment.
+
+---
+
+### Activating the virtual environment
+
+* **On Linux/MacOS (bash/zsh):**
+
+  ```bash
+  source venv/bin/activate
+  ```
+
+* **On Windows (Command Prompt):**
+
+  ```cmd
+  venv\Scripts\activate
+  ```
+
+* **On Windows (PowerShell):**
+
+  ```powershell
+  .\venv\Scripts\Activate.ps1
+  ```
+
+---
+
+### Deactivating
+
+To leave the virtual environment:
+
+```bash
+deactivate
+```
+
+---
+
+⚡Tip: Always create a virtual environment for each project to avoid dependency conflicts.
+
+Do you want me to also show you how to check if `venv` is installed and troubleshoot if the command doesn’t work?

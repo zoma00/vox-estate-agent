@@ -1,0 +1,210 @@
+hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/vox-estate-agent$ du -h --max-depth=1 ~/ | sort -h
+4.0K    /home/hazem-elbatawy/Documents
+4.0K    /home/hazem-elbatawy/Music
+4.0K    /home/hazem-elbatawy/Public
+4.0K    /home/hazem-elbatawy/Templates
+4.0K    /home/hazem-elbatawy/.unityclouddrive
+4.0K    /home/hazem-elbatawy/Videos
+12K     /home/hazem-elbatawy/.gnupg
+12K     /home/hazem-elbatawy/.le
+16K     /home/hazem-elbatawy/.android
+16K     /home/hazem-elbatawy/Desktop
+16K     /home/hazem-elbatawy/.ollama
+20K     /home/hazem-elbatawy/.ssh
+36K     /home/hazem-elbatawy/.codex
+76K     /home/hazem-elbatawy/.pki
+224K    /home/hazem-elbatawy/.dotnet
+280K    /home/hazem-elbatawy/.docker
+1.1M    /home/hazem-elbatawy/.local
+1.1M    /home/hazem-elbatawy/.plastic4
+5.5M    /home/hazem-elbatawy/Pictures
+6.0M    /home/hazem-elbatawy/.npm
+106M    /home/hazem-elbatawy/.windsurf
+1.4G    /home/hazem-elbatawy/.config
+1.5G    /home/hazem-elbatawy/Project Test
+1.8G    /home/hazem-elbatawy/My project
+2.1G    /home/hazem-elbatawy/.vscode
+2.2G    /home/hazem-elbatawy/.codeium
+2.5G    /home/hazem-elbatawy/First_pro
+2.6G    /home/hazem-elbatawy/snap
+4.8G    /home/hazem-elbatawy/.cache
+8.3G    /home/hazem-elbatawy/Downloads
+18G     /home/hazem-elbatawy/Unity
+45G     /home/hazem-elbatawy/
+hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/vox-estate-agent$ 
+
+
+Perfect — this already explains a lot 🔍
+
+Here’s where your space is going inside **`/home/hazem-elbatawy` (45G total):**
+
+* **Unity → 18G** ✅ (massive, likely projects/builds you don’t need daily).
+* **Downloads → 8.3G** ✅ (usually full of installers, big files, duplicates).
+* **.cache → 4.8G** ✅ (pip cache, browser cache, etc. — safe to clear).
+* **snap → 2.6G** (Ubuntu Snap apps, can grow large).
+* **First\_pro / My project / Project Test → \~6G combined** (old project dirs).
+* **VSCode & extensions (\~4.3G total)** → `.vscode (2.1G)` + `.codeium (2.2G)`
+
+👉 So the **biggest cleanup wins** will be:
+
+1. **`~/.cache` (4.8G)** → you can safely delete it (recreated automatically).
+
+   ```bash
+   rm -rf ~/.cache/*
+   ```
+2. **Downloads (8.3G)** → clean up old installers & large files.
+
+   ```bash
+   du -h --max-depth=1 ~/Downloads | sort -h
+   ```
+
+   (to see which subfolders/files are biggest).
+3. **Unity (18G)** → archive or move old Unity projects to an external disk.
+4. **Extra projects (`First_pro`, `My project`, `Project Test`)** → delete/move what you don’t need.
+5. **VSCode extensions** → if you don’t need all extensions, you can clear `.vscode` and `.codeium`.
+
+---
+
+⚡ If you clear just **`.cache` + Downloads + unused Unity projects**, you’ll easily free **15–25 GB** right away.
+
+---
+
+Do you want me to write you a **safe cleanup script** that:
+
+* Clears `.cache`
+* Trims `Downloads` of files older than X days
+* Suggests Unity/project folders to move
+
+So you just run one command and reclaim space safely?
+
+
+
+
+hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/vox-estate-agent$ rm -rf ~/.cache/*
+hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/vox-estate-agent$ df -h
+Filesystem      Size  Used Avail Use% Mounted on
+tmpfs           2.0G  2.6M  2.0G   1% /run
+/dev/sda4       117G  102G  9.5G  92% /
+tmpfs           9.7G  177M  9.5G   2% /dev/shm
+tmpfs           5.0M  8.0K  5.0M   1% /run/lock
+efivarfs        374K  213K  157K  58% /sys/firmware/efi/efivars
+/dev/sda1       871M   69M  803M   8% /boot/efi
+tmpfs           2.0G  124K  2.0G   1% /run/user/1000
+hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/vox-estate-agent$ 
+
+
+
+Nice 🎉 You just freed **\~4.8 GB** from `.cache` — your root (`/`) went from **100% full → 92% used**, with **\~9.5 GB free** now. Much better! 🚀
+
+But 9.5 GB free is still a bit tight if you’ll be working with **Torch, TTS, Unity, Docker**, etc. (they generate large temp files).
+
+👉 Next best moves:
+
+1. **Downloads (8.3 GB)** — usually the easiest to clean. Run:
+
+   ```bash
+   du -h --max-depth=1 ~/Downloads | sort -h
+   ```
+
+   and delete what you don’t need.
+2. **Unity (18 GB)** — if you don’t need all Unity projects on this machine, move/archive them to an external disk or compress them.
+
+   ```bash
+   tar -czf ~/Unity_backup.tar.gz ~/Unity
+   mv ~/Unity_backup.tar.gz /path/to/external/drive
+   rm -rf ~/Unity
+   ```
+3. **Old project dirs (`First_pro`, `My project`, `Project Test` \~6 GB)** — clean or archive if not needed.
+
+That would give you back **20–25 GB** more space.
+
+Do you want me to give you a **step-by-step cleanup plan (safe commands)** that targets only the biggest directories you can live without?
+
+
+
+
+hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~$ du -h --max-depth=1 ~/Downloads/vox-estate-agent | sort -h
+4.0K	/home/hazem-elbatawy/Downloads/vox-estate-agent/docs
+4.0K	/home/hazem-elbatawy/Downloads/vox-estate-agent/mobile-frontend
+4.0K	/home/hazem-elbatawy/Downloads/vox-estate-agent/web-frontend
+2.5M	/home/hazem-elbatawy/Downloads/vox-estate-agent/Tips
+7.1M	/home/hazem-elbatawy/Downloads/vox-estate-agent/input wave files
+13G	/home/hazem-elbatawy/Downloads/vox-estate-agent
+13G	/home/hazem-elbatawy/Downloads/vox-estate-agent/backend
+
+
+
+
+
+########################################################
+
+Yes — moving **18 GB** between partitions (`/dev/sda4` → `/dev/sda3`) will take time, because it’s a full copy+delete operation at disk speed.
+
+Since your `/dev/sda4` (root) is still **98% full**, we should find out what’s eating space beyond `~/Unity` and `~/Downloads`.
+
+---
+
+### Step 1: Check top-level disk usage on root
+
+Run this to see which top folders under `/` are consuming the most:
+
+```bash
+sudo du -h --max-depth=1 / | sort -h
+```
+
+This will show sizes like `/home`, `/var`, `/usr`, etc.
+
+---
+
+### Step 2: Drill down into `/home` (you already saw \~47 GB there)
+
+But there may be **system folders** filling up space, like logs or caches.
+
+Check `/var` specifically:
+
+```bash
+sudo du -h --max-depth=1 /var | sort -h
+```
+
+---
+
+### Step 3: While `mv` is running
+
+* If you’re moving `~/Unity`, let it finish — you’ll gain **18 GB** back.
+* If you want faster results, you can use `rsync` with progress instead of `mv`:
+
+```bash
+rsync -ah --progress ~/Unity "/media/hazem-elbatawy/New Volume/Unity"
+rm -rf ~/Unity
+ln -s "/media/hazem-elbatawy/New Volume/Unity" ~/Unity
+```
+
+That way you see the copy progress.
+
+---
+
+Do you want me to give you a **script that finds the top 10 biggest folders across your whole `/` filesystem**, so you can see at once what’s consuming `/dev/sda4`?
+
+
+########################################################
+
+                                                      Freed space
+########################################################################################
+
+
+hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~$ mv ~/Unity "/media/hazem-elbatawy/New Volume/Unity"
+ 
+
+hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~$ 
+hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~$ 
+hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~$ df -h
+Filesystem      Size  Used Avail Use% Mounted on
+tmpfs           2.0G  2.6M  2.0G   1% /run
+/dev/sda4       117G   91G   21G  82% /
+tmpfs           9.7G  351M  9.3G   4% /dev/shm
+tmpfs           5.0M  8.0K  5.0M   1% /run/lock
+efivarfs        374K  215K  155K  59% /sys/firmware/efi/efivars
+/dev/sda1       871M   69M  803M   8% /boot/efi
+tmpfs           2.0G  140K  2.0G   1% /run/user/1000
+/dev/sda3       804G  646G  159G  81% /media/hazem-elbatawy/New Volume
+

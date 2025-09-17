@@ -1,0 +1,13 @@
+Read [](file:///home/hazem-elbatawy/Downloads/vox-estate-agent/web-frontend/webfront/src/AdminDashboard.jsx)
+
+Using "Apply Patch"
+
+
+```
+src/AdminDashboard.jsx
+```
+The "Realestate Links" section with popular Egyptian real estate websites has now been added to your dashboard. You should see it below the Property Gallery in your admin dashboard UI.
+
+If you need more sites or want to further style this section, just let me know!
+
+Made changes.

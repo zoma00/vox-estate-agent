@@ -1,0 +1,30 @@
+from fastapi import FastAPI, Request
+import requests
+
+app = FastAPI()
+
+DID_API_KEY = "YOUR_DID_API_KEY"
+AGENT_ID = "v2_agt_NY84CG6e"  # Your agent ID
+
+@app.post("/talk")
+async def talk(request: Request):
+    data = await request.json()
+    user_text = data["text"]
+
+    # D-ID API endpoint for talking agent
+    url = f"https://api.d-id.com/agents/{AGENT_ID}/talks"
+    headers = {
+        "Authorization": f"Bearer {DID_API_KEY}",
+        "Content-Type": "application/json"
+    }
+    payload = {
+        "script": {
+            "type": "text",
+            "input": user_text,
+            "provider": {"type": "microsoft", "voice_id": "en-US-JennyNeural"}
+        }
+    }
+    response = requests.post(url, headers=headers, json=payload)
+    return response.json()  # Contains video/stream URL
+
+# You can now POST {"text": "Your message"} to /talk and get a video response

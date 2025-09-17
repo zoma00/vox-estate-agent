@@ -1,0 +1,10 @@
+# How to connect your FastAPI app to a domain
+
+1. Buy a domain from a registrar (e.g., Namecheap, GoDaddy).
+2. Set an A record in your domain DNS to point to your server's public IP.
+3. Run your FastAPI app with Uvicorn:
+  python -m uvicorn app.main:app --host 0.0.0.0 --port 8000
+4. (Recommended) Set up Nginx as a reverse proxy to forward requests from port 80/443 to 8000.
+5. (Optional) Use Certbot to enable HTTPS/SSL for your domain.
+
+This setup lets you access your FastAPI app via your domain name securely and reliably.

@@ -1,0 +1,18 @@
+
+Turn TODOs into Codex tasks
+Write a TODO comment and convert it into a Codex task with a single click.
+Back
+
+
+
+
+Decide how much autonomy you want to grant
+For more details, see the Codex docs
+Codex can make mistakes
+Review the code it writes and commands it runs.
+Powered by your ChatGPT account
+Uses your plan’s rate limits and training data preferences.
+Back
+
+
+

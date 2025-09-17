@@ -1,0 +1,9 @@
+D-ID charges high prices for production use because:
+--------------------------------------------------------
+
+- Generating realistic talking avatar videos requires powerful servers, advanced AI models, and significant computational resources.
+- They provide high-quality animation, voice synthesis, and hosting, all of which have ongoing infrastructure and development costs.
+- Pricing also covers support, API reliability, commercial licensing, and scalability for business use.
+- By charging more for production, they can offer lower-cost plans for demos and personal use, while ensuring sustainability and quality for high-traffic, commercial deployments.
+
+Building and maintaining this technology at scale is expensive, so production pricing reflects those real costs.

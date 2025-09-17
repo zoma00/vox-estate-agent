@@ -1,0 +1,39 @@
+# Python Version Setup Explanation
+
+## System Configuration
+- **System Python Version**: 3.12.3
+  - This is the default Python version installed on your system
+  - Check with: `python3 --version` or `python --version`
+  - Location: `/usr/bin/python3`
+
+## Virtual Environment Configuration
+- **Virtual Environment Python Version**: 3.11.13
+  - This is the version used specifically for your project
+  - Check with: `python3.11 --version`
+  - Location: `/home/hazem-elbatawy/Downloads/Multi Agent /backend/realestate_agent/venv/bin/python`
+
+## How to Verify
+1. Check system Python version:
+   ```bash
+   python3 --version
+   # Should output: Python 3.12.3
+   ```
+
+2. Check Python 3.11 version:
+   ```bash
+   python3.11 --version
+   # Should output: Python 3.11.13
+   ```
+
+3. When virtual environment is activated:
+   ```bash
+   source /home/hazem-elbatawy/Downloads/Multi\ Agent\ /backend/realestate_agent/venv/bin/activate
+   python --version
+   # Should output: Python 3.11.13
+   ```
+
+## Why This Setup is Useful
+- Keeps project dependencies isolated from system Python
+- Allows using different Python versions for different projects
+- Prevents version conflicts between projects
+- Makes your development environment reproducible

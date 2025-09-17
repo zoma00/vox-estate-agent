@@ -1,0 +1,288 @@
+This will make sure keep wav2lip and hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/Multi Agent /realestate_agent/Wav2Lip$ docker ps -a
+CONTAINER ID   IMAGE                     COMMAND                  CREATED      STATUS                  PORTS     NAMES
+1e22f71e9d23   realestate_demo-fastapi   "uvicorn app.main:ap…"   5 days ago   Exited (0) 5 days ago             realestate_demo-fastapi-1
+c1a1decfbcdb   postgres:15               "docker-entrypoint.s…"   7 days ago   Exited (0) 5 days ago             realestate_demo-db-1
+
+
+
+Got it ✅ You want the cleanup script to **keep**:
+
+* `wav2lip:latest` image
+* Your stopped containers:
+
+  * `realestate_demo-fastapi-1`
+  * `realestate_demo-db-1`
+
+Everything else (dangling images, unused stuff) can be cleaned up with confirmation.
+
+---
+
+### 📝 Updated Script: `docker_cleanup.sh`
+
+```bash
+#!/bin/bash
+set -e
+
+echo "====================================="
+echo " Docker Cleanup Script (Safe Mode) "
+echo "====================================="
+
+# Protect list
+PROTECTED_IMAGES=("wav2lip:latest")
+PROTECTED_CONTAINERS=("realestate_demo-fastapi-1" "realestate_demo-db-1")
+
+# Step 1: Containers
+echo
+echo "Stopped containers:"
+docker ps -a --filter "status=exited"
+
+read -p "Do you want to remove ALL stopped containers (except protected)? (y/n): " yn
+if [[ "$yn" == "y" ]]; then
+  for cid in $(docker ps -a -q --filter "status=exited"); do
+    cname=$(docker inspect --format '{{.Name}}' $cid | cut -c2-)
+    if [[ " ${PROTECTED_CONTAINERS[@]} " =~ " ${cname} " ]]; then
+      echo "Skipping protected container: $cname"
+    else
+      echo "Removing container: $cname"
+      docker rm $cid
+    fi
+  done
+else
+  echo "Skipped removing stopped containers."
+fi
+
+# Step 2: Dangling images
+echo
+echo "Dangling (untagged) images:"
+docker images -f "dangling=true"
+
+read -p "Do you want to remove all dangling images? (y/n): " yn
+if [[ "$yn" == "y" ]]; then
+  docker image prune -f
+else
+  echo "Skipped removing dangling images."
+fi
+
+# Step 3: Unused images (excluding protected)
+echo
+echo "All images:"
+docker images
+
+read -p "Do you want to remove unused images (not used by any container)? (y/n): " yn
+if [[ "$yn" == "y" ]]; then
+  for img in $(docker images --format "{{.Repository}}:{{.Tag}}"); do
+    if [[ " ${PROTECTED_IMAGES[@]} " =~ " ${img} " ]]; then
+      echo "Skipping protected image: $img"
+    else
+      docker rmi -f $img || true
+    fi
+  done
+else
+  echo "Skipped removing unused images."
+fi
+
+# Step 4: Volumes
+echo
+echo "Unused volumes:"
+docker volume ls -f "dangling=true"
+
+read -p "Do you want to remove unused volumes? (y/n): " yn
+if [[ "$yn" == "y" ]]; then
+  docker volume prune -f
+else
+  echo "Skipped removing unused volumes."
+fi
+
+# Step 5: Build cache
+echo
+echo "Docker build cache size:"
+docker builder prune --dry-run
+
+read -p "Do you want to clear ALL build cache? (y/n): " yn
+if [[ "$yn" == "y" ]]; then
+  docker builder prune -f
+else
+  echo "Skipped clearing build cache."
+fi
+
+echo
+echo "====================================="
+echo " Cleanup finished!"
+echo " Current usage:"
+docker system df -v
+echo "====================================="
+```
+
+---
+
+### 🔹 What this script guarantees
+
+* **Keeps `wav2lip:latest` image**
+* **Keeps your containers**:
+
+  * `realestate_demo-fastapi-1`
+  * `realestate_demo-db-1`
+* Deletes only what you confirm.
+* Skips protected items even if you type `y`.
+
+---
+
+Do you want me to also add **automatic space freed summary** (e.g., “You reclaimed 14.2 GB”) at the end of the script?
+
+
+
+
+
+################################################################################
+
+
+Perfect 👍 I’ll add a **before/after check** so the script tells you how much disk space was actually reclaimed.
+
+---
+
+### 📝 Final Script: `docker_cleanup.sh`
+
+```bash
+#!/bin/bash
+set -e
+
+echo "====================================="
+echo " Docker Cleanup Script (Safe Mode) "
+echo "====================================="
+
+# Protect list
+PROTECTED_IMAGES=("wav2lip:latest")
+PROTECTED_CONTAINERS=("realestate_demo-fastapi-1" "realestate_demo-db-1")
+
+# Function: Get current Docker disk usage in bytes
+get_usage() {
+  docker system df --format "{{.Size}}" | grep total | awk '{print $1}' | numfmt --from=iec
+}
+
+# Convert bytes → human readable
+hr_size() {
+  numfmt --to=iec $1
+}
+
+# Save usage before cleanup
+BEFORE=$(get_usage)
+
+# Step 1: Containers
+echo
+echo "Stopped containers:"
+docker ps -a --filter "status=exited"
+
+read -p "Do you want to remove ALL stopped containers (except protected)? (y/n): " yn
+if [[ "$yn" == "y" ]]; then
+  for cid in $(docker ps -a -q --filter "status=exited"); do
+    cname=$(docker inspect --format '{{.Name}}' $cid | cut -c2-)
+    if [[ " ${PROTECTED_CONTAINERS[@]} " =~ " ${cname} " ]]; then
+      echo "Skipping protected container: $cname"
+    else
+      echo "Removing container: $cname"
+      docker rm $cid
+    fi
+  done
+else
+  echo "Skipped removing stopped containers."
+fi
+
+# Step 2: Dangling images
+echo
+echo "Dangling (untagged) images:"
+docker images -f "dangling=true"
+
+read -p "Do you want to remove all dangling images? (y/n): " yn
+if [[ "$yn" == "y" ]]; then
+  docker image prune -f
+else
+  echo "Skipped removing dangling images."
+fi
+
+# Step 3: Unused images (excluding protected)
+echo
+echo "All images:"
+docker images
+
+read -p "Do you want to remove unused images (not used by any container)? (y/n): " yn
+if [[ "$yn" == "y" ]]; then
+  for img in $(docker images --format "{{.Repository}}:{{.Tag}}"); do
+    if [[ " ${PROTECTED_IMAGES[@]} " =~ " ${img} " ]]; then
+      echo "Skipping protected image: $img"
+    else
+      docker rmi -f $img || true
+    fi
+  done
+else
+  echo "Skipped removing unused images."
+fi
+
+# Step 4: Volumes
+echo
+echo "Unused volumes:"
+docker volume ls -f "dangling=true"
+
+read -p "Do you want to remove unused volumes? (y/n): " yn
+if [[ "$yn" == "y" ]]; then
+  docker volume prune -f
+else
+  echo "Skipped removing unused volumes."
+fi
+
+# Step 5: Build cache
+echo
+echo "Docker build cache size:"
+docker builder prune --dry-run
+
+read -p "Do you want to clear ALL build cache? (y/n): " yn
+if [[ "$yn" == "y" ]]; then
+  docker builder prune -f
+else
+  echo "Skipped clearing build cache."
+fi
+
+# Save usage after cleanup
+AFTER=$(get_usage)
+
+# Calculate reclaimed space
+FREED=$(( BEFORE - AFTER ))
+
+echo
+echo "====================================="
+echo " Cleanup finished!"
+echo " Before: $(hr_size $BEFORE)"
+echo " After : $(hr_size $AFTER)"
+echo " Freed : $(hr_size $FREED)"
+echo "====================================="
+```
+
+---
+
+### 🔹 What’s new
+
+* Calculates Docker disk usage **before & after** cleanup.
+* Shows reclaimed space in **human-readable format** (e.g., `14G`).
+* Still keeps `wav2lip:latest` + your 2 containers safe.
+
+---
+
+⚡Do you want me to also extend this so it shows **system-wide freed space** (like `df -h /` before/after), not just Docker’s usage?
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,398 @@
+**My Ubuntu system crashed after  i ran the wav2lib container and before generating the video  then restarted .
+** previously it wav2lip was working using this docker config:
+FROM python:3.8-slim
+
+# Install system dependencies (including OpenCV requirements)
+RUN apt-get update && \
+    apt-get install -y ffmpeg git libsm6 libxext6 libxrender-dev && \
+    rm -rf /var/lib/apt/lists/*
+
+# Set workdir
+WORKDIR /workspace
+
+# Copy requirements first for Docker layer caching
+COPY requirements.txt ./
+RUN pip install --upgrade pip && \
+    pip install -r requirements.txt
+
+# Copy the rest of the code
+COPY . .
+
+# Default command
+CMD ["/bin/bash"]
+** I just type text in the prompt termainl then it is gen in TTS and input wave then wav2lip gen a vids. There were no connectio for open ai. 
+** And this is the old cli_avatar.py:
+
+
+#!/usr/bin/env python3
+"""
+Simple CLI script for Text-to-Avatar pipeline:
+- User enters text
+- TTS generates audio
+- Wav2Lip generates video
+- Output video path is shown
+"""
+
+import subprocess
+import sys
+import os
+import requests
+import time
+
+# CONFIGURABLE PATHS
+TTS_SCRIPT = "batch_tts.sh"  # Your TTS batch script
+FACE_IMAGE = "face.jpg"  # Path to your avatar image (relative to Wav2Lip dir)
+WAV2LIP_INFER_PATH = "inference.py"  # Path inside Wav2Lip dir
+WAV2LIP_CHECKPOINT = "wav2lip.pth"  # Path inside Wav2Lip dir
+WAV2LIP_DIR = "Wav2Lip"
+OUTPUT_DIR = os.path.join(WAV2LIP_DIR, "results")  # Where output videos are saved
+
+# Generate a unique base name for this run
+timestamp = time.strftime("%Y%m%d_%H%M%S")
+base_name = f"avatar_{timestamp}"
+
+def get_wav2lip_docker_cmd():
+    return [
+        "sudo", "docker", "run", "--rm",
+        "-v", f"{os.path.abspath(WAV2LIP_DIR)}/:/workspace",
+        "wav2lip",
+        "python3", WAV2LIP_INFER_PATH,
+        "--checkpoint_path", WAV2LIP_CHECKPOINT,
+        "--face", FACE_IMAGE,
+        "--audio", "tts_output.wav"
+    ]
+
+
+def main():
+    print("=== AI Avatar CLI ===")
+    user_text = input("Enter text for the avatar to speak: ").strip()
+    if not user_text:
+        print("No input provided. Exiting.")
+        return
+
+
+    # Call FastAPI TTS endpoint to generate audio
+    print("[1/3] Generating speech audio with TTS (FastAPI)...")
+    tts_api_url = "http://localhost:8000/agent/tts"
+    tts_wav_name = f"tts_output_{base_name}.wav"
+    try:
+        response = requests.post(tts_api_url, data={"text": user_text})
+        response.raise_for_status()
+        # Save the returned audio content
+        with open(tts_wav_name, "wb") as f:
+            f.write(response.content)
+    except Exception as e:
+        print(f"TTS API call failed: {e}")
+        sys.exit(1)
+
+    # Copy generated wav to Wav2Lip dir as input for Docker
+    tts_wav_dst = os.path.join(WAV2LIP_DIR, f"tts_output.wav")
+    if os.path.exists(tts_wav_name):
+        import shutil
+        shutil.copy(tts_wav_name, tts_wav_dst)
+    else:
+        print(f"Error: TTS output wav '{tts_wav_name}' not found. Check TTS API output.")
+        sys.exit(1)
+
+
+    # Ensure face image exists before running Docker
+    face_path = os.path.join(WAV2LIP_DIR, FACE_IMAGE)
+    if not os.path.exists(face_path):
+        print(f"Error: Face image '{face_path}' not found. Please check the path.")
+        sys.exit(1)
+
+    # Ensure results directory exists before running Docker
+    if not os.path.exists(OUTPUT_DIR):
+        os.makedirs(OUTPUT_DIR)
+
+    # Copy tts_output.wav to Wav2Lip dir for Docker
+    tts_wav_src = "tts_output.wav"
+    tts_wav_dst = os.path.join(WAV2LIP_DIR, "tts_output.wav")
+    if os.path.exists(tts_wav_src):
+        import shutil
+        shutil.copy(tts_wav_src, tts_wav_dst)
+
+    print("[2/3] Generating talking video with Wav2Lip (Docker)...")
+    # Remove old result_voice.mp4 if exists to avoid confusion
+    result_voice_path = os.path.join(OUTPUT_DIR, "result_voice.mp4")
+    if os.path.exists(result_voice_path):
+        os.remove(result_voice_path)
+
+    wav2lip_result = subprocess.run(get_wav2lip_docker_cmd(), cwd=WAV2LIP_DIR, capture_output=True)
+    if wav2lip_result.returncode != 0:
+        print("Wav2Lip failed:", wav2lip_result.stderr.decode())
+        sys.exit(1)
+
+    # Rename the generated video to a unique name
+    if os.path.exists(result_voice_path):
+        unique_video_path = os.path.join(OUTPUT_DIR, f"{base_name}.mp4")
+        os.rename(result_voice_path, unique_video_path)
+        print(f"[3/3] Done! Video saved at: {unique_video_path}")
+        print("Play it with: mpv", unique_video_path)
+    else:
+        print(f"No video output found in '{OUTPUT_DIR}'.")
+        sys.exit(1)
+
+if __name__ == "__main__":
+    main()
+
+
+** And this is the new cli_avatar.py :
+
+#!/usr/bin/env python3
+"""
+Simple CLI script for Text-to-Avatar pipeline:
+- User enters text
+- TTS generates audio
+- Wav2Lip generates video
+- Output video path is shown
+"""
+
+# Load environment variables from .env
+import os
+import sys
+import time
+import subprocess
+import requests
+from dotenv import load_dotenv
+import openai
+load_dotenv()
+
+# === LLM Backend Selection ===
+
+# Updated for openai>=1.0.0
+def call_openai_llm(prompt, api_key=None, model="gpt-3.5-turbo"):
+    import openai
+    client = openai.OpenAI(api_key=api_key or os.getenv("OPENAI_API_KEY"))
+    response = client.chat.completions.create(
+        model=model,
+        messages=[{"role": "user", "content": prompt}],
+        max_tokens=512,
+        temperature=0.7,
+    )
+    return response.choices[0].message.content.strip()
+
+
+def call_llm(prompt, use_openai=True, **kwargs):
+    if use_openai:
+        return call_openai_llm(prompt, **kwargs)
+    else:
+        return call_ollama_llm(prompt, **kwargs)
+    
+# CONFIGURABLE PATHS
+TTS_SCRIPT = "batch_tts.sh"  # Your TTS batch script
+FACE_IMAGE = "face.jpg"  # Path to your avatar image (relative to Wav2Lip dir)
+WAV2LIP_INFER_PATH = "inference.py"  # Path inside Wav2Lip dir
+WAV2LIP_CHECKPOINT = "wav2lip.pth"  # Path inside Wav2Lip dir
+WAV2LIP_DIR = "Wav2Lip"
+OUTPUT_DIR = os.path.join(WAV2LIP_DIR, "results")  # Where output videos are saved
+
+# Generate a unique base name for this run
+timestamp = time.strftime("%Y%m%d_%H%M%S")
+base_name = f"avatar_{timestamp}"
+
+def get_wav2lip_docker_cmd():
+    return [
+        "sudo", "docker", "run", "--rm",
+        "-v", f"{os.path.abspath(WAV2LIP_DIR)}/:/workspace",
+        "wav2lip",
+        "python3", WAV2LIP_INFER_PATH,
+        "--checkpoint_path", WAV2LIP_CHECKPOINT,
+        "--face", FACE_IMAGE,
+        "--audio", "tts_output.wav"
+    ]
+
+
+def main():
+    print("=== AI Avatar CLI ===")
+    user_text = input("You: ").strip()
+    if not user_text:
+        print("No input provided. Exiting.")
+        return
+
+    # Get AI response from OpenAI (default) or Ollama (set use_openai=False)
+    ai_response = call_llm(user_text, use_openai=True)
+    print(f"AI: {ai_response}")
+
+    # Use AI response as the text for TTS and video
+    tts_text = ai_response
+
+    # Call FastAPI TTS endpoint to generate audio
+    print("[1/3] Generating speech audio with TTS (FastAPI)...")
+    tts_api_url = "http://localhost:8000/agent/tts"
+    tts_wav_name = f"tts_output_{base_name}.wav"
+    try:
+        response = requests.post(tts_api_url, data={"text": tts_text})
+        response.raise_for_status()
+        # Save the returned audio content
+        with open(tts_wav_name, "wb") as f:
+            f.write(response.content)
+    except Exception as e:
+        print(f"TTS API call failed: {e}")
+        sys.exit(1)
+
+    # Copy generated wav to Wav2Lip dir as input for Docker
+    tts_wav_dst = os.path.join(WAV2LIP_DIR, f"tts_output.wav")
+    if os.path.exists(tts_wav_name):
+        import shutil
+        shutil.copy(tts_wav_name, tts_wav_dst)
+    else:
+        print(f"Error: TTS output wav '{tts_wav_name}' not found. Check TTS API output.")
+        sys.exit(1)
+
+
+    # Ensure face image exists before running Docker
+    face_path = os.path.join(WAV2LIP_DIR, FACE_IMAGE)
+    if not os.path.exists(face_path):
+        print(f"Error: Face image '{face_path}' not found. Please check the path.")
+        sys.exit(1)
+
+    # Ensure results directory exists before running Docker
+    if not os.path.exists(OUTPUT_DIR):
+        os.makedirs(OUTPUT_DIR)
+
+    # Copy tts_output.wav to Wav2Lip dir for Docker
+    tts_wav_src = "tts_output.wav"
+    tts_wav_dst = os.path.join(WAV2LIP_DIR, "tts_output.wav")
+    if os.path.exists(tts_wav_src):
+        import shutil
+        shutil.copy(tts_wav_src, tts_wav_dst)
+
+    print("[2/3] Generating talking video with Wav2Lip (Docker)...")
+    # Remove old result_voice.mp4 if exists to avoid confusion
+    result_voice_path = os.path.join(OUTPUT_DIR, "result_voice.mp4")
+    if os.path.exists(result_voice_path):
+        os.remove(result_voice_path)
+
+    wav2lip_result = subprocess.run(get_wav2lip_docker_cmd(), cwd=WAV2LIP_DIR, capture_output=True)
+    if wav2lip_result.returncode != 0:
+        print("Wav2Lip failed:", wav2lip_result.stderr.decode())
+        sys.exit(1)
+
+    # Rename the generated video to a unique name
+    if os.path.exists(result_voice_path):
+        unique_video_path = os.path.join(OUTPUT_DIR, f"{base_name}.mp4")
+        os.rename(result_voice_path, unique_video_path)
+        print(f"[3/3] Done! Video saved at: {unique_video_path}")
+        print("Play it with: mpv", unique_video_path)
+    else:
+        print(f"No video output found in '{OUTPUT_DIR}'.")
+        sys.exit(1)
+
+if __name__ == "__main__":
+    main()
+
+** But this one is not updated with the new docker wav2lib docker run Cuda 
+command.
+
+
+** i want to debug what is the diffs between the 2 cli why when try to integrate
+with open ai the sys crached. open ai not heavy to do this. And previously I
+was able to gen vids using the AMD GPU. Why now i havee to use the 
+Gforce and cuda and also not working?
+
+
+
+
+Here’s a focused debug and explanation for your situation:
+
+---
+
+## 1. Why Did the Old Setup Work (AMD/CPU)?
+
+- **Old Dockerfile**: Used `python:3.8-slim` (CPU only, no CUDA, works on any hardware).
+- **Old CLI**: No OpenAI, just TTS and Wav2Lip, ran in a CPU container.
+- **AMD GPU**: Wav2Lip ran on CPU, not using GPU at all, so it worked regardless of GPU type.
+
+---
+
+## 2. Why Does the New Setup Crash or Require NVIDIA?
+
+- **New Dockerfile**: Uses CUDA base image (requires NVIDIA GPU and drivers).
+- **New CLI**: Calls OpenAI (which is lightweight), but the crash is not from OpenAI.
+- **Docker Command**: Not updated for CUDA (`--gpus all` and correct image name needed).
+- **AMD GPU**: CUDA containers do NOT work with AMD GPUs. If you have both AMD and NVIDIA, only NVIDIA is used for CUDA.
+- **System Crash**: Likely due to:
+  - Running a CUDA container on unsupported hardware (AMD).
+  - Resource exhaustion (low VRAM on MX350, or system RAM swap).
+  - Driver or toolkit misconfiguration.
+
+---
+
+## 3. What Changed?
+
+- **Old**: Everything ran on CPU, so it worked on any system.
+- **New**: Now requires NVIDIA GPU and CUDA, so only works if you have a supported NVIDIA GPU and all drivers/toolkit are set up.
+
+---
+
+## 4. OpenAI Integration
+
+- The OpenAI API call is not the cause of the crash. It’s just a web request.
+- The crash happens when the Docker container starts and tries to use CUDA.
+
+---
+
+## 5. What To Do
+
+### If you want to run on CPU (works on any hardware, including AMD):
+
+- Use the old Dockerfile (`python:3.8-slim`), do NOT use CUDA images.
+- Do NOT add `--gpus all` to the Docker command.
+- You can keep OpenAI integration; it won’t affect Docker.
+
+### If you want to use NVIDIA GPU (faster, but only works with NVIDIA):
+
+- Use the CUDA Docker image and `--gpus all`.
+- Make sure your NVIDIA drivers and container toolkit are set up (which you did).
+- Only works with NVIDIA, not AMD.
+
+---
+
+## 6. How to Update the CLI for CUDA
+
+Update your `get_wav2lip_docker_cmd()` to:
+
+```python
+def get_wav2lip_docker_cmd():
+    return [
+        "docker", "run", "--gpus", "all", "--rm",
+        "-v", f"{os.path.abspath(WAV2LIP_DIR)}/:/workspace",
+        "wav2lip-gpu",  # use your CUDA-enabled image name
+        "python3", WAV2LIP_INFER_PATH,
+        "--checkpoint_path", WAV2LIP_CHECKPOINT,
+        "--face", FACE_IMAGE,
+        "--audio", "tts_output.wav"
+    ]
+```
+
+---
+
+## 7. Summary Table
+
+| Setup         | Docker Image         | GPU Used | Works on AMD? | Works on NVIDIA? | Fast? | Notes                |
+|---------------|---------------------|----------|---------------|------------------|-------|----------------------|
+| Old (CPU)     | python:3.8-slim     | None     | Yes           | Yes              | Slow  | Works everywhere     |
+| New (CUDA)    | nvidia/cuda:xx-base | NVIDIA   | No            | Yes              | Fast  | Needs NVIDIA only    |
+
+---
+
+## 8. Why System Crash?
+
+- Running CUDA containers on unsupported hardware (AMD) or with low VRAM (MX350) can cause system instability or OOM (out of memory).
+- If you want stability and cross-hardware support, use the CPU-only Dockerfile.
+
+---
+
+## 9. What Should You Do?
+
+- If you want to use AMD or avoid crashes, switch back to the old Dockerfile and image (CPU-only).
+- If you want to use NVIDIA GPU, update the CLI and Docker image as above, but only if your system is stable and has enough VRAM.
+
+---
+
+Let me know if you want to:
+- Switch back to CPU-only (old Dockerfile, works everywhere)
+- Continue with GPU (update CLI and Docker image, NVIDIA only)
+
+I can give you the exact steps for either path!

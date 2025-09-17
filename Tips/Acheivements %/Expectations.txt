@@ -1,0 +1,14 @@
+Based on your current progress, technical skills, and the remaining tasks, here’s a realistic estimate for completing an interactive AI real estate agent (backend, TTS, animation, and basic frontend):
+
+- **TTS integration with FastAPI backend:** 1–2 days
+- **Animation/avatar module (e.g., SadTalker/Wav2Lip) integration:** 3–5 days (depends on GPU, model setup, and testing)
+- **AI/agent pipeline (basic conversational logic):** 2–4 days
+- **Frontend (React) and full pipeline integration:** 3–5 days
+- **Testing, bug fixing, and polish:** 2–3 days
+
+**Total estimated time:**  
+**8–15 days** (assuming focused, part-time work and no major blockers)
+
+If you work full-time and have all dependencies ready, you could finish in about a week. If you work part-time or encounter integration challenges, expect up to 2–3 weeks.
+
+Let me know if you want a detailed breakdown or advice on prioritizing features!

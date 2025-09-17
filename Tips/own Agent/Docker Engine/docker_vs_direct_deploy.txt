@@ -1,0 +1,7 @@
+# Direct Deployment vs Docker for AI Projects
+
+- You do NOT need Docker to deploy on a VPS or traditional server if you are comfortable managing Python and dependencies directly.
+- Docker is optional and helps with portability, isolation, and scaling, but is not required for small or single-server deployments.
+- You do not need Docker as a mediator or as a replacement for a cloud service.
+
+Summary: For most startup/small projects, direct deployment is simpler. Use Docker if you want advanced portability or plan to scale out.

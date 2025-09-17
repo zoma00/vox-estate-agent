@@ -1,0 +1,37 @@
+
+You are correct! Since your terminal shows:
+```
+(venv) ...$ python --version
+Python 3.11.13
+```
+This means your virtual environment (venv) with Python 3.11.13 is active.
+
+In the VS Code command palette, you should select the interpreter that matches your venv, which will look like:
+```
+python 3.11.13/bin/python3
+```
+or
+```
+/home/hazem-elbatawy/Downloads/vox-estate-agent/backend/realestate_agent/venv/bin/python
+```
+This ensures you are using the same environment in both the terminal and VS Code. Your setup is correct!
+
+
+This happens when VS Code is not detecting your virtual environment (venv) automatically. Here’s how to fix it:
+
+1. **Make sure you have activated your venv in the terminal:**
+   ```bash
+   source venv/bin/activate
+   ```
+
+2. **In VS Code:**
+   - Open the Command Palette (Ctrl+Shift+P).
+   - Type and select: `Python: Select Interpreter`
+   - Choose the interpreter that points to your project’s `venv` (it should look like `.venv/bin/python` or `venv/bin/python`).
+
+3. **Restart VS Code** after selecting the correct interpreter.
+
+4. **Check the bottom left of VS Code:**  
+   You should see the name of your venv (e.g., `venv`) in the status bar.
+
+Now, VS Code will use your virtual environment and recognize all installed packages. Let me know if you need step-by-step screenshots or further help!

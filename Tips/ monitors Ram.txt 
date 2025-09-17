@@ -1,0 +1,9 @@
+(venv) hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/Multi Agent /realestate_agent$ free -h
+               total        used        free      shared  buff/cache   available
+Mem:            19Gi       3.5Gi        14Gi       406Mi       2.2Gi        15Gi
+Swap:          8.0Gi       631Mi       7.4Gi
+
+
+
+[sudo] password for hazem-elbatawy: 
+htop 3.4.1 from Maximiliano Bertacchini ✪ (maxiberta✪) installed

@@ -1,0 +1,47 @@
+Yes, **763 seconds (about 12-13 minutes) is completely normal** for building a Wav2Lip Docker image, especially for the first time!
+
+## Why it takes so long:
+
+**Heavy Dependencies (740 seconds on pip install):**
+- **PyTorch/Torchvision**: Large deep learning framework with GPU support
+- **OpenCV**: Computer vision library with extensive binary components  
+- **Librosa**: Audio processing library with many dependencies
+- **NumPy/SciPy**: Scientific computing libraries that may need compilation
+
+## Breakdown of your build:
+```
+Total time: 763.6s (12.7 minutes)
+├── Pip install: 740.3s (12.3 minutes) ← Most of the time
+├── Image export: 16.8s
+├── Copy files: 1.9s  
+└── Other steps: ~5s (mostly cached)
+```
+
+## This is normal because:
+
+**First-time builds:**
+- No cached layers for pip packages
+- Downloads hundreds of MB of dependencies
+- Some packages compile from source
+- Network speed affects download time
+
+**Heavy ML packages:**
+- PyTorch alone can be 500MB+
+- OpenCV with contrib modules is large
+- Audio/video processing libraries have many binary dependencies
+
+## To speed up future builds:
+
+**Use Docker layer caching:**
+```dockerfile
+# Copy requirements first (separate layer)
+COPY requirements.txt .
+RUN pip install -r requirements.txt
+
+# Copy code later (changes more frequently)
+COPY . .
+```
+
+**Use multi-stage builds or pre-built base images**
+
+Your build completed successfully, so the time is just a one-time cost. Subsequent builds with code changes will be much faster since the pip install layer will be cached!
