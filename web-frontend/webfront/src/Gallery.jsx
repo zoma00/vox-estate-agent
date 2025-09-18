@@ -74,7 +74,7 @@ function Gallery() {
                     rel="noopener noreferrer"
                     className="btn visit-website-btn"
                   >
-                    Visit Website
+                    {new URL(property.website).hostname.replace('www.', '')}
                   </a>
                 )}
                 {property.hasApi && (
