@@ -1,0 +1,93 @@
+(venv) hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/vox-estate-agent$ sudo apt update
+Hit:1 http://eg.archive.ubuntu.com/ubuntu noble InRelease                                           
+Hit:2 https://download.docker.com/linux/ubuntu noble InRelease                                      
+Get:3 http://security.ubuntu.com/ubuntu noble-security InRelease [126 kB]                           
+Get:4 http://eg.archive.ubuntu.com/ubuntu noble-updates InRelease [126 kB]                          
+Hit:5 https://dl.winehq.org/wine-builds/ubuntu noble InRelease                                      
+Hit:6 https://ppa.launchpadcontent.net/deadsnakes/ppa/ubuntu noble InRelease                        
+Hit:8 https://ppa.launchpadcontent.net/ondrej/php/ubuntu noble InRelease                            
+Hit:9 https://windsurf-stable.codeiumdata.com/wVxQEIWkwPUEAGf3/apt stable InRelease                 
+Hit:7 https://hub-dist.unity3d.com/artifactory/hub-debian-prod-local stable InRelease               
+Get:10 http://eg.archive.ubuntu.com/ubuntu noble-backports InRelease [126 kB]                       
+Ign:11 https://download.sublimetext.com apt InRelease                                     
+Get:12 http://security.ubuntu.com/ubuntu noble-security/main amd64 Packages [1,124 kB]              
+Err:13 https://download.sublimetext.com apt Release                                                 
+  404  Not Found [IP: 104.236.0.104 443]
+Get:14 http://eg.archive.ubuntu.com/ubuntu noble-updates/main i386 Packages [526 kB]                
+Get:15 http://security.ubuntu.com/ubuntu noble-security/main i386 Packages [324 kB]                 
+Get:16 http://eg.archive.ubuntu.com/ubuntu noble-updates/main amd64 Packages [1,415 kB]             
+Get:17 http://security.ubuntu.com/ubuntu noble-security/main Translation-en [192 kB]                
+Hit:18 https://nvidia.github.io/libnvidia-container/stable/deb/amd64  InRelease                     
+Hit:19 https://nvidia.github.io/libnvidia-container/stable/ubuntu18.04/amd64  InRelease             
+Get:20 http://security.ubuntu.com/ubuntu noble-security/main amd64 Components [21.5 kB]             
+Get:21 http://security.ubuntu.com/ubuntu noble-security/restricted i386 Packages [19.3 kB]          
+Get:22 http://security.ubuntu.com/ubuntu noble-security/restricted amd64 Packages [1,770 kB]        
+Get:23 http://security.ubuntu.com/ubuntu noble-security/restricted Translation-en [396 kB]          
+Get:24 http://security.ubuntu.com/ubuntu noble-security/restricted amd64 Components [212 B]         
+Get:25 http://security.ubuntu.com/ubuntu noble-security/universe amd64 Components [52.2 kB]         
+Get:26 http://security.ubuntu.com/ubuntu noble-security/universe amd64 c-n-f Metadata [18.0 kB]     
+Get:27 http://security.ubuntu.com/ubuntu noble-security/multiverse i386 Packages [7,504 B]          
+Get:28 http://security.ubuntu.com/ubuntu noble-security/multiverse amd64 Packages [33.1 kB]         
+Get:29 http://security.ubuntu.com/ubuntu noble-security/multiverse Translation-en [5,768 B]         
+Get:30 http://security.ubuntu.com/ubuntu noble-security/multiverse amd64 Components [212 B]         
+Get:31 http://eg.archive.ubuntu.com/ubuntu noble-updates/main Translation-en [278 kB]               
+Get:32 http://eg.archive.ubuntu.com/ubuntu noble-updates/main amd64 Components [175 kB]             
+Get:33 http://eg.archive.ubuntu.com/ubuntu noble-updates/main amd64 c-n-f Metadata [15.2 kB]        
+Get:34 http://eg.archive.ubuntu.com/ubuntu noble-updates/restricted amd64 Packages [1,901 kB]       
+Get:35 http://eg.archive.ubuntu.com/ubuntu noble-updates/restricted i386 Packages [22.8 kB]         
+Get:36 http://eg.archive.ubuntu.com/ubuntu noble-updates/restricted Translation-en [426 kB]         
+Get:37 http://eg.archive.ubuntu.com/ubuntu noble-updates/restricted amd64 Components [212 B]        
+Get:38 http://eg.archive.ubuntu.com/ubuntu noble-updates/universe amd64 Packages [1,484 kB]         
+Get:39 http://eg.archive.ubuntu.com/ubuntu noble-updates/universe i386 Packages [980 kB]            
+Get:40 http://eg.archive.ubuntu.com/ubuntu noble-updates/universe Translation-en [299 kB]           
+Get:41 http://eg.archive.ubuntu.com/ubuntu noble-updates/universe amd64 Components [377 kB]         
+Get:42 http://eg.archive.ubuntu.com/ubuntu noble-updates/universe Icons (48x48) [232 kB]            
+Get:43 http://eg.archive.ubuntu.com/ubuntu noble-updates/universe Icons (64x64) [363 kB]            
+Get:44 http://eg.archive.ubuntu.com/ubuntu noble-updates/universe amd64 c-n-f Metadata [31.1 kB]    
+Get:45 http://eg.archive.ubuntu.com/ubuntu noble-updates/multiverse amd64 Packages [32.0 kB]        
+Get:46 http://eg.archive.ubuntu.com/ubuntu noble-updates/multiverse i386 Packages [7,236 B]         
+Get:47 http://eg.archive.ubuntu.com/ubuntu noble-updates/multiverse Translation-en [5,500 B]        
+Get:48 http://eg.archive.ubuntu.com/ubuntu noble-updates/multiverse amd64 Components [940 B]        
+Get:49 http://eg.archive.ubuntu.com/ubuntu noble-backports/main amd64 Components [7,060 B]          
+Get:50 http://eg.archive.ubuntu.com/ubuntu noble-backports/restricted amd64 Components [216 B]      
+Get:51 http://eg.archive.ubuntu.com/ubuntu noble-backports/universe amd64 Components [19.2 kB]      
+Get:52 http://eg.archive.ubuntu.com/ubuntu noble-backports/multiverse amd64 Components [212 B]      
+Reading package lists... Done                              
+E: The repository 'https://download.sublimetext.com apt Release' does not have a Release file.
+N: Updating from such a repository can't be done securely, and is therefore disabled by default.
+N: See apt-secure(8) manpage for repository creation and user configuration details.
+
+
+
+hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/vox-estate-agent$ sudo apt update
+[sudo] password for hazem-elbatawy: 
+Reading package lists... Done
+E: Could not get lock /var/lib/apt/lists/lock. It is held by process 14651 (aptd)
+N: Be aware that removing the lock file is not a solution and may break your system.
+E: Unable to lock directory /var/lib/apt/lists/
+
+
+
+hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/vox-estate-agent$ sudo apt update
+[sudo] password for hazem-elbatawy: 
+Reading package lists... Done
+E: Could not get lock /var/lib/apt/lists/lock. It is held by process 14651 (aptd)
+N: Be aware that removing the lock file is not a solution and may break your system.
+E: Unable to lock directory /var/lib/apt/lists/
+hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/vox-estate-agent$ ps aux | grep 14651
+root       14651  0.9  0.6 226472 128572 ?       SNl  23:30   0:02 /usr/bin/python3 /usr/sbin/aptd
+hazem-e+   14988  0.0  0.0   9144  2332 pts/8    S+   23:35   0:00 grep 14651
+hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/vox-estate-agent$ sudo kill 14651
+hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/vox-estate-agent$ sudo apt clean
+sudo apt update
+E: Could not get lock /var/cache/apt/archives/lock. It is held by process 14651 (aptd)
+N: Be aware that removing the lock file is not a solution and may break your system.
+E: Unable to lock directory /var/cache/apt/archives/
+E: Could not get lock /var/lib/apt/lists/lock. It is held by process 14651 (aptd)
+N: Be aware that removing the lock file is not a solution and may break your system.
+E: Unable to lock directory /var/lib/apt/lists/
+Reading package lists... Done
+E: Could not get lock /var/lib/apt/lists/lock. It is held by process 14651 (aptd)
+N: Be aware that removing the lock file is not a solution and may break your system.
+E: Unable to lock directory /var/lib/apt/lists/
+hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/vox-estate-agent$ 

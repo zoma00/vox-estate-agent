@@ -170,3 +170,537 @@ git remote add origin git@github.com:zoma00/vox-estate-agent.git
 git push -u origin main
 This way, the Wave2Lip code will be included directly in your repository. If you'd prefer to keep it as a separate repository that can be updated independently, we can set it up as a submodule instead. Which approach would you prefer?
 
+
+
+see that the nested Git repository is in your React frontend directory (web-frontend/webfront/), which is separate from the Wave2Lip code. Here's what we should do:
+
+For the frontend (web-frontend/webfront/):
+This is your React application
+It should be included directly in the main repository
+We'll remove its .git directory
+For Wave2Lip:
+Located at 
+backend/realestate_agent/Wav2Lip/
+This should be kept as a separate repository or submodule if needed
+Here's what to do next:
+
+Remove the nested .git from the frontend:
+bash
+rm -rf web-frontend/webfront/.git
+Add everything to the main repository:
+bash
+git add .
+git commit -m "Initial commit: Add frontend and backend code"
+Add your remote and push:
+bash
+git remote add origin git@github.com:zoma00/vox-estate-agent.git
+git push -u origin main
+Would you like me to help you execute these commands? Also, let me know if you want to handle the Wave2Lip directory differently.
+
+Feedback submitted
+
+
+
+(venv) hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/vox-estate-agent$ git add .
+git commit -m "Initial commit: Add frontend and backend code"
+[main (root-commit) 72c80d9] Initial commit: Add frontend and backend code
+ 418 files changed, 69416 insertions(+)
+ create mode 100644 .gitignore
+ create mode 100644 COMMAND_GUIDE.md
+ create mode 100644 ENVIRONMENT.md
+ create mode 100644 README.md
+ create mode 100644 Tips/ monitors Ram.txt 
+ create mode 100644 Tips/Acheivements %/Acheived 9-09.txt
+ create mode 100644 Tips/Acheivements %/Expectations.txt
+ create mode 100644 Tips/Acheivements %/ach 10-09.txt
+ create mode 100644 Tips/Acheivements %/impression.txt
+ create mode 100644 Tips/All Windsurf Chat/17-09 All chat.txt
+ create mode 100644 Tips/All Windsurf Chat/17-09 second  all chat.txt
+ create mode 100644 Tips/Archive/All Chat/Chat 10-09.txt
+ create mode 100644 Tips/Archive/All Chat/Chat 13-08.txt
+ create mode 100644 Tips/Archive/All Chat/Chat 8-09.txt
+ create mode 100644 Tips/Archive/All Chat/Chat 9-09.txt
+ create mode 100644 Tips/Archive/Clean snap.txt
+ create mode 100644 Tips/Archive/Codex/Codex features.txt
+ create mode 100644 Tips/Archive/Codex/Codex for realestat maulti agent usage.txt
+ create mode 100644 Tips/Archive/Codex/diffs between codex and chatgpt 4.txt
+ create mode 100644 Tips/Archive/Codex/integrate with codex.txt
+ create mode 100644 Tips/Archive/Concept Agent /Comparison between realestate and sec.txt
+ create mode 100644 Tips/Archive/Concept Agent /Multi Agents open ai.txt
+ create mode 100644 Tips/Archive/Concept Agent /Real Estate ai agents.txt
+ create mode 100644 Tips/Archive/Concept Agent /Real estate fresh market ideas.txt
+ create mode 100644 Tips/Archive/Concept Agent /Security.txt
+ create mode 100644 Tips/Archive/Docker commands/Docker build network command.txt
+ create mode 100644 Tips/Archive/Docker commands/Docker copy image to server.txt
+ create mode 100644 Tips/Archive/Docker commands/Docker images checking.txt
+ create mode 100644 Tips/Archive/Docker commands/Faster building.txt
+ create mode 100644 Tips/Archive/Gen agent/Generating the agent.txt
+ create mode 100644 Tips/Archive/Gen agent/Hugging face account.txt
+ create mode 100644 Tips/Archive/Gen agent/costs production high.txt
+ create mode 100644 Tips/Archive/Gen agent/d-id integration and token.txt
+ create mode 100644 Tips/Archive/Gen agent/d-id integration code.txt
+ create mode 100644 Tips/Archive/Gen agent/d-id interactive moving avatar.txt
+ create mode 100644 Tips/Archive/Gen agent/d-id so expensive prod.txt
+ create mode 100644 Tips/Archive/Gen agent/subscription plan.txt
+ create mode 100644 Tips/Archive/GitHub/ Wav2lip commit not submodules.txt
+ create mode 100644 Tips/Archive/GitHub/Git ignore consilidation and git ini.txt
+ create mode 100644 Tips/Archive/GitHub/Repos My list.txt
+ create mode 100644 Tips/Archive/GitHub/VoxStateAgent repo.txt
+ create mode 100644 Tips/Archive/GitHub/Wav2Lib with openai working.txt
+ create mode 100644 Tips/Archive/GitHub/git api.txt
+ create mode 100644 Tips/Archive/GitHub/gitignore.txt
+ create mode 100644 Tips/Archive/GitHub/pull first befoe add remote repo.txt
+ create mode 100644 Tips/Archive/Gpt prompts/Hack gpt prompt.txt
+ create mode 100644 Tips/Archive/Mount extra space for ubuntu.txt
+ create mode 100644 Tips/Archive/Sh for clean up docker.txt
+ create mode 100644 Tips/Archive/cleaning space.txt
+ create mode 100644 Tips/BusinessCardSheet.html
+ create mode 100644 Tips/Ligher approach/CLI Audio implementation.txt
+ create mode 100644 Tips/Ligher approach/Lghter tts and Audio Demo.txt
+ create mode 100644 Tips/Specs command.txt
+ create mode 100644 Tips/Time gen vids.txt
+ create mode 100644 Tips/Venv guide/venv create command.txt
+ create mode 100644 Tips/Venv guide/venv setup.txt
+ create mode 100644 Tips/download (4).jpeg
+ create mode 100644 Tips/download.jpeg
+ create mode 100644 Tips/face.jpg
+ create mode 100644 Tips/hh.jpg
+ create mode 100644 Tips/keys/OpenAI key.txt
+ create mode 100644 Tips/own Agent/ cost & revenue/Production costs.txt
+ create mode 100644 Tips/own Agent/ cost & revenue/Revenue.txt
+ create mode 100644 Tips/own Agent/Docker Engine/Docker engineering.txt
+ create mode 100644 Tips/own Agent/Docker Engine/docker_gpu_strategy.txt
+ create mode 100644 Tips/own Agent/Docker Engine/docker_vs_direct_deploy.txt
+ create mode 100644 Tips/own Agent/ML expertise.txt
+ create mode 100644 Tips/own Agent/Realestate text in eg.txt
+ create mode 100644 Tips/own Agent/Tests/Crash sys ollama and cli integration.txt
+ create mode 100644 Tips/own Agent/Tests/Fastapi command start/start uvicorn server.txt
+ create mode 100644 Tips/own Agent/Tests/Test CLI avatar script/Cli complete for vids and audio.txt
+ create mode 100644 Tips/own Agent/Tests/Test CLI avatar script/LLM Local.txt
+ create mode 100644 Tips/own Agent/Tests/Test CLI avatar script/Open ai integration cli.txt
+ create mode 100644 Tips/own Agent/Tests/Test CLI avatar script/Test Cli avatar.txt
+ create mode 100644 Tips/own Agent/Tests/Test CLI avatar script/cli script for tts model.txt
+ create mode 100644 Tips/own Agent/Tests/Test CLI avatar script/ollama LLM keep for VPS.txt
+ create mode 100644 Tips/own Agent/Tests/Test CLI avatar script/success cli avatar.txt
+ create mode 100644 Tips/own Agent/Tests/Test ollama and cli integration.txt
+ create mode 100644 Tips/own Agent/Tests/Test ollama llm.txt
+ create mode 100644 Tips/own Agent/Tests/test tts.txt
+ create mode 100644 Tips/own Agent/Time/Solution VPS Speeding.txt
+ create mode 100644 Tips/own Agent/Time/Time frame.txt
+ create mode 100644 Tips/own Agent/URLs Downloaded.txt
+ create mode 100644 Tips/own Agent/Work flow/10-09 Interactive conversation/interact with users.txt
+ create mode 100644 Tips/own Agent/Work flow/Agen pipeline enhance/Code pipline enhance.txt
+ create mode 100644 Tips/own Agent/Work flow/Agen pipeline enhance/main py updated.txt
+ create mode 100644 Tips/own Agent/Work flow/Animation/Animation agent.txt
+ create mode 100644 Tips/own Agent/Work flow/Animation/Wav2lip Docker installation.txt
+ create mode 100644 Tips/own Agent/Work flow/Animation/Wave2lip.txt
+ create mode 100644 Tips/own Agent/Work flow/Backup/tts_coqui py without batching.txt
+ create mode 100644 Tips/own Agent/Work flow/Debug/Debug docker cuda container.txt
+ create mode 100644 Tips/own Agent/Work flow/Debug/Debug venv relocation.txt
+ create mode 100644 Tips/own Agent/Work flow/Debug/Production &  Local space.txt
+ create mode 100644 Tips/own Agent/Work flow/Debug/space.txt
+ create mode 100644 Tips/own Agent/Work flow/Debug/switch back to old docker no cuda.txt
+ create mode 100644 Tips/own Agent/Work flow/Fastapi command start/start uvicorn server.txt
+ create mode 100644 Tips/own Agent/Work flow/Integ TTS in fastapi/Error running uvicorn install multipart.txt
+ create mode 100644 Tips/own Agent/Work flow/Integ TTS in fastapi/Test text to speech.txt
+ create mode 100644 Tips/own Agent/Work flow/Integ TTS in fastapi/fast api command installation.txt
+ create mode 100644 Tips/own Agent/Work flow/Integ TTS in fastapi/integrate TTS in FastAPI.txt
+ create mode 100644 Tips/own Agent/Work flow/Integ TTS in fastapi/test_tts_api py.txt
+ create mode 100644 Tips/own Agent/Work flow/Start with GPT 4.1.txt
+ create mode 100644 Tips/own Agent/Work flow/VEGA Environment Wav2Lip/Customize NIVIDIA DRIVER CUDA.txt
+ create mode 100644 Tips/own Agent/Work flow/VEGA Environment Wav2Lip/VEGA card Checks.txt
+ create mode 100644 Tips/own Agent/Work flow/coqui TTS installed.txt
+ create mode 100644 Tips/own Agent/Work flow/logical flow.txt
+ create mode 100644 Tips/own Agent/Work flow/project_deployment_guide.txt
+ create mode 100644 Tips/own Agent/deployment_options.txt
+ create mode 100644 Tips/own Agent/fastapi_domain_setup.txt
+ create mode 100644 Tips/own Agent/my agent.txt
+ create mode 100644 Tips/own Agent/venv activation command/Activating the python venv.txt
+ create mode 100644 Tips/own Agent/venv activation command/active venv.txt
+ create mode 100644 Tips/own Agent/venv activation command/venv command pallette selection.txt
+ create mode 100644 Tips/package python pyttsx3  install .txt
+ create mode 100644 Tips/python multipart.txt
+ create mode 100644 Tips/python_versions_explanation.txt
+ create mode 100644 Tips/search.txt
+ create mode 100644 Tips/sys specs.txt
+ create mode 100644 Tips/web  browser.txt
+ create mode 100644 backend/realestate_agent/AI_Avatar_Workflow.md
+ create mode 100644 backend/realestate_agent/CLI_AUDIO_GUIDE.md
+ create mode 100644 backend/realestate_agent/CLI_Guide.md
+ create mode 100644 backend/realestate_agent/CURRENT_STRUCTURE.md
+ create mode 100644 backend/realestate_agent/DEPLOYMENT_ROADMAP.md
+ create mode 100644 backend/realestate_agent/Generated old vids/result_input_0.mp4
+ create mode 100644 backend/realestate_agent/Generated old vids/result_input_10.mp4
+ create mode 100644 backend/realestate_agent/Generated old vids/result_input_11.mp4
+ create mode 100644 backend/realestate_agent/Generated old vids/result_input_12.mp4
+ create mode 100644 backend/realestate_agent/Generated old vids/result_input_13.mp4
+ create mode 100644 backend/realestate_agent/Generated old vids/result_input_14.mp4
+ create mode 100644 backend/realestate_agent/Generated old vids/result_input_15.mp4
+ create mode 100644 backend/realestate_agent/LICENSE
+ create mode 100644 backend/realestate_agent/README.md
+ create mode 100644 backend/realestate_agent/SETUP_GUIDE.md
+ create mode 100644 backend/realestate_agent/VENV_SETUP.md
+ create mode 100644 backend/realestate_agent/Wav2Lip/.gitignore
+ create mode 100644 backend/realestate_agent/Wav2Lip/Dockerfile.cpu
+ create mode 100644 backend/realestate_agent/Wav2Lip/README.md
+ create mode 100644 backend/realestate_agent/Wav2Lip/audio.py
+ create mode 100644 backend/realestate_agent/Wav2Lip/batch_wav2lip.sh
+ create mode 100644 backend/realestate_agent/Wav2Lip/checkpoints/README.md
+ create mode 100644 backend/realestate_agent/Wav2Lip/color_syncnet_train.py
+ create mode 100644 backend/realestate_agent/Wav2Lip/evaluation/README.md
+ create mode 100644 backend/realestate_agent/Wav2Lip/evaluation/gen_videos_from_filelist.py
+ create mode 100644 backend/realestate_agent/Wav2Lip/evaluation/real_videos_inference.py
+ create mode 100644 backend/realestate_agent/Wav2Lip/evaluation/scores_LSE/SyncNetInstance_calc_scores.py
+ create mode 100644 backend/realestate_agent/Wav2Lip/evaluation/scores_LSE/calculate_scores_LRS.py
+ create mode 100755 backend/realestate_agent/Wav2Lip/evaluation/scores_LSE/calculate_scores_real_videos.py
+ create mode 100644 backend/realestate_agent/Wav2Lip/evaluation/scores_LSE/calculate_scores_real_videos.sh
+ create mode 100644 backend/realestate_agent/Wav2Lip/evaluation/test_filelists/README.md
+ create mode 100644 backend/realestate_agent/Wav2Lip/evaluation/test_filelists/ReSyncED/random_pairs.txt
+ create mode 100644 backend/realestate_agent/Wav2Lip/evaluation/test_filelists/ReSyncED/tts_pairs.txt
+ create mode 100644 backend/realestate_agent/Wav2Lip/face_detection/README.md
+ create mode 100644 backend/realestate_agent/Wav2Lip/face_detection/__init__.py
+ create mode 100644 backend/realestate_agent/Wav2Lip/face_detection/api.py
+ create mode 100644 backend/realestate_agent/Wav2Lip/face_detection/detection/__init__.py
+ create mode 100644 backend/realestate_agent/Wav2Lip/face_detection/detection/core.py
+ create mode 100644 backend/realestate_agent/Wav2Lip/face_detection/detection/sfd/__init__.py
+ create mode 100644 backend/realestate_agent/Wav2Lip/face_detection/detection/sfd/bbox.py
+ create mode 100644 backend/realestate_agent/Wav2Lip/face_detection/detection/sfd/detect.py
+ create mode 100644 backend/realestate_agent/Wav2Lip/face_detection/detection/sfd/net_s3fd.py
+ create mode 100644 backend/realestate_agent/Wav2Lip/face_detection/detection/sfd/sfd_detector.py
+ create mode 100644 backend/realestate_agent/Wav2Lip/face_detection/models.py
+ create mode 100644 backend/realestate_agent/Wav2Lip/face_detection/utils.py
+ create mode 100644 backend/realestate_agent/Wav2Lip/filelists/README.md
+ create mode 100644 backend/realestate_agent/Wav2Lip/hparams.py
+ create mode 100644 backend/realestate_agent/Wav2Lip/hq_wav2lip_train.py
+ create mode 100644 backend/realestate_agent/Wav2Lip/inference.py
+ create mode 100644 backend/realestate_agent/Wav2Lip/models/__init__.py
+ create mode 100644 backend/realestate_agent/Wav2Lip/models/conv.py
+ create mode 100644 backend/realestate_agent/Wav2Lip/models/syncnet.py
+ create mode 100644 backend/realestate_agent/Wav2Lip/models/wav2lip.py
+ create mode 100644 backend/realestate_agent/Wav2Lip/preprocess.py
+ create mode 100644 backend/realestate_agent/Wav2Lip/requirements.txt
+ create mode 100644 backend/realestate_agent/Wav2Lip/results/README.md
+ create mode 100644 backend/realestate_agent/Wav2Lip/temp/README.md
+ create mode 100644 backend/realestate_agent/Wav2Lip/wav2lip_train.py
+ create mode 100644 backend/realestate_agent/animation/__init__.py
+ create mode 100644 backend/realestate_agent/app/__init__.py
+ create mode 100644 backend/realestate_agent/app/agent_pipeline.py
+ create mode 100644 backend/realestate_agent/app/main.py
+ create mode 100644 backend/realestate_agent/app/tts_service.py
+ create mode 100644 backend/realestate_agent/avatar/__init__.py
+ create mode 100755 backend/realestate_agent/batch_tts.sh
+ create mode 100755 backend/realestate_agent/batch_tts_and_play.sh
+ create mode 100644 backend/realestate_agent/cli_audio.py
+ create mode 100644 backend/realestate_agent/cli_audio_chat.py
+ create mode 100644 backend/realestate_agent/cli_audio_openai.py
+ create mode 100644 backend/realestate_agent/cli_audio_simple.py
+ create mode 100644 backend/realestate_agent/cli_avatar.py
+ create mode 100644 backend/realestate_agent/generate_avatar.py
+ create mode 100644 backend/realestate_agent/input.txt
+ create mode 100644 backend/realestate_agent/input_0.wav
+ create mode 100644 backend/realestate_agent/ollama_llm.py
+ create mode 100644 backend/realestate_agent/project_deployment_guide.txt
+ create mode 100644 backend/realestate_agent/requirements.txt
+ create mode 100644 backend/realestate_agent/static/audio/output_1758078760.mp3
+ create mode 100644 backend/realestate_agent/static/audio/output_1758084194.mp3
+ create mode 100644 backend/realestate_agent/static/audio/output_1758084472.mp3
+ create mode 100644 backend/realestate_agent/static/audio/output_20250917_023737_3c9d9d68.wav
+ create mode 100644 backend/realestate_agent/static/audio/output_20250917_024131_badc5962.wav
+ create mode 100644 backend/realestate_agent/static/audio/output_20250917_025744_a38d09fe.wav
+ create mode 100644 backend/realestate_agent/static/audio/output_20250917_030127_3f8f8df9.wav
+ create mode 100644 backend/realestate_agent/static/audio/output_20250917_030812_3c3e08b6.wav
+ create mode 100644 backend/realestate_agent/static/audio/output_20250917_031205_e387ecb9.wav
+ create mode 100644 backend/realestate_agent/static/audio/output_20250917_032019_ac7dcf86.wav
+ create mode 100644 backend/realestate_agent/static/audio/output_20250917_032707_433e4383.wav
+ create mode 100644 backend/realestate_agent/static/audio/output_20250917_054258_5f56f6b2.wav
+ create mode 100644 backend/realestate_agent/static/audio/output_20250917_054356_5a85c7f8.wav
+ create mode 100644 backend/realestate_agent/static/audio/output_20250917_055201_70d09860.wav
+ create mode 100644 backend/realestate_agent/static/audio/output_20250917_060352_d6e3285f.wav
+ create mode 100644 backend/realestate_agent/static/audio/output_20250917_061718_4d733853.wav
+ create mode 100644 backend/realestate_agent/static/audio/output_20250917_062047_115f0298.wav
+ create mode 100644 backend/realestate_agent/static/audio/output_20250917_062224_a17154f8.wav
+ create mode 100644 backend/realestate_agent/static/audio/output_20250917_062448_1a8ff211.wav
+ create mode 100644 backend/realestate_agent/static/audio/output_20250917_062516_4d4821c7.wav
+ create mode 100644 backend/realestate_agent/static/audio/output_20250917_062624_e7b546cf.wav
+ create mode 100644 backend/realestate_agent/static/audio/output_20250917_062723_41a1b424.wav
+ create mode 100644 backend/realestate_agent/static/audio/output_20250917_062838_8d82251d.wav
+ create mode 100644 backend/realestate_agent/static/audio/output_20250917_065504_8905d25a.wav
+ create mode 100644 backend/realestate_agent/static/audio/output_20250917_065519_b558a5ae.wav
+ create mode 100644 backend/realestate_agent/static/audio/output_20250917_070312_78d8b5a0.wav
+ create mode 100644 backend/realestate_agent/static/audio/output_20250917_070450_05477cb9.wav
+ create mode 100644 backend/realestate_agent/static/audio/output_20250917_070543_5b14624e.wav
+ create mode 100644 backend/realestate_agent/static/audio/output_20250917_070710_1a5432c5.wav
+ create mode 100644 backend/realestate_agent/static/audio/output_20250917_070914_462448bf.wav
+ create mode 100644 backend/realestate_agent/static/audio/output_20250917_071137_21c9e07a.wav
+ create mode 100644 backend/realestate_agent/static/audio/output_20250917_071202_25d6b37d.wav
+ create mode 100644 backend/realestate_agent/static/audio/output_20250917_071405_7579f690.wav
+ create mode 100644 backend/realestate_agent/static/audio/output_20250917_071717_0803c419.wav
+ create mode 100644 backend/realestate_agent/static/audio/output_20250917_072119_02827303.wav
+ create mode 100644 backend/realestate_agent/static/audio/output_20250917_072208_5f04914c.wav
+ create mode 100644 backend/realestate_agent/static/audio/output_20250917_072223_d6944662.wav
+ create mode 100644 backend/realestate_agent/static/audio/output_20250917_072520_34a4f054.wav
+ create mode 100644 backend/realestate_agent/static/audio/output_20250917_072820_014a1ead.wav
+ create mode 100644 backend/realestate_agent/static/audio/output_20250917_073147_18dcb53c.wav
+ create mode 100644 backend/realestate_agent/static/audio/output_20250917_073350_d98f0b40.wav
+ create mode 100644 backend/realestate_agent/static/audio/output_20250917_073720_68b6ac2e.wav
+ create mode 100644 backend/realestate_agent/static/audio/output_20250917_073817_588c80f0.wav
+ create mode 100644 backend/realestate_agent/static/audio/output_20250917_074817_a91b4439.wav
+ create mode 100644 backend/realestate_agent/static/audio/output_20250917_075042_55996970.wav
+ create mode 100644 backend/realestate_agent/static/audio/output_20250917_075826_1abaa0bc.wav
+ create mode 100644 backend/realestate_agent/static/audio/output_20250917_075830_e25c2038.wav
+ create mode 100644 backend/realestate_agent/static/audio/output_20250917_075840_18905761.wav
+ create mode 100644 backend/realestate_agent/static/audio/output_20250917_075912_55bae713.wav
+ create mode 100644 backend/realestate_agent/static/audio/output_20250917_075949_a7d89e41.wav
+ create mode 100644 backend/realestate_agent/static/audio/output_20250917_080357_ed825034.wav
+ create mode 100644 backend/realestate_agent/static/audio/output_20250917_080408_c2bf1366.wav
+ create mode 100644 backend/realestate_agent/static/audio/output_20250917_080439_384e9cf5.wav
+ create mode 100644 backend/realestate_agent/static/audio/output_20250917_080746_963fc46b.wav
+ create mode 100644 backend/realestate_agent/static/audio/output_20250917_081629_73450c31.wav
+ create mode 100644 backend/realestate_agent/static/audio/output_20250917_081632_a815a0b7.wav
+ create mode 100644 backend/realestate_agent/static/audio/output_20250917_081638_7bd1b635.wav
+ create mode 100644 backend/realestate_agent/static/audio/output_20250917_081640_ef7064b0.wav
+ create mode 100644 backend/realestate_agent/static/audio/output_20250917_081655_aabe55a4.wav
+ create mode 100644 backend/realestate_agent/static/audio/output_20250917_082103_fb8ee3ca.wav
+ create mode 100644 backend/realestate_agent/static/audio/output_20250917_082215_6c127878.wav
+ create mode 100644 backend/realestate_agent/static/audio/output_20250917_082300_f40290d7.wav
+ create mode 100644 backend/realestate_agent/static/audio/output_20250917_082408_56775915.wav
+ create mode 100644 backend/realestate_agent/static/audio/output_20250917_082453_0e97e0ea.wav
+ create mode 100644 backend/realestate_agent/static/audio/output_20250917_082543_efc168fa.wav
+ create mode 100644 backend/realestate_agent/static/audio/output_20250917_082645_577cd17a.wav
+ create mode 100644 backend/realestate_agent/static/audio/output_20250917_082715_7b12d8ef.wav
+ create mode 100644 backend/realestate_agent/static/audio/output_20250917_082745_406862d8.wav
+ create mode 100644 backend/realestate_agent/static/audio/output_20250917_083123_fb9d2a13.wav
+ create mode 100644 backend/realestate_agent/static/audio/output_20250917_083159_385fc42a.wav
+ create mode 100644 backend/realestate_agent/static/audio/output_20250917_083236_869b0a6a.wav
+ create mode 100644 backend/realestate_agent/static/audio/output_20250917_083242_db667c38.wav
+ create mode 100644 backend/realestate_agent/static/audio/output_20250917_083244_3b06c005.wav
+ create mode 100644 backend/realestate_agent/static/audio/output_20250917_083251_9ec8ff9d.wav
+ create mode 100644 backend/realestate_agent/static/audio/output_20250917_083253_99cf5a90.wav
+ create mode 100644 backend/realestate_agent/static/audio/output_20250917_083316_e2106523.wav
+ create mode 100644 backend/realestate_agent/static/audio/output_20250917_083317_ba514c9d.wav
+ create mode 100644 backend/realestate_agent/static/audio/output_20250917_083319_286483be.wav
+ create mode 100644 backend/realestate_agent/static/audio/output_20250917_083411_d980073e.wav
+ create mode 100644 backend/realestate_agent/static/audio/output_20250917_083415_745cd301.wav
+ create mode 100644 backend/realestate_agent/static/audio/output_20250917_083427_ceb22a07.wav
+ create mode 100644 backend/realestate_agent/static/audio/output_20250917_083507_2e96246f.wav
+ create mode 100644 backend/realestate_agent/static/audio/output_20250917_083509_8be67787.wav
+ create mode 100644 backend/realestate_agent/static/audio/output_20250917_084316_9003d0cb.wav
+ create mode 100644 backend/realestate_agent/static/audio/output_20250917_084326_b3cd2186.wav
+ create mode 100644 backend/realestate_agent/static/audio/output_20250917_084327_7347a6c5.wav
+ create mode 100644 backend/realestate_agent/static/audio/output_20250917_084354_63e780e9.wav
+ create mode 100644 backend/realestate_agent/static/audio/output_20250917_084357_ce58c68c.wav
+ create mode 100644 backend/realestate_agent/static/audio/output_20250917_084608_7a3b7c80.wav
+ create mode 100644 backend/realestate_agent/static/audio/output_20250917_084703_17c2d443.wav
+ create mode 100644 backend/realestate_agent/static/audio/output_20250917_084747_6b0d310a.wav
+ create mode 100644 backend/realestate_agent/static/audio/output_20250917_084750_2c117255.wav
+ create mode 100644 backend/realestate_agent/static/audio/output_20250917_084907_406e4154.wav
+ create mode 100644 backend/realestate_agent/static/audio/output_20250917_084909_0e74214e.wav
+ create mode 100644 backend/realestate_agent/static/audio/output_20250917_084941_f6c69504.wav
+ create mode 100644 backend/realestate_agent/static/audio/output_20250917_084943_60abb194.wav
+ create mode 100644 backend/realestate_agent/static/audio/output_20250917_215713_4bc4f9ea.wav
+ create mode 100644 backend/realestate_agent/static/audio/output_20250917_215729_31891d64.wav
+ create mode 100644 backend/realestate_agent/static/audio/output_20250917_215731_105fc72c.wav
+ create mode 100644 backend/realestate_agent/static/audio/output_20250917_220630_948ab8f2.wav
+ create mode 100644 backend/realestate_agent/static/audio/output_20250917_220741_40cbffac.wav
+ create mode 100644 backend/realestate_agent/static/audio/output_20250917_220825_eb0bb89a.wav
+ create mode 100644 backend/realestate_agent/static/audio/output_20250917_220826_6a210ba9.wav
+ create mode 100644 backend/realestate_agent/temp/output_20250917_022549_3fa5b86d.wav
+ create mode 100644 backend/realestate_agent/temp/output_20250917_023034_02055943.wav
+ create mode 100644 backend/realestate_agent/test.mp3
+ create mode 100644 backend/realestate_agent/test_simple_tts.py
+ create mode 100644 backend/realestate_agent/test_tts.py
+ create mode 100644 backend/realestate_agent/test_tts_api.py
+ create mode 100644 backend/realestate_agent/tts/__init__.py
+ create mode 100644 backend/realestate_agent/tts/tts_simple.py
+ create mode 100644 backend/realestate_agent/tts_output.wav
+ create mode 100644 backend/realestate_agent/tts_output_20250916_013124.wav
+ create mode 100644 backend/realestate_agent/tts_output_20250916_013317.wav
+ create mode 100644 backend/realestate_agent/tts_output_20250916_013404.wav
+ create mode 100644 backend/realestate_agent/tts_output_20250916_015422.wav
+ create mode 100644 backend/realestate_agent/tts_output_20250916_022941.wav
+ create mode 100644 backend/realestate_agent/tts_output_20250916_032353.wav
+ create mode 100644 backend/realestate_agent/tts_output_20250916_050846.wav
+ create mode 100644 backend/realestate_agent/tts_output_20250916_051214.wav
+ create mode 100644 backend/realestate_agent/tts_output_20250916_051518.wav
+ create mode 100644 backend/realestate_agent/tts_output_20250916_051545.wav
+ create mode 100644 backend/realestate_agent/tts_output_20250916_051610.wav
+ create mode 100644 backend/realestate_agent/tts_output_20250916_052651.wav
+ create mode 100644 backend/realestate_agent/tts_output_20250916_053139.wav
+ create mode 100644 backend/realestate_agent/tts_output_20250916_053446.wav
+ create mode 100644 backend/realestate_agent/tts_output_20250916_053735.wav
+ create mode 100644 backend/realestate_agent/tts_output_20250916_053841.wav
+ create mode 100644 backend/realestate_agent/tts_output_20250916_054038.wav
+ create mode 100644 backend/realestate_agent/tts_output_20250916_060036.wav
+ create mode 100644 backend/realestate_agent/tts_output_20250916_060322.wav
+ create mode 100644 backend/realestate_agent/tts_output_20250916_202707.wav
+ create mode 100644 backend/realestate_agent/tts_output_20250916_202823.wav
+ create mode 100644 backend/realestate_agent/tts_output_20250916_212248.wav
+ create mode 100644 backend/realestate_agent/tts_output_20250916_213941.wav
+ create mode 100644 backend/realestate_agent/tts_output_20250916_214011.wav
+ create mode 100644 backend/realestate_agent/utils/__init__.py
+ create mode 100755 backend/start_server.sh
+ create mode 100644 input wave files/custom_output.wav
+ create mode 100644 input wave files/input_0.wav
+ create mode 100644 input wave files/input_1.wav
+ create mode 100644 input wave files/input_10.wav
+ create mode 100644 input wave files/input_11.wav
+ create mode 100644 input wave files/input_12.wav
+ create mode 100644 input wave files/input_13.wav
+ create mode 100644 input wave files/input_14.wav
+ create mode 100644 input wave files/input_15.wav
+ create mode 100644 input wave files/input_16.wav
+ create mode 100644 input wave files/input_17.wav
+ create mode 100644 input wave files/input_18.wav
+ create mode 100644 input wave files/input_19.wav
+ create mode 100644 input wave files/input_2.wav
+ create mode 100644 input wave files/input_20.wav
+ create mode 100644 input wave files/input_21.wav
+ create mode 100644 input wave files/input_22.wav
+ create mode 100644 input wave files/input_23.wav
+ create mode 100644 input wave files/input_3.wav
+ create mode 100644 input wave files/input_4.wav
+ create mode 100644 input wave files/input_5.wav
+ create mode 100644 input wave files/input_6.wav
+ create mode 100644 input wave files/input_7.wav
+ create mode 100644 input wave files/input_8.wav
+ create mode 100644 input wave files/input_9.wav
+ create mode 100644 tts_cleanup_report.txt
+ create mode 100644 web-frontend/FRONTEND_PLAN.md
+ create mode 100644 web-frontend/webfront/.gitignore
+ create mode 100644 web-frontend/webfront/README.md
+ create mode 100644 web-frontend/webfront/React_tips/Aouth/Aouth UI Creation.txt
+ create mode 100644 web-frontend/webfront/React_tips/Aouth/FastAPI_Postgres_pgAdmin_guide.txt
+ create mode 100644 web-frontend/webfront/React_tips/Aouth/aouth.txt
+ create mode 100644 web-frontend/webfront/React_tips/Aouth/demo_plan.md
+ create mode 100644 web-frontend/webfront/React_tips/Designs/Added realestate websites.txt
+ create mode 100644 web-frontend/webfront/React_tips/Designs/UI design and features.txt
+ create mode 100644 web-frontend/webfront/React_tips/Designs/Url web browser lib.txt
+ create mode 100644 web-frontend/webfront/React_tips/Designs/update frontend use new endpoint.txt
+ create mode 100644 web-frontend/webfront/React_tips/Integration steps.txt
+ create mode 100644 web-frontend/webfront/React_tips/Speak /Speak interacion.txt
+ create mode 100644 web-frontend/webfront/React_tips/TTS Arabic model/Arabic model.txt
+ create mode 100644 web-frontend/webfront/React_tips/TTS Arabic model/Arabic runtime error.txt
+ create mode 100644 web-frontend/webfront/React_tips/TTS Arabic model/NLTK_Data_Error_Solution.txt
+ create mode 100644 web-frontend/webfront/React_tips/TTS Arabic model/Speeding up the tts v2 model.txt
+ create mode 100644 web-frontend/webfront/React_tips/TTS Arabic model/XTTS_v2_model_guide.txt
+ create mode 100644 web-frontend/webfront/React_tips/TTS_FIX_2025-09-17.md
+ create mode 100644 web-frontend/webfront/React_tips/add custom UI.txt
+ create mode 100644 web-frontend/webfront/React_tips/download the tts english.txt
+ create mode 100644 web-frontend/webfront/React_tips/lightweight_gTTS_guide.txt
+ create mode 100644 web-frontend/webfront/React_tips/npm setup.txt
+ create mode 100644 web-frontend/webfront/React_tips/venv and uvicorn and gTTS commands.txt
+ create mode 100644 web-frontend/webfront/babel.config.js
+ create mode 100644 web-frontend/webfront/package-lock.json
+ create mode 100644 web-frontend/webfront/package.json
+ create mode 100644 web-frontend/webfront/public/favicon.ico
+ create mode 100644 web-frontend/webfront/public/index.html
+ create mode 100644 web-frontend/webfront/public/logo192.png
+ create mode 100644 web-frontend/webfront/public/logo512.png
+ create mode 100644 web-frontend/webfront/public/manifest.json
+ create mode 100644 web-frontend/webfront/public/robots.txt
+ create mode 100644 web-frontend/webfront/src/AdminDashboard.jsx
+ create mode 100644 web-frontend/webfront/src/App.css
+ create mode 100644 web-frontend/webfront/src/App.js
+ create mode 100644 web-frontend/webfront/src/App.test.js
+ create mode 100644 web-frontend/webfront/src/AppAuthDemo.jsx
+ create mode 100644 web-frontend/webfront/src/Gallery.jsx
+ create mode 100644 web-frontend/webfront/src/Login.jsx
+ create mode 100644 web-frontend/webfront/src/Navbar.jsx
+ create mode 100644 web-frontend/webfront/src/Register.jsx
+ create mode 100644 web-frontend/webfront/src/SpeakChat.jsx
+ create mode 100644 web-frontend/webfront/src/components/SpeechRecognition.jsx
+ create mode 100644 web-frontend/webfront/src/constants/realEstateLinks.js
+ create mode 100644 web-frontend/webfront/src/index.css
+ create mode 100644 web-frontend/webfront/src/index.js
+ create mode 100644 web-frontend/webfront/src/logo.svg
+ create mode 100644 web-frontend/webfront/src/pages/DashboardHome.jsx
+ create mode 100644 web-frontend/webfront/src/pages/Properties.jsx
+ create mode 100644 web-frontend/webfront/src/pages/Screenshot from 2025-09-16 21-12-07.png
+ create mode 100644 web-frontend/webfront/src/pages/Settings.jsx
+ create mode 100644 web-frontend/webfront/src/pages/Users.jsx
+ create mode 100644 web-frontend/webfront/src/reportWebVitals.js
+ create mode 100644 web-frontend/webfront/src/setupTests.js
+ create mode 100644 web-frontend/webfront/src/utils/linkUtils.js
+ create mode 100644 web-frontend/webfront/src/utils/speechSynthesis.js
+ create mode 100644 web-frontend/webfront/src/utils/ttsService.js
+(venv) hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/vox-estate-agent$ git remote add origin git@github.com:zoma00/vox-estate-agent.git
+git push -u origin main
+To github.com:zoma00/vox-estate-agent.git
+ ! [rejected]        main -> main (fetch first)
+error: failed to push some refs to 'github.com:zoma00/vox-estate-agent.git'
+hint: Updates were rejected because the remote contains work that you do not
+hint: have locally. This is usually caused by another repository pushing to
+hint: the same ref. If you want to integrate the remote changes, use
+hint: 'git pull' before pushing again.
+hint: See the 'Note about fast-forwards' in 'git push --help' for details.
+(venv) hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/vox-estate-agent$ git pull
+remote: Enumerating objects: 102, done.
+remote: Counting objects: 100% (102/102), done.
+remote: Compressing objects: 100% (80/80), done.
+remote: Total 102 (delta 11), reused 97 (delta 10), pack-reused 0 (from 0)
+Receiving objects: 100% (102/102), 1.16 MiB | 747.00 KiB/s, done.
+Resolving deltas: 100% (11/11), done.
+From github.com:zoma00/vox-estate-agent
+ * [new branch]      main       -> origin/main
+There is no tracking information for the current branch.
+Please specify which branch you want to merge with.
+See git-pull(1) for details.
+
+    git pull <remote> <branch>
+
+If you wish to set tracking information for this branch you can do so with:
+
+    git branch --set-upstream-to=origin/<branch> main
+
+I see you've successfully committed your changes, but there's a conflict with the remote repository. Let's resolve this by setting up the tracking branch and then force pushing your changes (since you want to overwrite the remote with your local changes).
+
+Here's what to do:
+
+Set up tracking for your local main branch:
+bash
+git branch --set-upstream-to=origin/main main
+Since you want to overwrite the remote with your local changes, you'll need to force push:
+bash
+git push -f origin main
+This will overwrite the remote repository with your local changes. Be careful with force pushing as it will overwrite any changes on the remote.
+
+If you want to keep any changes from the remote repository that aren't in your local one, you should first merge them:
+
+bash
+git pull --rebase origin main
+Then push your changes:
+
+bash
+git push origin main
+Would you like me to help you execute any of these commands?
+
+Feedback submitted
+
+
+
+(venv) hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/vox-estate-agent$ git branch --set-upstream-to=origin/main main
+branch 'main' set up to track 'origin/main'.
+(venv) hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/vox-estate-agent$ git push -f origin main
+Enumerating objects: 418, done.
+Counting objects: 100% (418/418), done.
+Delta compression using up to 8 threads
+Compressing objects: 100% (392/392), done.
+Writing objects:  61% (258/418), 11.09 MiB | 182.00 KiB/s
+
+
+
+(venv) hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/vox-estate-agent$ git push -f origin main
+Enumerating objects: 418, done.
+Counting objects: 100% (418/418), done.
+Delta compression using up to 8 threads
+Compressing objects: 100% (392/392), done.
+Writing objects: 100% (418/418), 35.50 MiB | 113.00 KiB/s, done.
+Total 418 (delta 15), reused 71 (delta 4), pack-reused 0
+remote: Resolving deltas: 100% (15/15), done.
+To github.com:zoma00/vox-estate-agent.git
+ + 30e6519...72c80d9 main -> main (forced update)
+(venv) hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/vox-estate-agent$ git status
+On branch main
+Your branch is up to date with 'origin/main'.
+
+nothing to commit, working tree clean

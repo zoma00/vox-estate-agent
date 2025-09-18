@@ -1,0 +1,44 @@
+# Install Google Chrome
+wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+sudo apt install ./google-chrome-stable_current_amd64.deb
+
+
+hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~$ # Install Google Chrome
+wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+sudo apt install ./google-chrome-stable_current_amd64.deb
+--2025-09-18 03:05:45--  https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+Resolving dl.google.com (dl.google.com)... 142.250.200.206, 2a00:1450:4006:80c::200e
+Connecting to dl.google.com (dl.google.com)|142.250.200.206|:443... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 120764812 (115M) [application/x-debian-package]
+Saving to: ‘google-chrome-stable_current_amd64.deb’
+
+google-chrome-stable_current_amd64.deb          100%[=====================================================================================================>] 115.17M  2.43MB/s    in 41s     
+
+2025-09-18 03:06:26 (2.83 MB/s) - ‘google-chrome-stable_current_amd64.deb’ saved [120764812/120764812]
+
+Reading package lists... Done
+Building dependency tree... Done
+Reading state information... Done
+Note, selecting 'google-chrome-stable' instead of './google-chrome-stable_current_amd64.deb'
+The following NEW packages will be installed:
+  google-chrome-stable
+0 upgraded, 1 newly installed, 0 to remove and 13 not upgraded.
+Need to get 0 B/121 MB of archives.
+After this operation, 396 MB of additional disk space will be used.
+Get:1 /home/hazem-elbatawy/google-chrome-stable_current_amd64.deb google-chrome-stable amd64 140.0.7339.185-1 [121 MB]
+Selecting previously unselected package google-chrome-stable.
+(Reading database ... 269399 files and directories currently installed.)
+Preparing to unpack .../google-chrome-stable_current_amd64.deb ...
+Unpacking google-chrome-stable (140.0.7339.185-1) ...
+Setting up google-chrome-stable (140.0.7339.185-1) ...
+update-alternatives: using /usr/bin/google-chrome-stable to provide /usr/bin/x-www-browser (x-www-browser) in auto mode
+update-alternatives: using /usr/bin/google-chrome-stable to provide /usr/bin/gnome-www-browser (gnome-www-browser) in auto mode
+update-alternatives: using /usr/bin/google-chrome-stable to provide /usr/bin/google-chrome (google-chrome) in auto mode
+Processing triggers for gnome-menus (3.36.0-1.1ubuntu3) ...
+Processing triggers for man-db (2.12.0-4build2) ...
+Processing triggers for desktop-file-utils (0.27-2build1) ...
+N: Download is performed unsandboxed as root as file '/home/hazem-elbatawy/google-chrome-stable_current_amd64.deb' couldn't be accessed by user '_apt'. - pkgAcquire::Run (13: Permission denied)
+
+
+test passed. but chat not working.

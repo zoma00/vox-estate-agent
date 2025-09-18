@@ -1,0 +1,53 @@
+Download the React DevTools for a better development experience: https://react.dev/link/react-devtools
+ChromeSpeechRecognition.js:78 Speech recognition initialized.
+SpeakChat.js:27 Warming up TTS service...
+ttsService.js:22 Sending TTS request for text: Hello
+ChromeSpeechRecognition.js:83 Cleaning up speech recognition
+ChromeSpeechRecognition.js:78 Speech recognition initialized.
+SpeakChat.js:27 Warming up TTS service...
+ttsService.js:22 Sending TTS request for text: Hello
+ttsService.js:32 TTS response: {audio_url: {…}}
+ttsService.js:35 Full TTS response: {audio_url: {…}}
+ttsService.js:64 Formatted audio URL: http://localhost:8000/static/audio/output_20250918_045054_bb705cde.wav
+ttsService.js:32 TTS response: {audio_url: {…}}
+ttsService.js:35 Full TTS response: {audio_url: {…}}
+ttsService.js:64 Formatted audio URL: http://localhost:8000/static/audio/output_20250918_045054_12409509.wav
+SpeakChat.js:32 TTS service is ready.
+ChromeSpeechRecognition.js:110 User starting recognition.
+ChromeSpeechRecognition.js:36 Speech recognition started
+SpeakChat.js:229 Speech recognition started
+ChromeSpeechRecognition.js:106 User stopping recognition.
+ChromeSpeechRecognition.js:49 Final transcript: Can you start recording
+SpeakChat.js:68 Speech result received: Can you start recording
+ChromeSpeechRecognition.js:73 Speech recognition ended
+SpeakChat.js:237 Speech recognition ended
+SpeakChat.js:156 API Response: {text: "I'm here to assist you with any real estate-relate… need. Just let me know how I can help you today!", audio_path: 'static/audio/output_20250918_045120_9be161f8.wav', audio_url: '/static/audio/output_20250918_045120_9be161f8.wav', video_path: null, urls: Array(0), …}
+SpeakChat.js:169 Speaking response: I'm here to assist you with any real estate-related questions or information you may need. Just let me know how I can help you today!
+SpeakChat.js:83 Speaking text: I'm here to assist you with any real estate-related questions or information you may need. Just let me know how I can help you today!
+ttsService.js:22 Sending TTS request for text: I'm here to assist you with any real estate-related questions or information you may need. Just let ...
+ttsService.js:32 TTS response: {audio_url: {…}}
+ttsService.js:35 Full TTS response: {audio_url: {…}}
+ttsService.js:64 Formatted audio URL: http://localhost:8000/static/audio/output_20250918_045121_a63f3d9d.wav
+ttsService.js:88 Attempting to play audio from URL: http://localhost:8000/static/audio/output_20250918_045121_a63f3d9d.wav
+ttsService.js:134 Audio playback started successfully
+ttsService.js:100 Audio playback finished successfully
+SpeakChat.js:89 Finished speaking
+ChromeSpeechRecognition.js:110 User starting recognition.
+ChromeSpeechRecognition.js:36 Speech recognition started
+SpeakChat.js:229 Speech recognition started
+ChromeSpeechRecognition.js:106 User stopping recognition.
+ChromeSpeechRecognition.js:49 Final transcript: Thank you for assisting me can you help me again in speech recogn
+SpeakChat.js:68 Speech result received: Thank you for assisting me can you help me again in speech recogn
+ChromeSpeechRecognition.js:73 Speech recognition ended
+SpeakChat.js:237 Speech recognition ended
+SpeakChat.js:156 API Response: {text: 'Of course! How can I assist you with speech recognition today?', audio_path: 'static/audio/output_20250918_045155_f2513317.wav', audio_url: '/static/audio/output_20250918_045155_f2513317.wav', video_path: null, urls: Array(0), …}
+SpeakChat.js:169 Speaking response: Of course! How can I assist you with speech recognition today?
+SpeakChat.js:83 Speaking text: Of course! How can I assist you with speech recognition today?
+ttsService.js:22 Sending TTS request for text: Of course! How can I assist you with speech recognition today?
+ttsService.js:32 TTS response: {audio_url: {…}}
+ttsService.js:35 Full TTS response: {audio_url: {…}}
+ttsService.js:64 Formatted audio URL: http://localhost:8000/static/audio/output_20250918_045156_c16e2f17.wav
+ttsService.js:88 Attempting to play audio from URL: http://localhost:8000/static/audio/output_20250918_045156_c16e2f17.wav
+ttsService.js:134 Audio playback started successfully
+ttsService.js:100 Audio playback finished successfully
+SpeakChat.js:89 Finished speaking

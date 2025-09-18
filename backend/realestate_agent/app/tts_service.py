@@ -21,25 +21,35 @@ class TTSService:
     def initialize_engine(self):
         """Initialize the TTS engine with preferred settings."""
         try:
+            logger.info("Initializing TTS engine...")
             self.engine = pyttsx3.init()
+            if not self.engine:
+                raise Exception("Failed to initialize pyttsx3 engine")
+                
             # Set default voice properties
             self.engine.setProperty('rate', 150)  # Speed of speech
             self.engine.setProperty('volume', 1.0)  # Volume level (0.0 to 1.0)
             
             # Try to set a female voice if available
-            voices = self.engine.getProperty('voices')
-            if voices:
-                # Try to find a female voice first, fall back to first available
-                female_voices = [v for v in voices if 'female' in v.name.lower()]
-                if female_voices:
-                    self.engine.setProperty('voice', female_voices[0].id)
-                else:
-                    self.engine.setProperty('voice', voices[0].id)
-            
-            print(f"TTS Engine initialized with voice: {self.engine.getProperty('voice')}")
-            return True
+            try:
+                voices = self.engine.getProperty('voices')
+                if voices:
+                    # Try to find a female voice first, fall back to first available
+                    female_voices = [v for v in voices if 'female' in v.name.lower()]
+                    if female_voices:
+                        self.engine.setProperty('voice', female_voices[0].id)
+                    else:
+                        self.engine.setProperty('voice', voices[0].id)
+                
+                logger.info(f"TTS Engine initialized with voice: {self.engine.getProperty('voice')}")
+                return True
+            except Exception as voice_error:
+                logger.warning(f"Could not set voice: {voice_error}")
+                return True  # Still return True as the engine is initialized
+                
         except Exception as e:
-            print(f"Failed to initialize TTS engine: {e}")
+            logger.error(f"Failed to initialize TTS engine: {e}", exc_info=True)
+            self.engine = None
             return False
     
     def text_to_speech(self, text: str) -> tuple[str, str]:
@@ -53,41 +63,62 @@ class TTSService:
             tuple: (audio_path, audio_url)
         """
         if not text or not text.strip():
+            logger.warning("No text provided for TTS")
             raise ValueError("No text provided for TTS")
         
-        if not self.engine:
-            if not self.initialize_engine():
-                raise HTTPException(status_code=500, detail="TTS engine initialization failed")
+        # Ensure the engine is initialized
+        if not self.engine and not self.initialize_engine():
+            error_msg = "TTS engine initialization failed"
+            logger.error(error_msg)
+            raise HTTPException(status_code=500, detail=error_msg)
         
         try:
             # Create a unique filename
-            filename = f"output_{datetime.now().strftime('%Y%m%d_%H%M%S')}_{os.urandom(4).hex()}.wav"
-            output_path = os.path.join("static/audio", filename)
+            timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+            random_str = os.urandom(4).hex()
+            filename = f"output_{timestamp}_{random_str}.wav"
+            output_dir = Path("static/audio")
+            output_path = output_dir / filename
             
-            # Ensure directory exists
-            os.makedirs(os.path.dirname(output_path), exist_ok=True)
+            # Ensure directory exists with proper permissions
+            output_dir.mkdir(parents=True, exist_ok=True, mode=0o755)
             
             logger.info(f"Generating speech for text: {text[:100]}...")
             
-            # Save the speech to the file
-            self.engine.save_to_file(text, output_path)
-            self.engine.runAndWait()
+            try:
+                # Save the speech to the file
+                self.engine.save_to_file(text, str(output_path))
+                self.engine.runAndWait()
+            except Exception as e:
+                logger.error(f"Error generating speech: {e}", exc_info=True)
+                raise Exception(f"Failed to generate speech: {str(e)}")
             
             # Verify the file was created and has content
-            if not os.path.exists(output_path) or os.path.getsize(output_path) == 0:
-                raise Exception("Generated audio file is empty or was not created")
+            if not output_path.exists():
+                error_msg = f"TTS output file was not created: {output_path}"
+                logger.error(error_msg)
+                raise Exception(error_msg)
+                
+            file_size = output_path.stat().st_size
+            if file_size == 0:
+                error_msg = f"Generated audio file is empty: {output_path}"
+                logger.error(error_msg)
+                raise Exception(error_msg)
                 
             # Generate URL for the audio file
-            audio_url = f"/static/audio/{os.path.basename(output_path)}"
-            logger.info(f"Successfully generated speech file at: {output_path} (URL: {audio_url})")
+            audio_url = f"/static/audio/{filename}"
+            logger.info(f"Successfully generated speech file at: {output_path} (Size: {file_size} bytes, URL: {audio_url})")
             
-            return output_path, audio_url
+            return str(output_path), audio_url
             
+        except HTTPException:
+            raise
         except Exception as e:
-            print(f"Error in text_to_speech: {e}")
+            error_msg = f"Error in text_to_speech: {str(e)}"
+            logger.error(error_msg, exc_info=True)
             raise HTTPException(
                 status_code=500,
-                detail=f"Failed to generate speech: {str(e)}"
+                detail=error_msg
             )
 
 # Create a singleton instance

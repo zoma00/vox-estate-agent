@@ -1,0 +1,155 @@
+import React, { useState, useRef, useEffect } from 'react';
+
+const ChromeSpeechRecognition = () => {
+  const [status, setStatus] = useState('Click the button to start');
+  const [isListening, setIsListening] = useState(false);
+  const recognitionRef = useRef(null);
+
+  // Initialize speech recognition
+  useEffect(() => {
+    // Chrome uses webkitSpeechRecognition
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    
+    if (!SpeechRecognition) {
+      setStatus('Web Speech API is not supported in this browser');
+      return;
+    }
+
+    // Create recognition instance
+    recognitionRef.current = new SpeechRecognition();
+    const recognition = recognitionRef.current;
+
+    // Configure for Chrome
+    recognition.continuous = false;  // Stop after first result
+    recognition.interimResults = false;  // Only return final results
+    recognition.lang = 'en-US';  // Set language
+
+    // Event handlers
+    recognition.onstart = () => {
+      console.log('Speech recognition started');
+      setStatus('Listening... Speak now');
+      setIsListening(true);
+    };
+
+    recognition.onresult = (event) => {
+      const transcript = event.results[0][0].transcript;
+      console.log('Recognized speech:', transcript);
+      setStatus(`You said: ${transcript}`);
+    };
+
+    recognition.onerror = (event) => {
+      console.error('Speech recognition error:', event.error);
+      setStatus(`Error: ${event.error}. Please try again.`);
+      setIsListening(false);
+    };
+
+    recognition.onend = () => {
+      console.log('Speech recognition ended');
+      setIsListening(false);
+    };
+
+    // Cleanup
+    return () => {
+      if (recognitionRef.current) {
+        recognitionRef.current.stop();
+      }
+    };
+  }, []);
+
+  const toggleListening = () => {
+    if (!recognitionRef.current) return;
+
+    try {
+      if (isListening) {
+        recognitionRef.current.stop();
+        setStatus('Stopped listening');
+      } else {
+        recognitionRef.current.start();
+        setStatus('Starting...');
+      }
+    } catch (err) {
+      console.error('Error toggling recognition:', err);
+      setStatus(`Error: ${err.message}`);
+    }
+  };
+
+  return (
+    <div style={{ 
+      padding: '20px', 
+      fontFamily: 'Roboto, Arial, sans-serif',
+      maxWidth: '500px',
+      margin: '0 auto',
+      textAlign: 'center'
+    }}>
+      <h2 style={{ color: '#1a73e8' }}>Voice Recognition (Chrome)</h2>
+      <div style={{ 
+        minHeight: '100px',
+        padding: '15px',
+        backgroundColor: '#f8f9fa',
+        borderRadius: '8px',
+        margin: '20px 0',
+        border: '1px solid #dadce0'
+      }}>
+        <p style={{ 
+          fontSize: '16px',
+          margin: '10px 0',
+          color: '#202124'
+        }}>
+          {status}
+        </p>
+      </div>
+      <button
+        onClick={toggleListening}
+        style={{
+          padding: '12px 24px',
+          fontSize: '16px',
+          backgroundColor: isListening ? '#d93025' : '#1a73e8',
+          color: 'white',
+          border: 'none',
+          borderRadius: '4px',
+          cursor: 'pointer',
+          transition: 'background-color 0.2s',
+          boxShadow: '0 1px 2px 0 rgba(66,133,244,0.3)',
+          fontWeight: '500'
+        }}
+        onMouseOver={e => {
+          if (!isListening) e.target.style.backgroundColor = '#1765d1';
+        }}
+        onMouseOut={e => {
+          if (!isListening) e.target.style.backgroundColor = '#1a73e8';
+        }}
+      >
+        {isListening ? 'Stop Listening' : 'Start Listening'}
+      </button>
+      
+      <div style={{ 
+        marginTop: '25px',
+        padding: '15px',
+        backgroundColor: '#e8f0fe',
+        borderRadius: '8px',
+        textAlign: 'left'
+      }}>
+        <h4 style={{ 
+          margin: '0 0 10px 0',
+          color: '#1a73e8',
+          fontSize: '14px'
+        }}>
+          Tips for best results:
+        </h4>
+        <ul style={{ 
+          margin: '0',
+          paddingLeft: '20px',
+          fontSize: '14px',
+          color: '#5f6368'
+        }}>
+          <li>Use Chrome browser (version 25 or later)</li>
+          <li>Allow microphone access when prompted</li>
+          <li>Speak clearly into your microphone</li>
+          <li>Use in a quiet environment for better accuracy</li>
+        </ul>
+      </div>
+    </div>
+  );
+};
+
+export default ChromeSpeechRecognition;
