@@ -43,9 +43,26 @@ function Gallery() {
     );
   }
 
+  const galleryStyle = {
+    minHeight: '100vh',
+    padding: '2rem 0',
+    backgroundImage: 'linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(https://images.pexels.com/photos/1396122/pexels-photo-1396122.jpeg?auto=compress&cs=tinysrgb&w=1920&h=1080&dpr=2)',
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
+    backgroundAttachment: 'fixed',
+    backgroundRepeat: 'no-repeat',
+  };
+
+  const containerStyle = {
+    maxWidth: '1200px',
+    margin: '0 auto',
+    padding: '0 1rem',
+  };
+
   return (
-    <div className="gallery-container">
-      <h1 className="gallery-title">Featured Properties</h1>
+    <div style={galleryStyle}>
+      <div style={containerStyle}>
+        <h1 className="gallery-title" style={{ color: '#fff', textAlign: 'center', marginBottom: '2rem', textShadow: '2px 2px 4px rgba(0,0,0,0.5)' }}>Featured Properties</h1>
       
       <div className="properties-grid">
         {properties.map((property) => (
@@ -107,6 +124,7 @@ function Gallery() {
         >
           Next
         </button>
+      </div>
       </div>
     </div>
   );

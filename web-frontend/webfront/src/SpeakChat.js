@@ -317,35 +317,52 @@ function SpeakChat() {
 
   return (
     <div style={{
+      minHeight: '100vh',
       display: 'flex',
-      flexDirection: 'column',
-      height: '100vh',
-      backgroundColor: '#f5f5f5',
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundImage: "linear-gradient(rgba(0,0,0,0.22), rgba(0,0,0,0.22)), url('https://images.unsplash.com/photo-1501183638710-841dd1904471?auto=format&fit=crop&w=1650&q=80')",
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      backgroundRepeat: 'no-repeat',
+      padding: '2rem'
     }}>
+      <div style={{
+        display: 'flex',
+        flexDirection: 'column',
+        minHeight: '70vh',
+        backgroundColor: 'rgba(255,255,255,0.95)',
+        maxWidth: '380px',
+        width: '94%',
+        margin: '0 auto',
+        borderRadius: '12px',
+        boxShadow: '0 8px 30px rgba(0,0,0,0.08)',
+        overflow: 'hidden'
+      }}>
       {/* Header */}
       <header style={{
         backgroundColor: '#1a73e8',
         color: 'white',
-        padding: '1rem',
+        padding: '0.6rem 0.75rem',
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
-        boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+        boxShadow: '0 1px 4px rgba(0,0,0,0.06)',
       }}>
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <img 
             src={agentImg} 
             alt="AI Assistant" 
             style={{
-              width: 40,
-              height: 40,
+              width: 32,
+              height: 32,
               borderRadius: '50%',
-              marginRight: '1rem',
+              marginRight: '0.75rem',
               backgroundColor: 'white',
-              padding: 4,
+              padding: 3,
             }} 
           />
-          <h1 style={{ margin: 0, fontSize: '1.5rem' }}>AI Real Estate Assistant</h1>
+          <h1 style={{ margin: 0, fontSize: '1.05rem' }}>AI Real Estate Assistant</h1>
         </div>
         <button 
           onClick={handleTestSpeech}
@@ -378,8 +395,8 @@ function SpeakChat() {
       <div style={{
         flex: 1,
         overflowY: 'auto',
-        padding: '1rem',
-        backgroundColor: '#f5f5f5',
+        padding: '0.6rem',
+        backgroundColor: '#f5f5f5ff',
       }}>
         {messages.map((msg, i) => (
           <div
@@ -393,9 +410,9 @@ function SpeakChat() {
           >
             <div style={{
               backgroundColor: msg.sender === 'user' ? '#e3f2fd' : 'white',
-              padding: '0.75rem 1rem',
-              borderRadius: '18px',
-              boxShadow: '0 1px 2px rgba(0,0,0,0.1)',
+              padding: '0.5rem 0.9rem',
+              borderRadius: '14px',
+              boxShadow: '0 1px 2px rgba(0,0,0,0.06)',
             }}>
               {msg.sender === 'agent' ? (
                 renderMessageWithLinks(msg.text, true)
@@ -434,10 +451,10 @@ function SpeakChat() {
               )}
               
               <div style={{
-                fontSize: '0.7em',
+                fontSize: '0.66em',
                 color: '#666',
                 textAlign: 'right',
-                marginTop: '0.5rem',
+                marginTop: '0.4rem',
               }}>
                 {new Date(msg.timestamp).toLocaleTimeString([], { 
                   hour: '2-digit', 
@@ -452,11 +469,11 @@ function SpeakChat() {
           <div style={{
             display: 'flex',
             alignItems: 'center',
-            padding: '0.5rem 1rem',
+            padding: '0.35rem 0.7rem',
             backgroundColor: 'white',
-            borderRadius: '18px',
+            borderRadius: 'px',
             maxWidth: 'fit-content',
-            boxShadow: '0 1px 2px rgba(0,0,0,0.1)',
+            boxShadow: '0 1px 2px rgba(0,0,0,0.06)',
           }}>
             <div className="typing-indicator">
               <span></span>
@@ -471,7 +488,7 @@ function SpeakChat() {
 
       {/* Input Area */}
       <div style={{
-        padding: '1rem',
+        padding: '0.5rem',
         backgroundColor: 'white',
         borderTop: '1px solid #e0e0e0',
         position: 'relative',
@@ -479,10 +496,10 @@ function SpeakChat() {
         <div style={{
           display: 'flex',
           alignItems: 'center',
-          maxWidth: '800px',
+          maxWidth: '100%',
           margin: '0 auto',
           position: 'relative',
-          paddingRight: '50px', // Make room for the mic button
+          paddingRight: '44px', // Make room for the mic button
         }}>
           <input
             type="text"
@@ -493,14 +510,14 @@ function SpeakChat() {
             disabled={loading}
             style={{
               flex: 1,
-              padding: '0.75rem 1rem',
+              padding: '0.55rem 0.85rem',
               border: '1px solid #ddd',
-              borderRadius: '24px',
-              fontSize: '1rem',
+              borderRadius: '20px',
+              fontSize: '0.96rem',
               outline: 'none',
-              boxShadow: '0 1px 2px rgba(0,0,0,0.05)',
+              boxShadow: '0 1px 2px rgba(0,0,0,0.03)',
               transition: 'all 0.2s',
-              paddingRight: '50px', // Make room for the mic button
+              paddingRight: '42px', // Make room for the mic button
             }}
           />
           
@@ -626,6 +643,7 @@ function SpeakChat() {
           }
         `}
       </style>
+      </div>
     </div>
   );
 }

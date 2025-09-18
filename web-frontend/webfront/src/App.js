@@ -11,7 +11,7 @@ import ErrorBoundary from './components/ErrorBoundary';
 const TTS_API_URL = 'http://localhost:8000/api/tts';
 const OPENAI_API_URL = 'http://localhost:8000/api/openai_chat';
 const agentImg = 'https://cdn-icons-png.flaticon.com/512/4712/4712027.png';
-const homeBg = 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1200&q=80';
+const homeBg = 'https://images.pexels.com/photos/186077/pexels-photo-186077.jpeg?auto=compress&cs=tinysrgb&w=1920&h=1080&dpr=2';
 
 function App() {
   const [messages, setMessages] = useState([]);
@@ -95,25 +95,41 @@ function App() {
           path="/" 
           element={
             <div className="home-container" style={{ 
-              backgroundImage: `url(${homeBg})`,
+              backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url(${homeBg})`,
               minHeight: '100vh',
               backgroundSize: 'cover',
-              backgroundPosition: 'center'
+              backgroundPosition: 'center',
+              paddingTop: '100px',
+              paddingBottom: '50px',
+              boxSizing: 'border-box'
             }}>
-              <SpeakChat 
-                messages={messages}
-                input={input}
-                setInput={setInput}
-                handleSendMessage={handleSend}
-                audioRef={audioRef}
-                agentImg={agentImg}
-                loading={loading}
-                onInputChange={handleInputChange}
-                onKeyDown={handleKeyDown}
-              />
-              <div className="explore-cta">
-                <Link to="/gallery" className="explore-button">
-                  🖼️ View Gallery
+              <div style={{
+                textAlign: 'center',
+                padding: '2rem',
+                backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                borderRadius: '12px',
+                maxWidth: '600px',
+                margin: '0 auto',
+                boxShadow: '0 4px 12px rgba(0,0,0,0.15)'
+              }}>
+                <h1 style={{ color: '#333', marginBottom: '1.5rem' }}>Find Your Dream Home</h1>
+                <Link 
+                  to="/gallery" 
+                  style={{
+                    display: 'inline-block',
+                    padding: '0.8rem 2rem',
+                    backgroundColor: '#4CAF50',
+                    color: 'white',
+                    textDecoration: 'none',
+                    borderRadius: '4px',
+                    fontWeight: 'bold',
+                    fontSize: '1.1rem',
+                    transition: 'background-color 0.3s'
+                  }}
+                  onMouseOver={(e) => e.target.style.backgroundColor = '#45a049'}
+                  onMouseOut={(e) => e.target.style.backgroundColor = '#4CAF50'}
+                >
+                  Browse Properties
                 </Link>
               </div>
             </div>
