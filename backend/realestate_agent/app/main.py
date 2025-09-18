@@ -6,8 +6,19 @@ from pathlib import Path
 import dotenv
 
 # Load environment variables
-env_path = Path(__file__).resolve().parent.parent.parent / '.env'
+# Look for .env in the current directory (app/)
+env_path = Path(__file__).resolve().parent / '.env'
+if not env_path.exists():
+    # If not found, look in the parent directory
+    env_path = Path(__file__).resolve().parent.parent / '.env'
+    if not env_path.exists():
+        # If still not found, look in the project root
+        env_path = Path(__file__).resolve().parent.parent.parent / '.env'
+
 dotenv.load_dotenv(env_path)
+print(f"Loading environment variables from: {env_path}")
+print(f"Current working directory: {os.getcwd()}")
+print(f"OPENAI_API_KEY is set: {'Yes' if os.getenv('OPENAI_API_KEY') else 'No'}")
 
 # Verify OpenAI API key is set
 if not os.getenv("OPENAI_API_KEY"):
@@ -50,13 +61,29 @@ app = FastAPI(
 )
 
 # CORS middleware configuration
+# List of allowed origins (add your frontend URL here)
+origins = [
+    "http://localhost:3000",  # Default React development server
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # ⚠️ Replace with frontend URL in production
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
+    expose_headers=["Content-Disposition"],
 )
+
+# Add CORS headers to all responses
+@app.middleware("http")
+async def add_cors_headers(request: Request, call_next):
+    response = await call_next(request)
+    origin = request.headers.get('origin')
+    if origin in origins:
+        response.headers["Access-Control-Allow-Origin"] = origin
+        response.headers["Access-Control-Allow-Credentials"] = "true"
+    return response
 
 # Request/response models
 class ChatRequest(BaseModel):

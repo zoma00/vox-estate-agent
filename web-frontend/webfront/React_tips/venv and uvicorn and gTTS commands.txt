@@ -5,11 +5,10 @@ messages, the most relevant file is:
 
 Active venv then:
 ------------------------
-hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/vox-estate-agent$ cd backend/realestate_agent/
-hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/vox-estate-agent/backend/realestate_agent$ 
+cd ~/Downloads/vox-estate-agent/backend/realestate_agent
 
- source venv/bin/activate && python -m uvicorn app.main:app --host 0.0.0.0 --port 8000
 
+source venv/bin/activate && python -m uvicorn app.main:app --host 0.0.0.0 --port 8000
 
 
 React:

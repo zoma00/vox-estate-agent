@@ -1,0 +1,69 @@
+How to Customize the AI Assistant's Behavior
+
+This document explains how to change the personality, role, and limitations of the AI assistant.
+
+----------------------------------------------------------------------
+
+**The Key File: `main.py`**
+
+The AI's behavior is controlled by a "system prompt" that is passed to the OpenAI API. You can find this prompt in the following file:
+
+`backend/realestate_agent/app/main.py`
+
+
+**Finding the System Prompt**
+
+Inside `main.py`, look for the `@app.post("/api/chat")` endpoint. Within this function, you will see a call to `process_user_input`. The `system_prompt` is defined there.
+
+As of this writing, it looks like this (around line 142):
+
+```python
+system_prompt="You are a helpful real estate assistant. Provide detailed and accurate information about properties, market trends, and answer any real estate related questions."
+```
+
+This instruction is why the AI currently only talks about real estate.
+
+
+**How to Change the Behavior**
+
+You have two main options:
+
+**1. Make it a General-Purpose Assistant**
+
+To allow the AI to talk about any topic without restrictions, simply remove the `system_prompt` argument entirely. 
+
+*Before:*
+```python
+response = await process_user_input(
+    # ... other arguments
+    system_prompt="You are a helpful real estate assistant..."
+)
+```
+
+*After (remove the line):*
+```python
+response = await process_user_input(
+    # ... other arguments
+    # The system_prompt line is now gone
+)
+```
+
+
+**2. Give it a New Role or Personality**
+
+If you want the AI to adopt a different persona, you can edit the text of the `system_prompt`. Be creative! The AI will do its best to follow your instructions.
+
+*Example: A friendly, general conversationalist named Cascade*
+```python
+system_prompt="You are a friendly and helpful conversational AI. Your name is Cascade. Engage in a pleasant and informative conversation with the user on any topic they wish to discuss."
+```
+
+*Example: A historical expert*
+```python
+system_prompt="You are a world-renowned history professor. Your answers should be detailed, historically accurate, and engaging. You love to tell stories about the past."
+```
+
+
+**Important Note:**
+
+After making any changes to `main.py`, you will need to **restart the backend server** for the new instructions to take effect.

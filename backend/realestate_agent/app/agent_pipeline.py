@@ -257,12 +257,19 @@ async def process_user_input(
         audio_path = None
         audio_url = None
         if generate_audio and response.text:
-            tts_result = await generate_tts_audio(response.text)
-            audio_path = tts_result.get('audio_path')
-            audio_url = tts_result.get('audio_url')
-            
-            response.audio_path = audio_path
-            response.audio_url = audio_url
+            try:
+                tts_result = await generate_tts_audio(response.text)
+                if tts_result:
+                    audio_path = tts_result.get('audio_path')
+                    audio_url = tts_result.get('audio_url')
+                    
+                    response.audio_path = audio_path
+                    response.audio_url = audio_url
+                else:
+                    logger.warning("TTS generation returned no result")
+            except Exception as e:
+                logger.error(f"Error generating TTS audio: {e}", exc_info=True)
+                # Continue without TTS rather than failing the entire request
 
         # Step 3: Open URLs
         if open_urls and response.urls:
