@@ -36,3 +36,88 @@
     transform: rotate(360deg);
   }
 }
+
+
+
+App.css
+/* Chat container */
+.chat-container {
+  max-width: 900px;
+  margin: 2rem auto;
+  padding: 3rem;
+  background: white;
+  min-height: calc(100vh - 8rem);
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.08);
+  border-radius: 16px;
+  position: relative;
+  z-index: 1;
+  border: 1px solid #f0f0f0;
+}
+
+/* Chat messages */
+.message {
+  margin: 1.5rem 0;
+  padding: 1.25rem 1.5rem;
+  border-radius: 12px;
+  max-width: 80%;
+  line-height: 1.6;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+/* User message */
+.message.user {
+  margin-left: auto;
+  background-color: #f0f7ff;
+}
+
+/* Agent message */
+.message.agent {
+  margin-right: auto;
+  background-color: #f9f9f9;
+}
+
+/* Real Estate Hub Styles */
+.real-estate-hub {
+  padding: 2rem;
+  background: #f8f9fa;
+}
+
+.navigation-footer {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+}
+
+/* Shared Navigation Styles */
+.explore-button,
+.return-to-chat {
+  padding: 12px 24px;
+  border-radius: 30px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  display: inline-block;
+}
+
+.explore-button {
+  background: #4a90e2;
+  color: white;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.return-to-chat {
+  background: #34d399;
+  color: #1a1a1a;
+  border: 2px solid #1a1a1a;
+}
+
+/* Homepage Layout */
+.home-container {
+  position: relative;
+}
+
+.explore-cta {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+}

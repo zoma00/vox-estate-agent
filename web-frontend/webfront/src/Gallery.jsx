@@ -1,54 +1,113 @@
+import React, { useState, useEffect } from 'react';
+import { fetchProperties } from './services/realEstateApi';
 import { REAL_ESTATE_LINKS } from './constants/realEstateLinks';
-
-const propertyImages = [
-  'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=400&q=80',
-  'https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=400&q=80',
-  'https://images.unsplash.com/photo-1512918728675-ed5a9ecdebfd?auto=format&fit=crop&w=400&q=80',
-  'https://images.unsplash.com/photo-1523217582562-09d0def993a6?auto=format&fit=crop&w=400&q=80',
-];
+import './Gallery.css';
 
 function Gallery() {
+  const [properties, setProperties] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+
+  useEffect(() => {
+    const loadProperties = async () => {
+      setLoading(true);
+      try {
+        const result = await fetchProperties({ page, hitsPerPage: 9 });
+        setProperties(result.hits);
+        setTotalPages(result.totalPages);
+      } catch (error) {
+        console.error('Error fetching properties:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadProperties();
+  }, [page]);
+
+  const handlePrevPage = () => {
+    if (page > 1) setPage(page - 1);
+  };
+
+  const handleNextPage = () => {
+    if (page < totalPages) setPage(page + 1);
+  };
+
+  if (loading) {
+    return (
+      <div className="gallery-loading">
+        <div className="spinner"></div>
+        <p>Loading properties...</p>
+      </div>
+    );
+  }
+
   return (
-    <div style={{ maxWidth: 900, margin: '40px auto', background: '#fff', borderRadius: 16, boxShadow: '0 2px 16px #0002', padding: 32 }}>
-      <h2 style={{ textAlign: 'center', color: '#2c3e50', marginBottom: 32 }}>Property Gallery</h2>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 24, marginBottom: 40 }}>
-        {propertyImages.map((img, idx) => (
-          <div key={idx} style={{ background: '#fff', borderRadius: 8, boxShadow: '0 2px 8px #0001', overflow: 'hidden', textAlign: 'center' }}>
-            <img src={img} alt={`Property ${idx + 1}`} style={{ width: '100%', height: 160, objectFit: 'cover' }} />
-            <div style={{ padding: '12px 0' }}>Property {idx + 1}</div>
+    <div className="gallery-container">
+      <h1 className="gallery-title">Featured Properties</h1>
+      
+      <div className="properties-grid">
+        {properties.map((property) => (
+          <div key={property.id} className="property-card">
+            <div className="property-image" style={{ backgroundImage: `url(${property.coverPhoto.url})` }}>
+              <div className="property-price">{property.price}</div>
+            </div>
+            <div className="property-details">
+              <h3 className="property-title">{property.title}</h3>
+              <div className="property-location">
+                {property.location.map((loc, idx) => (
+                  <span key={idx}>{loc.name}{idx < property.location.length - 1 ? ', ' : ''}</span>
+                ))}
+              </div>
+              <div className="property-features">
+                <span>🏠 {property.area} sq.ft</span>
+                <span>🛏️ {property.rooms} beds</span>
+                <span>🚿 {property.baths} baths</span>
+              </div>
+              <div className="property-actions">
+                <button className="btn view-details-btn">View Details</button>
+                {property.website && (
+                  <a 
+                    href={property.website} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="btn visit-website-btn"
+                  >
+                    Visit Website
+                  </a>
+                )}
+                {property.hasApi && (
+                  <span className="api-indicator" title="API Available">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
+                    </svg>
+                    API
+                  </span>
+                )}
+              </div>
+            </div>
           </div>
         ))}
       </div>
-      <section>
-        <h2 style={{ marginBottom: 16 }}>Real Estate Links</h2>
-        <ul style={{ listStyle: 'none', padding: 0 }}>
-          {REAL_ESTATE_LINKS.map((link, index) => (
-            <li key={index} style={{ marginBottom: '8px' }}>
-              <a 
-                href={link.url} 
-                target="_blank" 
-                rel="noopener noreferrer"
-                style={{
-                  color: '#2c3e50',
-                  textDecoration: 'none',
-                  display: 'flex',
-                  alignItems: 'center',
-                  padding: '8px 12px',
-                  borderRadius: '6px',
-                  transition: 'all 0.2s ease',
-                  ':hover': {
-                    backgroundColor: '#f5f7fa',
-                    color: '#1a73e8',
-                  },
-                }}
-              >
-                <span style={{ marginRight: '8px' }}>🔗</span>
-                {link.name}
-              </a>
-            </li>
-          ))}
-        </ul>
-      </section>
+
+      <div className="pagination">
+        <button 
+          onClick={handlePrevPage} 
+          disabled={page === 1}
+          className={`pagination-btn ${page === 1 ? 'disabled' : ''}`}
+        >
+          Previous
+        </button>
+        <span className="page-indicator">Page {page} of {totalPages}</span>
+        <button 
+          onClick={handleNextPage} 
+          disabled={page === totalPages}
+          className={`pagination-btn ${page === totalPages ? 'disabled' : ''}`}
+        >
+          Next
+        </button>
+      </div>
     </div>
   );
 }

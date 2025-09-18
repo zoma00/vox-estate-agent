@@ -1,0 +1,61 @@
+# Property Finder Egypt - Robots.txt Analysis
+
+## File Location
+https://www.propertyfinder.eg/robots.txt
+
+## Key Restrictions
+
+### Blocked Directories
+- `/ajax/` - Likely contains API endpoints
+- `/manager/` - Admin/management area (except `/manager/login/`)
+- `/to/` - URL shortener
+- `/search` and `/search-v2` - Search functionality
+- `/en/review` and `/ar/review` - Review sections
+- `/sp_events/` - Special events
+
+### Blocked Parameters (prevents scraping of filtered searches)
+- `sublocation=*`
+- `location=*`
+- `price=*`
+- `category=*`
+- `built_up_area=*`
+- `city=*`
+- `pmt=*`
+- `payment_freq=*`
+- `pkw=*`
+- `ob=*`
+- `company_profile=*`
+- `bedrooms=*`
+- `furnished=*`
+- `bf=*`
+- `bt=*`
+- `brand_name=*`
+
+### Blocked Crawlers
+- Common web scrapers (HTTrack, WebZIP, etc.)
+- SEO tools (Screaming Frog SEO Spider, etc.)
+- Automated tools (Teleport, Offline Explorer, etc.)
+- Mediapartners-Google (Google AdSense)
+
+## What This Means
+1. **No Scraping**: The site explicitly blocks web scraping tools and automated access to property listings.
+2. **No API Access**: The `/ajax/` directory (likely containing API endpoints) is restricted.
+3. **Legal Implications**: Attempting to bypass these restrictions may violate their Terms of Service.
+
+## Recommended Alternatives
+1. **Official Access**:
+   - Contact Property Finder for official API access
+   - Inquire about partnership opportunities
+
+2. **Alternative APIs**:
+   - Bayut API (covers Middle East, including Egypt)
+   - Aqarmap (if they offer an API)
+   - Other real estate data providers with proper licensing
+
+3. **Legal Considerations**:
+   - Always respect robots.txt and website terms of service
+   - Consider using official APIs or data providers
+   - For research purposes, check if they offer data exports or research partnerships
+
+## Last Updated
+2025-09-18

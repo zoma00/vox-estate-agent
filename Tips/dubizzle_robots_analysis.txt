@@ -1,0 +1,58 @@
+# Dubizzle - Robots.txt Analysis
+
+## File Location
+https://www.dubizzle.com/robots.txt
+
+## Key Restrictions
+
+### Blocked Directories
+- `/report/` - Reporting system
+- `/profile/` - User profiles
+- `/accounts/` - Account management
+- `/chat/` - Messaging system
+- `/dashboard/` - User dashboard
+- `/api/` - API endpoints
+- `/auth/` - Authentication pages
+- `/products/choose/` - Product selection
+- `/place-an-ad/` - Ad creation
+
+### Blocked Functionality
+- User login pages
+- Profile management
+- Ad creation flows
+- Search functionality
+- API access
+- Authentication endpoints
+
+### Blocked Crawlers
+- Common web scrapers (HTTrack, WebZIP, etc.)
+- SEO tools (Screaming Frog SEO Spider)
+- Automated tools (Teleport, Offline Explorer, etc.)
+- Site downloaders and offline browsers
+
+## What This Means
+1. **No Scraping**: Dubizzle explicitly blocks web scraping tools and automated access to its listings.
+2. **No API Access**: The `/api/` directory is restricted, and there's no public API mentioned.
+3. **User Protection**: Sensitive user areas like profiles and dashboards are protected.
+4. **Legal Implications**: Attempting to bypass these restrictions may violate their Terms of Service.
+
+## Recommended Alternatives
+1. **Official Partnerships**:
+   - Contact Dubizzle for official API access
+   - Inquire about business partnerships
+
+2. **Alternative Platforms**:
+   - Bayut API
+   - Property Finder API
+   - Other classifieds with official APIs
+
+3. **Legal Considerations**:
+   - Always respect robots.txt and website terms of service
+   - Consider using official data providers
+   - For research, check if they offer data exports or research partnerships
+
+## Sitemap
+- Sitemap available at: https://uae.dubizzle.com/sitemaps/sitemap.xml
+
+## Last Updated
+2025-09-18

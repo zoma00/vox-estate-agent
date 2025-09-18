@@ -294,3 +294,41 @@ Keeping your main branch clean
 Would you like me to help you execute these commands or do you have any questions about this workflow?
 
 Feedback submitted
+
+
+
+
+hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/vox-estate-agent$ git push -u origin feature/speech-recognition
+Enumerating objects: 71, done.
+Counting objects: 100% (71/71), done.
+Delta compression using up to 8 threads
+Compressing objects: 100% (49/49), done.
+Writing objects: 100% (50/50), 2.31 MiB | 1.20 MiB/s, done.
+Total 50 (delta 14), reused 0 (delta 0), pack-reused 0
+remote: Resolving deltas: 100% (14/14), completed with 13 local objects.
+remote: 
+remote: Create a pull request for 'feature/speech-recognition' on GitHub by visiting:
+remote:      https://github.com/zoma00/vox-estate-agent/pull/new/feature/speech-recognition
+remote: 
+To github.com:zoma00/vox-estate-agent.git
+ * [new branch]      feature/speech-recognition -> feature/speech-recognition
+branch 'feature/speech-recognition' set up to track 'origin/feature/speech-recognition'.
+hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/vox-estate-agent$ 
+
+
+Great! You've successfully:
+
+1. Created a new branch `feature/speech-recognition`
+2. Committed all your changes with a descriptive message
+3. Pushed the branch to the remote repository
+
+The branch is now set up to track the remote branch. The output also provides a link to create a pull request (PR) on GitHub if you want to merge these changes into the main branch.
+
+Would you like to:
+1. Create a pull request to merge these changes into main?
+2. Continue working on this branch?
+3. Or something else?
+
+Also, I noticed that many audio files were included in the commit. Would you like me to help you add them to [.gitignore](cci:7://file:///home/hazem-elbatawy/Downloads/vox-estate-agent/.gitignore:0:0-0:0) to prevent them from being tracked in the future?
+
+

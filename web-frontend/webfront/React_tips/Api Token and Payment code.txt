@@ -1,0 +1,388 @@
+I'll help you set up an API access system with token-based authentication and payments. Here's a structured approach:
+
+## 1. Backend API Service
+
+First, let's create an API service to handle token management:
+
+```javascript
+// src/services/apiService.js
+import axios from 'axios';
+
+const API_BASE_URL = 'http://localhost:8000/api'; // Your backend API URL
+
+const api = axios.create({
+  baseURL: API_BASE_URL,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
+
+// Add auth token to requests
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem('apiToken');
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+
+export const fetchPropertyData = async (platformId, params) => {
+  try {
+    const response = await api.get(`/properties/${platformId}`, { params });
+    return response.data;
+  } catch (error) {
+    console.error('API Error:', error);
+    throw error;
+  }
+};
+
+export const purchaseTokens = async (tokenPackage) => {
+  try {
+    const response = await api.post('/tokens/purchase', tokenPackage);
+    return response.data;
+  } catch (error) {
+    console.error('Purchase Error:', error);
+    throw error;
+  }
+};
+
+export const getTokenBalance = async () => {
+  try {
+    const response = await api.get('/tokens/balance');
+    return response.data;
+  } catch (error) {
+    console.error('Balance Check Error:', error);
+    throw error;
+  }
+};
+```
+
+## 2. Token Purchase Component
+
+```jsx
+// src/components/TokenPurchase.jsx
+import React, { useState, useEffect } from 'react';
+import { purchaseTokens, getTokenBalance } from '../services/apiService';
+
+const TOKEN_PACKAGES = [
+  { id: 'basic', name: 'Basic', tokens: 100, price: 9.99 },
+  { id: 'pro', name: 'Professional', tokens: 500, price: 39.99 },
+  { id: 'enterprise', name: 'Enterprise', tokens: 2000, price: 149.99 },
+];
+
+const TokenPurchase = () => {
+  const [selectedPackage, setSelectedPackage] = useState(null);
+  const [balance, setBalance] = useState(0);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const fetchBalance = async () => {
+      try {
+        const data = await getTokenBalance();
+        setBalance(data.balance);
+      } catch (error) {
+        console.error('Failed to fetch token balance');
+      }
+    };
+    fetchBalance();
+  }, []);
+
+  const handlePurchase = async () => {
+    if (!selectedPackage) return;
+    
+    setLoading(true);
+    try {
+      const result = await purchaseTokens({
+        packageId: selectedPackage,
+        paymentMethod: 'stripe', // or other payment methods
+      });
+      
+      if (result.success) {
+        // Handle successful payment
+        setBalance(prev => prev + TOKEN_PACKAGES.find(pkg => pkg.id === selectedPackage).tokens);
+        alert('Tokens purchased successfully!');
+      }
+    } catch (error) {
+      console.error('Purchase failed:', error);
+      alert('Failed to complete purchase. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="token-purchase">
+      <h3>Your Token Balance: {balance}</h3>
+      <div className="token-packages">
+        {TOKEN_PACKAGES.map((pkg) => (
+          <div 
+            key={pkg.id}
+            className={`token-package ${selectedPackage === pkg.id ? 'selected' : ''}`}
+            onClick={() => setSelectedPackage(pkg.id)}
+          >
+            <h4>{pkg.name}</h4>
+            <div className="tokens">{pkg.tokens} tokens</div>
+            <div className="price">${pkg.price}</div>
+          </div>
+        ))}
+      </div>
+      <button 
+        onClick={handlePurchase} 
+        disabled={!selectedPackage || loading}
+        className="purchase-btn"
+      >
+        {loading ? 'Processing...' : 'Purchase Tokens'}
+      </button>
+    </div>
+  );
+};
+
+export default TokenPurchase;
+```
+
+## 3. API Usage Component
+
+```jsx
+// src/components/PropertyDataFetcher.jsx
+import React, { useState } from 'react';
+import { fetchPropertyData } from '../services/apiService';
+
+const PropertyDataFetcher = ({ platformId }) => {
+  const [loading, setLoading] = useState(false);
+  const [data, setData] = useState(null);
+  const [error, setError] = useState(null);
+
+  const fetchData = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const result = await fetchPropertyData(platformId, {
+        // Add any required parameters
+        location: 'dubai',
+        type: 'apartment',
+      });
+      setData(result);
+    } catch (err) {
+      if (err.response?.status === 402) {
+        setError('Insufficient tokens. Please purchase more tokens to continue.');
+      } else {
+        setError('Failed to fetch property data. Please try again.');
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="property-data-fetcher">
+      <button onClick={fetchData} disabled={loading}>
+        {loading ? 'Loading...' : 'Fetch Property Data'}
+      </button>
+      
+      {error && <div className="error">{error}</div>}
+      
+      {data && (
+        <div className="property-data">
+          {/* Render your property data here */}
+          <pre>{JSON.stringify(data, null, 2)}</pre>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default PropertyDataFetcher;
+```
+
+## 4. Backend Implementation (Node.js/Express Example)
+
+```javascript
+// server/middleware/auth.js
+const jwt = require('jsonwebtoken');
+
+const verifyToken = (req, res, next) => {
+  const token = req.headers.authorization?.split(' ')[1];
+  
+  if (!token) {
+    return res.status(401).json({ error: 'No token provided' });
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = decoded;
+    next();
+  } catch (error) {
+    return res.status(401).json({ error: 'Invalid token' });
+  }
+};
+
+// server/routes/properties.js
+const express = require('express');
+const router = express.Router();
+const { checkTokenBalance, deductTokens } = require('../services/tokenService');
+const { fetchFromExternalAPI } = require('../services/externalAPIService');
+
+router.get('/:platformId', verifyToken, async (req, res) => {
+  try {
+    const { platformId } = req.params;
+    const userId = req.user.id;
+    
+    // Check token balance
+    const hasEnoughTokens = await checkTokenBalance(userId, 1); // 1 token per request
+    
+    if (!hasEnoughTokens) {
+      return res.status(402).json({ error: 'Insufficient tokens' });
+    }
+    
+    // Deduct tokens
+    await deductTokens(userId, 1);
+    
+    // Fetch data from external API
+    const data = await fetchFromExternalAPI(platformId, req.query);
+    
+    res.json(data);
+  } catch (error) {
+    console.error('Error fetching property data:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+module.exports = router;
+```
+
+## 5. Payment Integration (Stripe Example)
+
+```javascript
+// server/routes/payments.js
+const express = require('express');
+const router = express.Router();
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+const { addTokens } = require('../services/tokenService');
+
+router.post('/create-payment-intent', verifyToken, async (req, res) => {
+  const { packageId } = req.body;
+  const package = TOKEN_PACKAGES.find(pkg => pkg.id === packageId);
+  
+  if (!package) {
+    return res.status(400).json({ error: 'Invalid package' });
+  }
+
+  try {
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount: package.price * 100, // Amount in cents
+      currency: 'usd',
+      metadata: {
+        userId: req.user.id,
+        packageId,
+        tokens: package.tokens
+      }
+    });
+
+    res.json({
+      clientSecret: paymentIntent.client_secret
+    });
+  } catch (error) {
+    console.error('Payment error:', error);
+    res.status(500).json({ error: 'Payment processing failed' });
+  }
+});
+
+// Webhook for Stripe events
+router.post('/webhook', async (req, res) => {
+  const sig = req.headers['stripe-signature'];
+  let event;
+
+  try {
+    event = stripe.webhooks.constructEvent(
+      req.body,
+      sig,
+      process.env.STRIPE_WEBHOOK_SECRET
+    );
+  } catch (err) {
+    return res.status(400).send(`Webhook Error: ${err.message}`);
+  }
+
+  // Handle the payment_intent.succeeded event
+  if (event.type === 'payment_intent.succeeded') {
+    const paymentIntent = event.data.object;
+    const { userId, packageId, tokens } = paymentIntent.metadata;
+    
+    // Add tokens to user's balance
+    await addTokens(userId, parseInt(tokens));
+  }
+
+  res.json({ received: true });
+});
+
+module.exports = router;
+```
+
+## 6. Usage in Your Application
+
+1. **Token Purchase Flow**:
+   - Users visit the token purchase page
+   - Select a package and complete payment
+   - Tokens are added to their account
+
+2. **API Usage**:
+   ```jsx
+   // Example usage in a component
+   import { useState } from 'react';
+   import PropertyDataFetcher from './PropertyDataFetcher';
+   import TokenPurchase from './TokenPurchase';
+
+   const PropertySearch = () => {
+     const [showPurchaseModal, setShowPurchaseModal] = useState(false);
+
+     return (
+       <div>
+         <h2>Property Search</h2>
+         <PropertyDataFetcher platformId="bayut" />
+         
+         <button onClick={() => setShowPurchaseModal(true)}>
+           Purchase Tokens
+         </button>
+         
+         {showPurchaseModal && (
+           <div className="modal">
+             <TokenPurchase />
+             <button onClick={() => setShowPurchaseModal(false)}>Close</button>
+           </div>
+         )}
+       </div>
+     );
+   };
+   ```
+
+## 7. Security Considerations
+
+1. **Token Security**:
+   - Store tokens securely using HTTP-only cookies
+   - Implement token expiration and refresh tokens
+   - Rate limiting for API endpoints
+
+2. **Payment Security**:
+   - Never handle raw payment details on your server
+   - Use Stripe Elements or a similar secure payment form
+   - Implement webhook verification
+
+3. **API Security**:
+   - Validate all input parameters
+   - Implement proper error handling
+   - Log all API usage for monitoring
+
+## 8. Deployment
+
+1. Set up environment variables:
+   ```
+   STRIPE_SECRET_KEY=your_stripe_secret_key
+   STRIPE_WEBHOOK_SECRET=your_webhook_secret
+   JWT_SECRET=your_jwt_secret
+   DATABASE_URL=your_database_url
+   ```
+
+2. Deploy your backend to a secure server (e.g., AWS, Heroku, DigitalOcean)
+
+3. Update the frontend API base URL to point to your deployed backend
+
+This implementation provides a complete solution for token-based API access with payment integration. You can customize the token packages, pricing, and API endpoints according to your specific requirements.
