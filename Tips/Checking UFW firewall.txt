@@ -1,0 +1,442 @@
+I assume you meant UFW (Uncomplicated Firewall). Below are quick commands and what they show, plus safe steps to enable/disable and check defaults.
+
+Quick checks (one-liners)
+- Check whether UFW is installed:
+```bash
+which ufw || dpkg -l | grep -i ufw
+```
+- Check UFW status (human readable):
+```bash
+sudo ufw status verbose
+```
+- Check status in a concise form (script-friendly):
+```bash
+sudo ufw status | head -n 1
+# or
+sudo ufw status | grep -i '^Status'
+```
+- Check if UFW service is running and enabled at boot:
+```bash
+sudo systemctl status ufw
+sudo systemctl is-enabled ufw
+```
+
+Interpreting `sudo ufw status verbose`
+- `Status: active` — firewall is on and enforcing rules.
+- `Status: inactive` — firewall is off.
+- `Default: deny (incoming), allow (outgoing), disabled (routed)` — shows default policies (deny incoming by default is common/secure).
+
+Show rules with numbers (useful for removing specific rules later):
+```bash
+sudo ufw status numbered
+```
+
+Check underlying system firewall engines (in case UFW is not used)
+- iptables:
+```bash
+sudo iptables -L -n -v
+```
+- nftables (newer Ubuntu versions may use nftables):
+```bash
+sudo nft list ruleset
+```
+- firewalld (unlikely on stock Ubuntu, but check):
+```bash
+sudo systemctl status firewalld
+```
+
+Safe enable / disable workflow (important if you access the machine remotely via SSH)
+1. Allow SSH before enabling UFW so you don’t lock yourself out:
+```bash
+sudo ufw allow OpenSSH   # or `sudo ufw allow 22/tcp`
+```
+2. Enable UFW:
+```bash
+sudo ufw enable
+# Confirm status:
+sudo ufw status verbose
+```
+3. To temporarily disable:
+```bash
+sudo ufw disable
+```
+
+Check which ports are listening (useful to see what you need to allow):
+```bash
+sudo ss -tuln    # or `sudo netstat -tuln` if installed
+```
+
+Check UFW logging (if enabled) and recent events:
+```bash
+# enable logs (if desired)
+sudo ufw logging on
+# view recent logs
+sudo tail -n 200 /var/log/ufw.log
+# or via journalctl
+sudo journalctl -u ufw --no-pager --since "1 hour ago"
+```
+
+Check default policy explicitly
+```bash
+sudo ufw status verbose | sed -n '1,4p'
+# Or use ufw show raw to inspect
+sudo ufw show raw
+```
+
+Install UFW if not present
+```bash
+sudo apt update
+sudo apt install ufw
+```
+
+Automation / scripting checks
+- Script-friendly check that returns 0 when active:
+```bash
+sudo ufw status | grep -qi 'status: active'
+echo "exit code: $?"
+```
+
+Notes and best practices
+- Always allow SSH (or your remote access port) before enabling firewall on remote servers.
+- Cloud providers (AWS/GCP/Azure) also have network-level firewalls/security groups that operate outside the instance — check those separately.
+- UFW is a front-end for iptables/nftables; even if UFW is inactive, iptables/nftables rules may still exist (check `iptables`/`nft`).
+- If you only need to confirm whether the system firewall is active, `sudo ufw status verbose` + `sudo systemctl is-enabled ufw` are usually enough.
+
+If you want, I can:
+- Run the appropriate checks on your machine right now and paste the outputs (I can run `sudo` commands if you want me to — tell me which checks to run).
+- Or give exact commands to run safely on a remote server (I can provide a short script).
+
+
+#################################
+
+Bash:
+##########################
+
+hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~$ which ufw || dpkg -l | grep -i ufw
+/usr/sbin/ufw
+hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~$ sudo ufw status verbose
+[sudo] password for hazem-elbatawy: 
+Status: inactive
+
+hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~$ sudo ufw status | head -n 1
+# or
+sudo ufw status | grep -i '^Status'
+Status: inactive
+Status: inactive
+
+hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~$ sudo systemctl status ufw
+sudo systemctl is-enabled ufw
+● ufw.service - Uncomplicated firewall
+     Loaded: loaded (/usr/lib/systemd/system/ufw.service; enabled; preset: enab>
+     Active: active (exited) since Fri 2025-09-19 13:49:10 EEST; 47min ago
+       Docs: man:ufw(8)
+   Main PID: 1240 (code=exited, status=0/SUCCESS)
+        CPU: 7ms
+
+Sep 19 13:49:10 hazem-elbatawy-Vostro-15-3510 systemd[1]: Starting ufw.service >
+Sep 19 13:49:10 hazem-elbatawy-Vostro-15-3510 systemd[1]: Finished ufw.service >
+lines 1-9/9 (END)...skipping...
+● ufw.service - Uncomplicated firewall
+     Loaded: loaded (/usr/lib/systemd/system/ufw.service; enabled; preset: enabled)
+     Active: active (exited) since Fri 2025-09-19 13:49:10 EEST; 47min ago
+       Docs: man:ufw(8)
+   Main PID: 1240 (code=exited, status=0/SUCCESS)
+        CPU: 7ms
+
+Sep 19 13:49:10 hazem-elbatawy-Vostro-15-3510 systemd[1]: Starting ufw.service - Uncomplicated firewall...
+Sep 19 13:49:10 hazem-elbatawy-Vostro-15-3510 systemd[1]: Finished ufw.service - Uncomplicated firewall.
+
+
+● ufw.service - Uncomplicated firewall
+     Loaded: loaded (/usr/lib/systemd/system/ufw.service; enabled; preset: enabled)
+     Active: active (exited) since Fri 2025-09-19 13:49:10 EEST; 47min ago
+       Docs: man:ufw(8)
+   Main PID: 1240 (code=exited, status=0/SUCCESS)
+        CPU: 7ms
+
+Sep 19 13:49:10 hazem-elbatawy-Vostro-15-3510 systemd[1]: Starting ufw.service - Uncomplicated firewall...
+Sep 19 13:49:10 hazem-elbatawy-Vostro-15-3510 systemd[1]: Finished ufw.service - Uncomplicated firewall.
+~
+
+
+
+● ufw.service - Uncomplicated firewall
+     Loaded: loaded (/usr/lib/systemd/system/ufw.service; enabled; preset>
+     Active: active (exited) since Fri 2025-09-19 13:49:10 EEST; 47min ago
+       Docs: man:ufw(8)
+   Main PID: 1240 (code=exited, status=0/SUCCESS)
+        CPU: 7ms
+
+Sep 19 13:49:10 hazem-elbatawy-Vostro-15-3510 systemd[1]: Starting ufw.se>
+Sep 19 13:49:10 hazem-elbatawy-Vostro-15-3510 systemd[1]: Finished ufw.se>
+~
+~
+hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~$ sudo ufw status numbered
+Status: inactive
+
+
+hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~$ sudo ufw enable
+# Confirm status:
+sudo ufw status verbose
+Firewall is active and enabled on system startup
+Status: active
+Logging: on (low)
+Default: deny (incoming), allow (outgoing), deny (routed)
+New profiles: skip
+
+To                         Action      From
+--                         ------      ----
+8501                       ALLOW IN    Anywhere                  
+8501 (v6)                  ALLOW IN    Anywhere (v6)  
+
+not locked out still connected for the terminal session
+
+
+
+hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~$ sudo ufw status verbose
+Status: active
+Logging: on (low)
+Default: deny (incoming), allow (outgoing), deny (routed)
+New profiles: skip
+
+To                         Action      From
+--                         ------      ----
+8501                       ALLOW IN    Anywhere                  
+22/tcp (OpenSSH)           ALLOW IN    Anywhere                  
+8501 (v6)                  ALLOW IN    Anywhere (v6)             
+22/tcp (OpenSSH (v6))      ALLOW IN    Anywhere (v6)             
+
+
+
+#############################################################
+
+This looks good — UFW is active and explicitly allowing SSH, so you won’t be locked out.
+
+What your output shows (brief)
+- `Status: active` — UFW is enforcing rules.
+- `Default: deny (incoming), allow (outgoing)` — conservative, secure defaults.
+- Rules shown:
+  - `22/tcp (OpenSSH) ALLOW IN Anywhere` (and the v6 entry) — SSH is allowed for all sources.
+  - `8501 ALLOW IN Anywhere` (and v6) — port 8501 is allowed for all sources (likely a service you run, e.g., Streamlit).
+
+If you want to tighten access (recommended if this is a remote server)
+- Restrict SSH to your IP (safer than a global allow). Replace X.X.X.X with your public IP:
+```bash
+# add rule that only allows your IP to connect on SSH
+sudo ufw allow from X.X.X.X to any port 22 proto tcp
+
+# verify
+sudo ufw status numbered
+```
+- Then remove the wide OpenSSH rule (use the numbered output to delete the correct rule):
+```bash
+# Example: if the wide OpenSSH rule is #3 (check with status numbered first)
+sudo ufw delete 3
+# or delete by name (less predictable if duplicates exist)
+sudo ufw delete allow OpenSSH
+```
+
+To remove the port 8501 rule (if you don't want it open to the world)
+```bash
+sudo ufw status numbered    # find the rule number for 8501
+sudo ufw delete <num>       # remove that rule
+# or
+sudo ufw delete allow 8501
+```
+
+Quick checks you can run now
+- Confirm UFW rules:
+```bash
+sudo ufw status verbose
+```
+- See rules with numbers (safer for deleting):
+```bash
+sudo ufw status numbered
+```
+- See which process is listening on a port (e.g., 8501):
+```bash
+sudo ss -tuln | grep ':8501\b' || sudo ss -tuln | grep 8501
+# or
+sudo lsof -i :8501
+```
+- Get your public IP (from that machine):
+```bash
+curl -s https://ifconfig.co
+# or
+curl -s https://ipinfo.io/ip
+```
+
+Safety notes
+- Always add an SSH allow rule for your IP before removing the global OpenSSH rule — otherwise you may lock yourself out.
+- On cloud providers (AWS/GCP/Azure), also check the VM’s network security group / firewall — those operate outside the instance and must allow SSH too.
+- IPv6 entries shown mean UFW is allowing both IPv4 and IPv6 traffic; if you don’t use IPv6, you can remove the v6 rules similarly.
+
+If you want, I can:
+- Give the exact commands with your public IP (paste it here), or
+- Walk you through restricting SSH step-by-step (I’ll show the `status numbered` output parsing and safe delete sequence). Which would you like?
+
+
+##############################################3
+
+# add rule that only allows your IP to connect on SSH
+sudo ufw allow from X.X.X.X to any port 22 proto tcp
+
+# verify
+sudo ufw status numbered
+
+
+##############################  to get my public ip         #################################
+
+Quick ways to find your public IP (run from the machine)
+
+- Using curl (recommended — simple):
+```bash
+curl -s https://ifconfig.co        # returns your public IP (IPv4 or IPv6)
+curl -s https://ipinfo.io/ip      # another popular service
+curl -s https://api.ipify.org     # very small response, IPv4 or IPv6
+```
+
+- Using DNS (no external HTTP service):
+```bash
+# uses OpenDNS resolver
+dig +short myip.opendns.com @resolver1.opendns.com
+```
+
+- Using wget if curl not installed:
+```bash
+wget -qO- https://ifconfig.co
+```
+
+- Cloud VM metadata endpoints (if running on a cloud VM)
+```bash
+# AWS
+curl -s http://169.254.169.254/latest/meta-data/public-ipv4
+
+# GCE (Google)
+curl -s "http://metadata.google.internal/computeMetadata/v1/instance/network-interfaces/0/access-configs/0/external-ip" -H "Metadata-Flavor: Google"
+
+# Azure
+curl -s "http://169.254.169.254/metadata/instance/network/interface/0/ipv4/ipAddress/0/publicIpAddress?api-version=2021-02-01" -H "Metadata:true"
+```
+
+Save to a shell variable (handy for UFW rules)
+```bash
+MYIP=$(curl -s https://ifconfig.co)
+echo $MYIP
+
+# then add a UFW rule allowing only your IP for SSH
+sudo ufw allow from $MYIP to any port 22 proto tcp
+```
+
+Notes and caveats
+- These commands contact a third-party service to report your public IP. Use the cloud metadata endpoints when on cloud VMs to avoid external calls.
+- Public IP can change (dynamic ISP). If your IP changes often, consider using a dynamic DNS service or allow a range instead of a single IP.
+- If you are behind a VPN or corporate NAT, the returned IP is the VPN/NAT exit IP — not your home network IP.
+- If you want IPv4 specifically, some services allow flags or you can filter output; most return the appropriate IP version automatically.
+
+Quick test from another machine
+- From a different machine (e.g., your phone on mobile data or another laptop), try:
+```bash
+ssh username@your.public.ip
+```
+- If it connects, your firewall/SSH rules are correct.
+
+If you want, I can:
+- Run one of these commands for you and paste the result (tell me which command to run).
+- Give the exact `ufw` command using your returned IP if you paste it here.
+
+
+#######################################
+
+
+# add rule that only allows your IP to connect on SSH
+sudo ufw allow from X.X.X.X to any port 22 proto tcp
+
+# verify
+sudo ufw status numbered
+
+hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~$ curl -s https://ifconfig.co        # returns your public IP (IPv4 or IPv6)
+curl -s https://ipinfo.io/ip      # another popular service
+curl -s https://api.ipify.org     # very small response, IPv4 or IPv6
+196.136.193.94
+
+
+@############################################################
+Bash
+
+hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/vox-estate-agent$ sudo ufw allow from 196.136.193.94 to any port 22 proto tcp && sudo ufw status numbered
+[sudo] password for hazem-elbatawy: 
+Rule added
+Status: active
+
+     To                         Action      From
+     --                         ------      ----
+[ 1] 8501                       ALLOW IN    Anywhere                  
+[ 2] OpenSSH                    ALLOW IN    Anywhere                  
+[ 3] 22/tcp                     ALLOW IN    196.136.193.94            
+[ 4] 8501 (v6)                  ALLOW IN    Anywhere (v6)             
+[ 5] OpenSSH (v6)               ALLOW IN    Anywhere (v6)   
+
+
+
+Created 4 todos
+
+I'll (1) add the IP-based UFW rule using the provided public IP, (2) show the commands you should run to verify and test SSH from another device, and (3) update the todo list statuses. I won't remove the global OpenSSH rule until you confirm remote SSH works. I'll run the UFW command now. 
+
+Ran terminal command: sudo ufw allow from 196.136.193.94 to any port 22 proto tcp && sudo ufw status numbered
+
+Starting (2/4) *Verify and test SSH access*
+
+Done — I added a UFW rule allowing SSH only from your public IP (196.136.193.94) and showed the numbered rules.
+
+What I ran
+- Added IP-restricted SSH allow and listed rules:
+  ```bash
+  sudo ufw allow from 196.136.193.94 to any port 22 proto tcp
+  sudo ufw status numbered
+  ```
+- Output (relevant lines):
+  - [1] 8501 ALLOW IN Anywhere
+  - [2] OpenSSH ALLOW IN Anywhere
+  - [3] 22/tcp ALLOW IN 196.136.193.94
+  - [4] 8501 (v6) ALLOW IN Anywhere (v6)
+  - [5] OpenSSH (v6) ALLOW IN Anywhere (v6)
+
+Next recommended step (do this before deleting the global OpenSSH rule)
+- From another device (or your phone using mobile data), try a fresh SSH connection:
+  ```bash
+  ssh yourusername@196.136.193.94
+  ```
+  If it connects, proceed to remove the broad OpenSSH rule.
+
+How to remove the global OpenSSH allow (safe sequence)
+1. Confirm connection works from another device.
+2. Remove the numbered rule for `OpenSSH` using its index (the index may change; check `sudo ufw status numbered` again first). Example:
+  ```bash
+  # If OpenSSH is rule 2 (confirm with sudo ufw status numbered)
+  sudo ufw delete 2
+  ```
+3. Verify:
+  ```bash
+  sudo ufw status verbose
+  ```
+
+Optional: restrict or remove port 8501 if you don't want it public:
+```bash
+sudo ufw status numbered   # find rule index
+sudo ufw delete <num>      # remove rule for 8501
+# or to restrict to your IP:
+sudo ufw allow from 196.136.193.94 to any port 8501 proto tcp
+```
+
+Todo update
+- I updated the session todo list:
+  - Added IP-based SSH allow — completed
+  - Verify & test SSH access — in-progress
+  - Remove global OpenSSH rule — not started
+
+If you'd like I can:
+- Wait while you test SSH from another device, then remove the global `OpenSSH` rules for you.
+- Or remove the `OpenSSH` rules now (risky if you haven't tested).
+Which do you want me to do next?
+

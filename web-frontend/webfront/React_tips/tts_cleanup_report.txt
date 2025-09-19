@@ -1,0 +1,35 @@
+# TTS Cleanup Report
+
+## Performed on: 2025-09-17
+
+## Removed Files
+1. `backend/realestate_agent/tts/tts_coqui.py`
+   - Old Coqui TTS implementation
+   - Reason: Replaced with a more lightweight solution
+
+2. `backend/realestate_agent/tts/test_tts.py`
+   - Old test file for Coqui TTS
+   - Reason: No longer needed with the new implementation
+
+3. `backend/realestate_agent/tts/test_timing.py`
+   - Timing tests for the old TTS
+   - Reason: Related to the removed Coqui TTS
+
+## Current TTS Implementation
+- File: `backend/realestate_agent/tts/tts_simple.py`
+- Type: Lightweight gTTS (Google Text-to-Speech)
+- Benefits:
+  - Faster response times
+  - Lower resource usage
+  - Simpler maintenance
+  - Multiple language support
+
+## Next Steps
+1. The new implementation is already integrated with the application
+2. No further action is required unless you want to customize the TTS behavior
+3. Refer to `lightweight_tts_guide.txt` for usage and API documentation
+
+## Verification
+- The application should now be more responsive
+- TTS functionality should work with the new implementation
+- No dependencies on the old Coqui TTS remain

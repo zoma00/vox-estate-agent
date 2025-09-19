@@ -1,0 +1,70 @@
+(venv) hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/vox-estate-agent/backend/realestate_agent$ ls -la /home/hazem-elbatawy/Downloads/vox-estate-agent/backend/realestate_agent/
+total 92
+drwxrwxr-x 14 hazem-elbatawy hazem-elbatawy 4096 Sep 18 19:56  .
+drwxrwxr-x  4 hazem-elbatawy hazem-elbatawy 4096 Sep 18 18:59  ..
+-rw-rw-r--  1 hazem-elbatawy hazem-elbatawy 1257 Sep 11 00:06  AI_Avatar_Workflow.md
+drwxrwxr-x  2 hazem-elbatawy hazem-elbatawy 4096 Sep  9 20:08  animation
+drwxrwxr-x  2 hazem-elbatawy hazem-elbatawy 4096 Sep 18 19:51  app
+-rw-rw-r--  1 hazem-elbatawy hazem-elbatawy    0 Sep 17 01:38  app.log
+drwxrwxr-x  2 hazem-elbatawy hazem-elbatawy 4096 Sep 17 08:29  audio_output
+drwxrwxr-x  2 hazem-elbatawy hazem-elbatawy 4096 Sep  9 20:08  avatar
+-rw-rw-r--  1 hazem-elbatawy hazem-elbatawy 4719 Sep 13 06:34  cli_avatar.py
+-rw-rw-r--  1 hazem-elbatawy hazem-elbatawy 1560 Sep 11 00:32  CLI_Guide.md
+-rw-rw-r--  1 hazem-elbatawy hazem-elbatawy 1633 Sep 13 08:40  DEPLOYMENT_ROADMAP.md
+-rw-rw-r--  1 hazem-elbatawy hazem-elbatawy  455 Sep 18 02:09  .env
+-rw-rw-r--  1 hazem-elbatawy hazem-elbatawy    0 Sep  9 20:08  generate_avatar.py
+drwxrwxr-x  2 hazem-elbatawy hazem-elbatawy 4096 Sep 11 00:38 'Generated old vids'
+-rw-rw-r--  1 hazem-elbatawy hazem-elbatawy 1076 Sep  9 20:08  LICENSE
+drwxrwxr-x  2 hazem-elbatawy hazem-elbatawy 4096 Sep 17 05:52  nltk_data
+-rw-rw-r--  1 hazem-elbatawy hazem-elbatawy  894 Sep 11 05:50  ollama_llm.py
+-rw-rw-r--  1 hazem-elbatawy hazem-elbatawy  155 Sep 17 08:15  requirements.txt
+drwxrwxr-x  2 hazem-elbatawy hazem-elbatawy 4096 Sep 11 01:00  results
+drwxr-xr-x  4 hazem-elbatawy hazem-elbatawy 4096 Sep 17 01:38  static
+drwxrwxr-x  2 hazem-elbatawy hazem-elbatawy 4096 Sep 17 02:31  temp
+drwxrwxr-x  3 hazem-elbatawy hazem-elbatawy 4096 Sep 18 19:48  tts
+drwxrwxr-x  2 hazem-elbatawy hazem-elbatawy 4096 Sep  9 20:08  utils
+drwxrwxr-x  6 hazem-elbatawy hazem-elbatawy 4096 Sep 13 17:51  venv
+(venv) hazem-elbatawy@hazem-elbatawy-Vostr
+
+
+
+
+I see you want to clean up the `backend/realestate_agent/tts/static/audio` directory. Let's check its contents first:
+
+
+I see that the [audio](cci:7://file:///home/hazem-elbatawy/Downloads/vox-estate-agent/backend/static/audio:0:0-0:0) directory is empty. Here's how you can remove it:
+
+```bash
+rm -r /home/hazem-elbatawy/Downloads/vox-estate-agent/backend/realestate_agent/tts/static/audio
+```
+
+### Additional Cleanup Suggestions:
+
+1. **Empty Directories** (safe to remove if not in use):
+   ```bash
+   # Check for empty directories
+   find /home/hazem-elbatawy/Downloads/vox-estate-agent -type d -empty
+   
+   # Remove empty directories (be careful with this command)
+   # find /home/hazem-elbatawy/Downloads/vox-estate-agent -type d -empty -delete
+   ```
+
+2. **Temporary Files**:
+   ```bash
+   # Clear the temp directory
+   rm -rf /home/hazem-elbatawy/Downloads/vox-estate-agent/backend/realestate_agent/temp/*
+   ```
+
+3. **Log Files**:
+   ```bash
+   # Clear the app log
+   > /home/hazem-elbatawy/Downloads/vox-estate-agent/backend/realestate_agent/app.log
+   ```
+
+4. **Old Generated Files**:
+   ```bash
+   # Check for old generated files
+   find /home/hazem-elbatawy/Downloads/vox-estate-agent -name "*.wav" -o -name "*.mp4" -o -name "*.mp3" -type f
+   ```
+
+Would you like me to help you with any of these cleanup tasks?

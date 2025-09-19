@@ -1,0 +1,50 @@
+lestate_agent$ git branch
+* feature/tts-implementation
+  main
+hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/vox-estate-agent/backend/realestate_agent$ git status
+On branch feature/tts-implementation
+Your branch is up to date with 'origin/feature/tts-implementation'.
+
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+        modified:   ../../web-frontend/webfront/README.md
+        modified:   ../../web-frontend/webfront/React_tips/venv and uvicorn and gTTS commands.txt
+        modified:   ../../web-frontend/webfront/package.json
+        modified:   ../../web-frontend/webfront/src/App.js
+        modified:   ../../web-frontend/webfront/src/AppAuthDemo.jsx
+        modified:   ../../web-frontend/webfront/src/Gallery.jsx
+        modified:   ../../web-frontend/webfront/src/Navbar.jsx
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+        ../../Tips/AI_Avatar_Workflow.md
+        ../../Tips/Archive/GitHub/Cleaned pro.txt
+        ../../Tips/Archive/GitHub/push 19-09 2-44am.txt
+        ../../Tips/Archive/GitHub/updated UI.txt
+        ../../Tips/CLI_AUDIO_GUIDE.md
+        ../../Tips/CLI_Guide.md
+        ../../Tips/Checking UFW firewall.txt
+        ../../Tips/DEPLOYMENT_ROADMAP.md
+        ../../Tips/Production/
+        ../../Tips/SETUP_GUIDE.md
+        ../../Tips/VENV_SETUP.md
+        ../ToDos 18-09.txt
+        ../../docs/
+        ../../mobile-frontend/
+        ../../web-frontend/webfront/React_tips/COMMAND_GUIDE.md
+        ../../web-frontend/webfront/React_tips/ENVIRONMENT.md
+        ../../web-frontend/webfront/React_tips/ENV_SETUP_GUIDE.md
+        ../../web-frontend/webfront/React_tips/FRONTEND_PLAN.md
+        ../../web-frontend/webfront/React_tips/New Name pro.txt
+        ../../web-frontend/webfront/React_tips/README.md
+        ../../web-frontend/webfront/React_tips/clean pro.txt
+        ../../web-frontend/webfront/React_tips/command ls la.txt
+        ../../web-frontend/webfront/React_tips/tts_cleanup_report.txt
+        ../../web-frontend/webfront/public/real-estate-buildings-in-modern-city-akg75n64dxflm7dk.jpg
+        ../../web-frontend/webfront/src/SpeakChat.js.clean
+
+no changes added to commit (use "git add" and/or "git commit -a")
+hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/vox-estate-agent/backend/realestate_agent$ 
+
+

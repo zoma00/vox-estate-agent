@@ -36,7 +36,7 @@ function AppAuthDemo() {
     <Router>
       <Navbar token={token} user={user} onLogout={handleLogout} />
       <Routes>
-        <Route path="/" element={<div style={{ padding: 32 }}><h1>Welcome to Vox Estate Agent</h1></div>} />
+  <Route path="/" element={<div style={{ padding: 32 }}><h1>Welcome to PropEstateAI</h1></div>} />
         <Route path="/login" element={<Login onLogin={setToken} />} />
         <Route
           path="/chat"

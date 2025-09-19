@@ -1,0 +1,225 @@
+hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/vox-estate-agent/backend/realestate_agent$ git branch
+  feature/speech-recognition
+* main
+hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/vox-estate-agent/backend/realestate_agent$ git status
+On branch main
+Your branch is up to date with 'origin/main'.
+
+Changes not staged for commit:
+  (use "git add/rm <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+        deleted:    ../../COMMAND_GUIDE.md
+        deleted:    ../../ENVIRONMENT.md
+        deleted:    ../../ENV_SETUP_GUIDE.md
+        deleted:    ../../README.md
+        deleted:    AI_Avatar_Workflow.md
+        deleted:    CLI_AUDIO_GUIDE.md
+        deleted:    CLI_Guide.md
+        deleted:    CURRENT_STRUCTURE.md
+        deleted:    DEPLOYMENT_ROADMAP.md
+        deleted:    Generated old vids/result_input_0.mp4
+        deleted:    Generated old vids/result_input_10.mp4
+        deleted:    Generated old vids/result_input_11.mp4
+        deleted:    Generated old vids/result_input_12.mp4
+        deleted:    Generated old vids/result_input_13.mp4
+        deleted:    Generated old vids/result_input_14.mp4
+        deleted:    Generated old vids/result_input_15.mp4
+        deleted:    README.md
+        deleted:    SETUP_GUIDE.md
+        deleted:    VENV_SETUP.md
+        deleted:    Wav2Lip/.gitignore
+        deleted:    Wav2Lip/Dockerfile.cpu
+        deleted:    Wav2Lip/README.md
+        deleted:    Wav2Lip/audio.py
+        deleted:    Wav2Lip/batch_wav2lip.sh
+        deleted:    Wav2Lip/checkpoints/README.md
+        deleted:    Wav2Lip/color_syncnet_train.py
+        deleted:    Wav2Lip/evaluation/README.md
+        deleted:    Wav2Lip/evaluation/gen_videos_from_filelist.py
+        deleted:    Wav2Lip/evaluation/real_videos_inference.py
+        deleted:    Wav2Lip/evaluation/scores_LSE/SyncNetInstance_calc_scores.py
+        deleted:    Wav2Lip/evaluation/scores_LSE/calculate_scores_LRS.py
+        deleted:    Wav2Lip/evaluation/scores_LSE/calculate_scores_real_videos.py
+        deleted:    Wav2Lip/evaluation/scores_LSE/calculate_scores_real_videos.sh
+        deleted:    Wav2Lip/evaluation/test_filelists/README.md
+        deleted:    Wav2Lip/evaluation/test_filelists/ReSyncED/random_pairs.txt
+        deleted:    Wav2Lip/evaluation/test_filelists/ReSyncED/tts_pairs.txt
+        deleted:    Wav2Lip/face_detection/README.md
+        deleted:    Wav2Lip/face_detection/__init__.py
+        deleted:    Wav2Lip/face_detection/api.py
+        deleted:    Wav2Lip/face_detection/detection/__init__.py
+        deleted:    Wav2Lip/face_detection/detection/core.py
+        deleted:    Wav2Lip/face_detection/detection/sfd/__init__.py
+        deleted:    Wav2Lip/face_detection/detection/sfd/bbox.py
+        deleted:    Wav2Lip/face_detection/detection/sfd/detect.py
+        deleted:    Wav2Lip/face_detection/detection/sfd/net_s3fd.py
+        deleted:    Wav2Lip/face_detection/detection/sfd/sfd_detector.py
+        deleted:    Wav2Lip/face_detection/models.py
+        deleted:    Wav2Lip/face_detection/utils.py
+        deleted:    Wav2Lip/filelists/README.md
+        deleted:    Wav2Lip/hparams.py
+        deleted:    Wav2Lip/hq_wav2lip_train.py
+        deleted:    Wav2Lip/inference.py
+        deleted:    Wav2Lip/models/__init__.py
+        deleted:    Wav2Lip/models/conv.py
+        deleted:    Wav2Lip/models/syncnet.py
+        deleted:    Wav2Lip/models/wav2lip.py
+        deleted:    Wav2Lip/preprocess.py
+        deleted:    Wav2Lip/requirements.txt
+        deleted:    Wav2Lip/results/README.md
+        deleted:    Wav2Lip/temp/README.md
+        deleted:    Wav2Lip/wav2lip_train.py
+        deleted:    animation/__init__.py
+        deleted:    avatar/__init__.py
+        deleted:    batch_tts.sh
+        deleted:    batch_tts_and_play.sh
+        deleted:    cli_audio.py
+        deleted:    cli_audio_chat.py
+        deleted:    cli_audio_openai.py
+        deleted:    cli_audio_simple.py
+        deleted:    input.txt
+        deleted:    input_0.wav
+        deleted:    project_deployment_guide.txt
+        deleted:    temp/output_20250917_022549_3fa5b86d.wav
+        deleted:    temp/output_20250917_023034_02055943.wav
+        deleted:    test.mp3
+        deleted:    test_simple_tts.py
+        deleted:    test_tts.py
+        deleted:    test_tts_api.py
+        deleted:    tts_output_20250916_214011.wav
+        deleted:    ../../input wave files/custom_output.wav
+        deleted:    ../../input wave files/input_0.wav
+        deleted:    ../../input wave files/input_1.wav
+        deleted:    ../../input wave files/input_10.wav
+        deleted:    ../../input wave files/input_11.wav
+        deleted:    ../../input wave files/input_12.wav
+        deleted:    ../../input wave files/input_13.wav
+        deleted:    ../../input wave files/input_14.wav
+        deleted:    ../../input wave files/input_15.wav
+        deleted:    ../../input wave files/input_16.wav
+        deleted:    ../../input wave files/input_17.wav
+        deleted:    ../../input wave files/input_18.wav
+        deleted:    ../../input wave files/input_19.wav
+        deleted:    ../../input wave files/input_2.wav
+        deleted:    ../../input wave files/input_20.wav
+        deleted:    ../../input wave files/input_21.wav
+        deleted:    ../../input wave files/input_22.wav
+        deleted:    ../../input wave files/input_23.wav
+        deleted:    ../../input wave files/input_3.wav
+        deleted:    ../../input wave files/input_4.wav
+        deleted:    ../../input wave files/input_5.wav
+        deleted:    ../../input wave files/input_6.wav
+        deleted:    ../../input wave files/input_7.wav
+        deleted:    ../../input wave files/input_8.wav
+        deleted:    ../../input wave files/input_9.wav
+        deleted:    ../../tts_cleanup_report.txt
+        deleted:    ../../web-frontend/FRONTEND_PLAN.md
+        modified:   ../../web-frontend/webfront/src/Gallery.jsx
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+        ../../Tips/AI_Avatar_Workflow.md
+        ../../Tips/Archive/GitHub/updated UI.txt
+        ../../Tips/CLI_AUDIO_GUIDE.md
+        ../../Tips/CLI_Guide.md
+        ../../Tips/DEPLOYMENT_ROADMAP.md
+        ../../Tips/SETUP_GUIDE.md
+        ../../Tips/VENV_SETUP.md
+        ../ToDos 18-09.txt
+        ../../docs/
+        ../../web-frontend/webfront/React_tips/COMMAND_GUIDE.md
+        ../../web-frontend/webfront/React_tips/ENVIRONMENT.md
+        ../../web-frontend/webfront/React_tips/ENV_SETUP_GUIDE.md
+        ../../web-frontend/webfront/React_tips/FRONTEND_PLAN.md
+        ../../web-frontend/webfront/React_tips/README.md
+        ../../web-frontend/webfront/React_tips/clean pro.txt
+        ../../web-frontend/webfront/React_tips/command ls la.txt
+        ../../web-frontend/webfront/React_tips/tts_cleanup_report.txt
+
+no changes added to commit (use "git add" and/or "git commit -a")
+hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/vox-estate-agent/backend/realestate_agent$ git remote -v
+origin  git@github.com:zoma00/vox-estate-agent.git (fetch)
+origin  git@github.com:zoma00/vox-estate-agent.git (push)
+
+
+# Git Branch Management and Cleanup Guide
+
+## Objective:
+- Remove the old `feature/speech-recognition` branch
+- Clean up Wav2Lip related files
+- Create a new branch for TTS implementation using pyttsx3
+- Push changes to the remote repository
+
+## Steps Performed:
+
+### 1. Check current branch and status
+```bash
+git branch
+git status
+```
+
+### 2. Delete the old feature branch
+```bash
+git branch -D feature/speech-recognition
+```
+
+### 3. Create and switch to a new branch
+```bash
+git checkout -b feature/tts-implementation
+```
+
+### 4. Stage all deleted files for commit
+```bash
+git add -u
+```
+
+### 5. Commit the changes
+```bash
+git commit -m "chore: remove Wav2Lip and related files, clean up project structure"
+```
+
+### 6. Push the new branch to remote
+```bash
+git push -u origin feature/tts-implementation
+```
+
+## Verification:
+- Check branches: `git branch -a`
+- View commit history: `git log --oneline`
+- Verify remote: `git remote -v`
+
+## Notes:
+- The `-u` flag in `git push -u` (or `--set-upstream`):
+  - Pushes your branch to the remote repository
+  - Sets up tracking between your local branch and the remote branch
+  - Allows using simpler commands in the future (just `git push` or `git pull`)
+  - Only needs to be used the first time you push a new branch
+  - Example: `git push -u origin feature/tts-implementation`
+
+- The `-D` flag forces deletion of the local branch (use with caution)
+- All Wav2Lip related files have been removed from version control
+- The new branch `feature/tts-implementation` is now ready for TTS development
+
+## Next Steps:
+1. Set up a virtual environment (if not already done)
+2. Install required packages (pyttsx3, etc.)
+3. Begin implementing TTS functionality
+4. Regularly commit and push your changes
+
+
+
+
+git branch -D feature/speech-recognition
+
+git checkout -b feature/tts-implementation
+
+git status
+
+git add -u
+
+git commit -m "chore: remove Wav2Lip and related files, clean up project structure"
+
+
+git remote -v
+
+git push -u origin feature/tts-implementation

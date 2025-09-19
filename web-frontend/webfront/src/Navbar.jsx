@@ -6,7 +6,7 @@ function Navbar({ token, user, onLogout }) {
   return (
     <nav className="navbar">
       <Link to="/" className="nav-brand">
-        Vox Estate Agent
+        PropEstateAI
       </Link>
       
       <div className="nav-links">

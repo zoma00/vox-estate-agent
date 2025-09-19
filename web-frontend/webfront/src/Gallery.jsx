@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { fetchProperties } from './services/realEstateApi';
-import { REAL_ESTATE_LINKS } from './constants/realEstateLinks';
 import './Gallery.css';
 
 function Gallery() {

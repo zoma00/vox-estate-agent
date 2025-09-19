@@ -1,0 +1,13 @@
+** I want to cleanup the project from some files. So check if these files is working or i can remove it:
+1- backend/realestate_agent/batch_tts_and_play.sh
+2- backend/realestate_agent/batch_tts.sh
+3-backend/realestate_agent/cli_audio_chat.py
+
+
+to be remove:
+---------------
+** Check if these files is working or i can remove it:
+
+backend/realestate_agent/audio_output
+backend/realestate_agent/avatar
+backend/realestate_agent/Generated old vids

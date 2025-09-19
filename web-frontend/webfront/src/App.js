@@ -113,6 +113,11 @@ function App() {
                 boxShadow: '0 4px 12px rgba(0,0,0,0.15)'
               }}>
                 <h1 style={{ color: '#333', marginBottom: '1.5rem' }}>Find Your Dream Home</h1>
+                <p style={{ color: '#555', lineHeight: 1.6 }}>
+                  Welcome to <strong>PropEstateAI</strong> — your AI-assisted real estate assistant. Browse curated property listings, visit company websites, and explore detailed listings with rich descriptions, images, and direct links. 
+                  Use the chat assistant to ask for personalized searches (for example: "3-bedroom apartments in Athens under €250k")
+                   and get spoken summaries via the integrated TTS service.
+                </p>
                 <Link 
                   to="/gallery" 
                   style={{
