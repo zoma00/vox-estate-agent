@@ -176,3 +176,26 @@ Pull requests and suggestions are welcome! Please open an issue to discuss your 
 
 # propestateai
 **Voice-powered AI agent for real estate automation and interaction.**
+
+---
+
+## Secrets & Git hooks (important)
+
+Never commit secrets (API keys, credentials, or .env files) into the repository. This project includes a sample pre-commit hook to help prevent accidental commits of files containing common secret patterns.
+
+Quick steps for developers:
+
+- Ensure your real keys live in environment variables or your hosting secrets manager (e.g., systemd Environment, Docker secrets, AWS Secrets Manager, GitHub Actions secrets).
+- Keep a `.env.example` in the repo with placeholder values instead of real keys.
+
+Installing the local git hook:
+
+1. From the repository root run:
+
+```bash
+./scripts/install-git-hooks.sh
+```
+
+2. This installs a `pre-commit` hook that scans for `OPENAI_API_KEY`, `sk-` patterns, and common `.env` filenames and blocks the commit if it finds matches.
+
+If you accidentally committed secrets and pushed them to a remote, revoke the exposed key immediately and consider purging history using `git filter-repo` or BFG — see the Contributing/Operations docs for details.
