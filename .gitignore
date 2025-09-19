@@ -199,3 +199,11 @@ dmypy.json
 # Add these lines to your .gitignore
 *.wav
 /backend/realestate_agent/static/audio/
+# Ignore backend environment files
+backend/.env
+backend/.env.*
+# Ignore any top-level .env files
+.env
+
+# Ignore Tips keys and other local keys files
+Tips/keys/
