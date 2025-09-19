@@ -1,0 +1,88 @@
+Summary of actions to remove OpenAI key file and add pre-commit protection
+Date: 2025-09-19
+Branch: feature/tts-implementation
+
+Context
+- A sensitive OpenAI API key was present in several files (example: `backend/.env.backup` and `Tips/keys/OpenAI key.txt`). The key was visible in the workspace attachments.
+- The user indicated they manually deleted `Tips/keys/OpenAI key.txt` from the repository.
+
+What I did (chronological)
+1) Verified tracked state
+   - Confirmed `backend/.env.backup` was not tracked (git reported "not-tracked").
+   - Searched the repo for occurrences of `OPENAI_API_KEY` and the specific `sk-proj-...` string to find other exposures.
+
+2) Updated `.gitignore` to prevent future accidental commits
+   - Added entries to ignore `backend/.env`, `backend/.env.*`, top-level `.env`, and `Tips/keys/`.
+   - Commit: `chore: ignore env files and local keys (prevent accidental commit of secrets)` (commit id: b61c8be)
+
+3) Removed tracked files containing the key from the git index (kept local copies)
+   - Removed the following from the index with `git rm --cached` and committed:
+     - `Tips/keys/OpenAI key.txt`
+     - `web-frontend/webfront/React_tips/Integration steps.txt`
+     - `web-frontend/webfront/React_tips/Dangling symlink venv bug.txt`
+   - Commit: `chore(secrets): remove local key files from repository index` (commit id: 8652add)
+   - Pushed the commits to remote branch `feature/tts-implementation`.
+
+4) Added pre-commit protection and docs note
+   - Created a simple pre-commit hook at `.githooks/pre-commit` that scans staged files for `OPENAI_API_KEY`, `sk-` patterns, and `.env` and blocks commits if matches are found.
+   - Added `scripts/install-git-hooks.sh` to copy `.githooks/pre-commit` into `.git/hooks` and make it executable.
+   - Updated `docs/README.md` with a "Secrets & Git hooks" section explaining how to install the hook and best practices.
+   - Commit: `chore(secrets): add pre-commit hook and install script; docs note` (commit id: 09f9e19)
+   - Pushed the commits to remote branch `feature/tts-implementation` (branch updated: 8652add..09f9e19).
+
+Commands I ran (high level)
+- Search and checks:
+  - `git grep -n "OPENAI_API_KEY\|sk-"`
+  - `git ls-files --error-unmatch backend/.env.backup`
+- Update ignore and commit:
+  - Edit `.gitignore` (add `backend/.env*`, `.env`, `Tips/keys/`)
+  - `git add .gitignore && git commit -m "chore: ignore env files and local keys (prevent accidental commit of secrets)"`
+- Remove files from index and commit:
+  - `git rm --cached "Tips/keys/OpenAI key.txt" "web-frontend/.../Integration steps.txt" "web-frontend/.../Dangling symlink venv bug.txt"`
+  - `git commit -m "chore(secrets): remove local key files from repository index"`
+  - `git push origin feature/tts-implementation`
+- Add hooks and docs, commit, push:
+  - Created `.githooks/pre-commit` and `scripts/install-git-hooks.sh`
+  - `git add docs/README.md .githooks/pre-commit scripts/install-git-hooks.sh`
+  - `git commit -m "chore(secrets): add pre-commit hook and install script; docs note"`
+  - `git push origin feature/tts-implementation`
+
+Verification performed
+- Confirmed `git ls-files --error-unmatch "Tips/keys/OpenAI key.txt"` reports not-tracked (file not tracked by git).
+- Confirmed pushes completed and branch updated on remote.
+
+Important notes & next steps (recommended)
+1) Revoke the exposed key immediately via the OpenAI dashboard. I cannot revoke it for you. Revocation is essential.
+2) If the secret was present in pushed commits (history), consider purging history using `git filter-repo` (recommended) or BFG. This rewrites history and requires a force push and coordination with collaborators.
+   - If you want me to purge history, reply and I will prepare and run `git filter-repo` commands and force-push; be aware all collaborators must re-clone or reset their local branches.
+3) Install the pre-commit hook locally to block future accidental commits:
+   - From repo root:
+     - `./scripts/install-git-hooks.sh`
+4) Use environment variables or a secrets manager in production (don’t store secrets in repository files).
+
+Local copies
+- The files that were removed from the index remain on your local filesystem (they were removed from git tracking but not deleted locally). Remove them securely if desired.
+
+If you want me to proceed with an automated history purge now, reply with `purge` and indicate whether you prefer `git-filter-repo` (recommended) or BFG.
+
+End of summary.
+I'll (1) mark the "remove .env.backup" todo completed since you've removed tracked secret files and we've already updated ignore rules, and (2) run a quick git check to confirm `Tips/keys/OpenAI key.txt` is no longer tracked and show the commit that removed it. Outcome: confirmed removal and updated todo list. 
+
+Completed (2/6) *Remove .env.backup from repo*
+
+Ran terminal command: git ls-files --error-unmatch "Tips/keys/OpenAI key.txt" && echo tracked || echo not-tracked
+
+Got it — thanks for confirming. I checked and `Tips/keys/OpenAI key.txt` is no longer tracked by git (shows "not-tracked"). I updated the todo list to mark the removal step completed.
+
+Quick summary and next safe steps you can take (recommended)
+- Revoke the exposed key immediately in the OpenAI dashboard (if you haven't yet). This is essential even though the file is untracked now.
+- If the exposed key was ever pushed to remote history (you briefly pushed before removing), consider purging history (I can run `git filter-repo` or BFG if you want). That process rewrites history and requires force-push and coordination.
+- Keep using the pre-commit hook I added — run:
+  - install-git-hooks.sh
+  - This prevents future accidental commits that include .env or `sk-` patterns.
+
+If you want, I can:
+- Run a history purge now (I’ll prepare and run `git filter-repo` and force-push) — reply “purge” to proceed, or
+- Leave history as-is and only rely on revocation + the hook (reply “no-purge”).
+
+Which would you prefer?
