@@ -1,0 +1,46 @@
+Navbar Enhancements — mobile-frontend
+
+Summary
+-------
+This document describes the changes made to the mobile navbar to bring visual and functional parity with the web frontend's `Navbar.jsx` and `Navbar.css`. The goal was to create a responsive, branded (`PropEstateAI`) navbar that works well on small screens while keeping the same structure and class names so styles can be shared or copied easily.
+
+Files changed
+-------------
+- `mobile-frontend/src/components/Navbar.jsx` (created/updated)
+- `mobile-frontend/src/styles.css` (updated to include navbar styles inspired by web `Navbar.css`)
+
+Design goals
+------------
+- Keep the brand name `PropEstateAI` visible and linked to home.
+- Provide primary navigation links for `Home`, `Gallery`, and `Agent` (placeholders that can be wired to routes).
+- Add prominent `Login`/`Register` buttons (or `Logout` when logged in) and a simple greeting when a user is present.
+- Ensure accessible tap targets and legible font sizes on mobile screens.
+- Use the same class names as the web frontend (`nav-brand`, `nav-links`, `nav-link`, `logout-btn`) to simplify later CSS copying.
+
+Behavior changes
+----------------
+- Responsive layout: On narrow screens the links wrap into a compact row; future enhancement can add a hamburger menu for very small widths.
+- `onLogout` callback prop: `Navbar.jsx` accepts `token`, `user`, and `onLogout` props so authentication state from the parent app can control which buttons to show.
+- Theme/brand: `PropEstateAI` text flipped into an anchor that routes to `/` (use React Router `Link` when integrating SPA routing).
+
+Implementation notes
+--------------------
+- `Navbar.jsx` uses semantic elements: `<nav>` and `<ul>` for the link list.
+- There is a small CSS block in `mobile-frontend/src/styles.css` that mirrors the web CSS for the nav; it sets background color, spacing, link colors, and a mobile-friendly layout.
+- For audio/chat demos we opted to keep the login controls simple. When auth is implemented we will wire up the `onLogout` and show the user's display name in the greeting.
+
+Testing
+-------
+- Verified Vite dev server updates the navbar when editing `Navbar.jsx`/`styles.css` (HMR working).
+- Verified the brand link navigates to the home route in the mobile app.
+- Confirmed `Login` and `Register` buttons are visible when no `token` prop is provided; when `token` is provided the `Logout` button and user greeting appear.
+
+Next steps / optional
+---------------------
+- Implement a hamburger menu for small screens and animate link reveal.
+- Copy exact CSS from `web-frontend/webfront/src/Navbar.css` for pixel-perfect match.
+- Wire authentication (Auth0 or Clerk) and store the token in localStorage; update `Navbar.jsx` to display user avatar/name.
+- Add unit tests for the `Navbar` component using `@testing-library/react`.
+
+Date: 2025-09-20
+Author: Changes applied by the project assistant

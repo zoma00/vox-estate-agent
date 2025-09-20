@@ -48,3 +48,178 @@ no changes added to commit (use "git add" and/or "git commit -a")
 hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/vox-estate-agent/backend/realestate_agent$ 
 
 
+I'll (1) record a short todo list and mark the first task in-progress, then (2) run the git commands to stage all changes, commit with a clear message, and push the current branch to origin; finally (3) update the todo list marking tasks completed and report results.
+
+
+
+git add -A
+
+git status --porcelain
+
+
+
+hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/vox-estate-agent$ git add -A
+hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/vox-estate-agent$ 
+hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/vox-estate-agent$ git status --porcelain
+A  Tips/AI_Avatar_Workflow.md
+A  "Tips/Archive/GitHub/Cleaned pro.txt"
+A  "Tips/Archive/GitHub/push 19-09 2-44am.txt"
+A  "Tips/Archive/GitHub/push 19-09 mobile front.txt"
+A  "Tips/Archive/GitHub/updated UI.txt"
+A  Tips/CLI_AUDIO_GUIDE.md
+A  Tips/CLI_Guide.md
+A  "Tips/Checking UFW firewall.txt"
+A  Tips/DEPLOYMENT_ROADMAP.md
+A  "Tips/Production/Routes production.txt"
+A  Tips/SETUP_GUIDE.md
+A  Tips/VENV_SETUP.md
+A  "backend/ToDos 18-09.txt"
+A  docs/CURRENT_STRUCTURE.md
+A  docs/README.md
+A  docs/deploy_routing.md
+A  docs/real_estate_fields.md
+A  docs/tts_service.md
+A  mobile-frontend/README.md
+A  "mobile-frontend/Tips/App built.txt"
+A  "mobile-frontend/Tips/PWA define.txt"
+A  "mobile-frontend/Tips/Pro construct.txt"
+A  mobile-frontend/index.html
+A  mobile-frontend/package-lock.json
+A  mobile-frontend/package.json
+A  mobile-frontend/src/App.jsx
+A  mobile-frontend/src/main.jsx
+A  mobile-frontend/src/pages/Chat.jsx
+A  mobile-frontend/src/pages/Gallery.jsx
+A  mobile-frontend/src/pages/Home.jsx
+A  mobile-frontend/src/styles.css
+A  mobile-frontend/vite.config.js
+M  web-frontend/webfront/README.md
+A  web-frontend/webfront/React_tips/COMMAND_GUIDE.md
+A  web-frontend/webfront/React_tips/ENVIRONMENT.md
+A  web-frontend/webfront/React_tips/ENV_SETUP_GUIDE.md
+A  web-frontend/webfront/React_tips/FRONTEND_PLAN.md
+A  "web-frontend/webfront/React_tips/New Name pro.txt"
+A  web-frontend/webfront/React_tips/README.md
+A  "web-frontend/webfront/React_tips/clean pro.txt"
+A  "web-frontend/webfront/React_tips/command ls la.txt"
+A  web-frontend/webfront/React_tips/tts_cleanup_report.txt
+M  "web-frontend/webfront/React_tips/venv and uvicorn and gTTS commands.txt"
+M  web-frontend/webfront/package.json
+A  web-frontend/webfront/public/real-estate-buildings-in-modern-city-akg75n64dxflm7dk.jpg
+M  web-frontend/webfront/src/App.js
+M  web-frontend/webfront/src/AppAuthDemo.jsx
+M  web-frontend/webfront/src/Gallery.jsx
+M  web-frontend/webfront/src/Navbar.jsx
+A  web-frontend/webfront/src/SpeakChat.js.clean
+hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/vox-estate-agent$ git status --porcelain
+A  Tips/AI_Avatar_Workflow.md
+A  "Tips/Archive/GitHub/Cleaned pro.txt"
+A  "Tips/Archive/GitHub/push 19-09 2-44am.txt"
+A  "Tips/Archive/GitHub/push 19-09 mobile front.txt"
+A  "Tips/Archive/GitHub/updated UI.txt"
+A  Tips/CLI_AUDIO_GUIDE.md
+A  Tips/CLI_Guide.md
+A  "Tips/Checking UFW firewall.txt"
+A  Tips/DEPLOYMENT_ROADMAP.md
+A  "Tips/Production/Routes production.txt"
+A  Tips/SETUP_GUIDE.md
+A  Tips/VENV_SETUP.md
+A  "backend/ToDos 18-09.txt"
+A  docs/CURRENT_STRUCTURE.md
+A  docs/README.md
+A  docs/deploy_routing.md
+A  docs/real_estate_fields.md
+A  docs/tts_service.md
+A  mobile-frontend/README.md
+A  "mobile-frontend/Tips/App built.txt"
+A  "mobile-frontend/Tips/PWA define.txt"
+A  "mobile-frontend/Tips/Pro construct.txt"
+A  mobile-frontend/index.html
+A  mobile-frontend/package-lock.json
+A  mobile-frontend/package.json
+A  mobile-frontend/src/App.jsx
+A  mobile-frontend/src/main.jsx
+A  mobile-frontend/src/pages/Chat.jsx
+A  mobile-frontend/src/pages/Gallery.jsx
+A  mobile-frontend/src/pages/Home.jsx
+A  mobile-frontend/src/styles.css
+A  mobile-frontend/vite.config.js
+M  web-frontend/webfront/README.md
+A  web-frontend/webfront/React_tips/COMMAND_GUIDE.md
+A  web-frontend/webfront/React_tips/ENVIRONMENT.md
+A  web-frontend/webfront/React_tips/ENV_SETUP_GUIDE.md
+A  web-frontend/webfront/React_tips/FRONTEND_PLAN.md
+A  "web-frontend/webfront/React_tips/New Name pro.txt"
+A  web-frontend/webfront/React_tips/README.md
+A  "web-frontend/webfront/React_tips/clean pro.txt"
+A  "web-frontend/webfront/React_tips/command ls la.txt"
+A  web-frontend/webfront/React_tips/tts_cleanup_report.txt
+M  "web-frontend/webfront/React_tips/venv and uvicorn and gTTS commands.txt"
+M  web-frontend/webfront/package.json
+A  web-frontend/webfront/public/real-estate-buildings-in-modern-city-akg75n64dxflm7dk.jpg
+M  web-frontend/webfront/src/App.js
+M  web-frontend/webfront/src/AppAuthDemo.jsx
+M  web-frontend/webfront/src/Gallery.jsx
+M  web-frontend/webfront/src/Navbar.jsx
+A  web-frontend/webfront/src/SpeakChat.js.clean
+hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/vox-estate-agent$ git commit -m "feat: add mobile Vite scaffold, deploy docs, and UI updates (SpeakChat/chat fixes, branding, proxy)" 
+[feature/tts-implementation ca91a68] feat: add mobile Vite scaffold, deploy docs, and UI updates (SpeakChat/chat fixes, branding, proxy)
+ 50 files changed, 6609 insertions(+), 7 deletions(-)
+ create mode 100644 Tips/AI_Avatar_Workflow.md
+ create mode 100644 Tips/Archive/GitHub/Cleaned pro.txt
+ create mode 100644 Tips/Archive/GitHub/push 19-09 2-44am.txt
+ create mode 100644 Tips/Archive/GitHub/push 19-09 mobile front.txt
+ create mode 100644 Tips/Archive/GitHub/updated UI.txt
+ create mode 100644 Tips/CLI_AUDIO_GUIDE.md
+ create mode 100644 Tips/CLI_Guide.md
+ create mode 100644 Tips/Checking UFW firewall.txt
+ create mode 100644 Tips/DEPLOYMENT_ROADMAP.md
+ create mode 100644 Tips/Production/Routes production.txt
+ create mode 100644 Tips/SETUP_GUIDE.md
+ create mode 100644 Tips/VENV_SETUP.md
+ create mode 100644 backend/ToDos 18-09.txt
+ create mode 100644 docs/CURRENT_STRUCTURE.md
+ create mode 100644 docs/README.md
+ create mode 100644 docs/deploy_routing.md
+ create mode 100644 docs/real_estate_fields.md
+ create mode 100644 docs/tts_service.md
+ create mode 100644 mobile-frontend/README.md
+ create mode 100644 mobile-frontend/Tips/App built.txt
+ create mode 100644 mobile-frontend/Tips/PWA define.txt
+ create mode 100644 mobile-frontend/Tips/Pro construct.txt
+ create mode 100644 mobile-frontend/index.html
+ create mode 100644 mobile-frontend/package-lock.json
+ create mode 100644 mobile-frontend/package.json
+ create mode 100644 mobile-frontend/src/App.jsx
+ create mode 100644 mobile-frontend/src/main.jsx
+ create mode 100644 mobile-frontend/src/pages/Chat.jsx
+ create mode 100644 mobile-frontend/src/pages/Gallery.jsx
+ create mode 100644 mobile-frontend/src/pages/Home.jsx
+ create mode 100644 mobile-frontend/src/styles.css
+ create mode 100644 mobile-frontend/vite.config.js
+ create mode 100644 web-frontend/webfront/React_tips/COMMAND_GUIDE.md
+ create mode 100644 web-frontend/webfront/React_tips/ENVIRONMENT.md
+ create mode 100644 web-frontend/webfront/React_tips/ENV_SETUP_GUIDE.md
+ create mode 100644 web-frontend/webfront/React_tips/FRONTEND_PLAN.md
+ create mode 100644 web-frontend/webfront/React_tips/New Name pro.txt
+ create mode 100644 web-frontend/webfront/React_tips/README.md
+ create mode 100644 web-frontend/webfront/React_tips/clean pro.txt
+ create mode 100644 web-frontend/webfront/React_tips/command ls la.txt
+ create mode 100644 web-frontend/webfront/React_tips/tts_cleanup_report.txt
+ create mode 100644 web-frontend/webfront/public/real-estate-buildings-in-modern-city-akg75n64dxflm7dk.jpg
+ create mode 100644 web-frontend/webfront/src/SpeakChat.js.clean
+hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/vox-estate-agent$ git push origin feature/tts-implementation
+Enumerating objects: 84, done.
+Counting objects: 100% (84/84), done.
+Delta compression using up to 8 threads
+Compressing objects: 100% (64/64), done.
+Writing objects: 100% (67/67), 477.50 KiB | 4.26 MiB/s, done.
+Total 67 (delta 13), reused 6 (delta 0), pack-reused 0
+remote: Resolving deltas: 100% (13/13), completed with 13 local objects.
+To github.com:zoma00/vox-estate-agent.git
+   7c57863..ca91a68  feature/tts-implementation -> feature/tts-implementation
+hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/vox-estate-agent$ 
+
+
+
+

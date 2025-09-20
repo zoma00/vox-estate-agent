@@ -1,0 +1,37 @@
+Change: Improve readability of the demo paragraph on the Home hero
+
+Files changed:
+- src/styles.css
+
+What changed:
+- Updated CSS to force the `.muted` paragraph inside `.hero-card` to be white with a dark text-shadow.
+
+New rule added:
+.hero-card .muted { color: #fff !important; text-shadow: 0 2px 8px rgba(0,0,0,0.85) !important; }
+
+Reason:
+- The demo paragraph sits over a background image which contains bright and varied colors. The previous dark text color and lack of shadow made the paragraph hard to read.
+- White text with a strong dark shadow improves contrast and legibility across the hero image.
+
+How to verify locally:
+1. From the project folder run:
+   cd mobile-frontend
+   npm install   # if node_modules are not present
+   npm run dev
+
+2. Open the dev server in a browser (default Vite port): http://localhost:5173
+3. Visit the Home route (`/`) and confirm the paragraph reads:
+   "A demo mobile UI — chat with the agent, get spoken responses, and explore listings."
+   It should appear white with a dark shadow.
+
+Notes & future options:
+- If you prefer avoiding `!important`, we can refactor the CSS cascade or increase selector specificity instead.
+- If you want the same treatment on the web frontend, add a matching rule in `web-frontend/webfront/src` styles or update `App.js` accordingly.
+
+Change author: automated assistant (applied at user request)
+Date: 2025-09-20
+
+
+
+
+

@@ -1,3 +1,14 @@
+Mobile frontend (PropEstateAI)
+
+Run locally:
+
+1. cd mobile-frontend
+2. npm install
+3. npm run dev
+
+The dev server proxies `/api` to the backend configured in `vite.config.js`.
+
+Next steps: polish UI and add magic-link auth integration.
 # PropEstateAI - Mobile frontend (Vite + React)
 
 This is a minimal mobile-focused React scaffold intended to share API endpoints with the main web frontend. It uses Vite for fast local development.

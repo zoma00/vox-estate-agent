@@ -11,7 +11,7 @@ import ErrorBoundary from './components/ErrorBoundary';
 const TTS_API_URL = 'http://localhost:8000/api/tts';
 const OPENAI_API_URL = 'http://localhost:8000/api/openai_chat';
 const agentImg = 'https://cdn-icons-png.flaticon.com/512/4712/4712027.png';
-const homeBg = 'https://images.pexels.com/photos/186077/pexels-photo-186077.jpeg?auto=compress&cs=tinysrgb&w=1920&h=1080&dpr=2';
+const homeBg = '/real-estate-buildings-in-modern-city-akg75n64dxflm7dk.jpg';
 
 function App() {
   const [messages, setMessages] = useState([]);
@@ -106,24 +106,24 @@ function App() {
               <div style={{
                 textAlign: 'center',
                 padding: '2rem',
-                backgroundColor: 'rgba(255, 255, 255, 0.9)',
-                borderRadius: '12px',
-                maxWidth: '600px',
+                maxWidth: '720px',
                 margin: '0 auto',
-                boxShadow: '0 4px 12px rgba(0,0,0,0.15)'
+                color: '#fff',
+                textShadow: '0 2px 12px rgba(0,0,0,0.6)'
               }}>
-                <h1 style={{ color: '#333', marginBottom: '1.5rem' }}>Find Your Dream Home</h1>
-                <p style={{ color: '#555', lineHeight: 1.6 }}>
-                  Welcome to <strong>PropEstateAI</strong> — your AI-assisted real estate assistant. Browse curated property listings, visit company websites, and explore detailed listings with rich descriptions, images, and direct links. 
-                  Use the chat assistant to ask for personalized searches (for example: "3-bedroom apartments in Athens under €250k")
-                   and get spoken summaries via the integrated TTS service.
+                <h1 style={{ color: '#fff', marginBottom: '1.5rem' }}>Find Your Dream Home</h1>
+                <p style={{ color: '#fff', lineHeight: 1.6 }}>
+                  Welcome to <strong style={{ color: '#fff' }}>PropEstateAI</strong> — your AI-assisted real estate assistant. Browse curated property listings, visit company websites, and explore detailed listings with rich descriptions, images, and direct links.
+                </p>
+                <p className="intro-demo">
+                  A demo web UI — chat with the agent, get spoken responses, and explore listings.
                 </p>
                 <Link 
                   to="/gallery" 
                   style={{
                     display: 'inline-block',
                     padding: '0.8rem 2rem',
-                    backgroundColor: '#4CAF50',
+                    backgroundColor: 'rgba(255,255,255,0.12)',
                     color: 'white',
                     textDecoration: 'none',
                     borderRadius: '4px',
@@ -131,8 +131,8 @@ function App() {
                     fontSize: '1.1rem',
                     transition: 'background-color 0.3s'
                   }}
-                  onMouseOver={(e) => e.target.style.backgroundColor = '#45a049'}
-                  onMouseOut={(e) => e.target.style.backgroundColor = '#4CAF50'}
+                  onMouseOver={(e) => e.target.style.backgroundColor = 'rgba(255,255,255,0.18)'}
+                  onMouseOut={(e) => e.target.style.backgroundColor = 'rgba(255,255,255,0.12)'}
                 >
                   Browse Properties
                 </Link>

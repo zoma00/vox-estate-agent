@@ -116,6 +116,15 @@ App.css
   position: relative;
 }
 
+/* Intro demo paragraph styling moved from inline styles in App.js */
+.intro-demo {
+  color: #fff;
+  line-height: 1.6;
+  text-shadow: 0 2px 12px rgba(0,0,0,0.75);
+  margin-top: 1rem;
+  max-width: 720px;
+}
+
 .explore-cta {
   position: fixed;
   bottom: 20px;

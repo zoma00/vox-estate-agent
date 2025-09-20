@@ -1,0 +1,49 @@
+`git status --porcelain` (or `git status -s`) prints a stable, machine-friendly summary of the working tree instead of the human-readable message. It’s meant for scripts and tools so the output format won’t change between Git versions.
+
+Quick summary
+- Use: `git status --porcelain`  
+- Purpose: produce short, predictable lines describing each file’s state (staged vs unstaged).  
+- Equivalent short form: `git status -s`.
+
+Example output (v1 style)
+```
+A  newfile.txt
+ M modified_unstaged.txt
+?? untracked_file.txt
+```
+
+How to read each line
+- Two columns then filename: `XY <path>`
+  - `X` = index (staged) status
+  - `Y` = worktree (unstaged) status
+- Common X/Y codes:
+  - ` ` = unchanged
+  - `M` = modified
+  - `A` = added
+  - `D` = deleted
+  - `R` = renamed
+  - `C` = copied
+  - `U` = unmerged (conflict)
+  - `?` = untracked
+  - `!` = ignored
+
+Examples
+- `M  file.txt` → modified in index (staged) only  
+- ` M file.txt` → modified in working tree (not staged)  
+- `MM file.txt` → staged and then further modified in worktree  
+- `?? file.txt` → untracked file
+
+Advanced
+- Use `--porcelain=v2` for a richer, more parseable format with metadata (preferred for complex scripts).
+- For simple scripting, parse `--porcelain` lines; for robust tools, prefer `--porcelain=v2`.
+
+If you want, I can show a tiny shell snippet that parses `git status --porcelain` to list only staged files. Which format (v1 or v2) do you want to use in scripts?
+
+
+hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/vox-estate-agent$ git status -s
+ M "Tips/Archive/GitHub/push 19-09 mobile front.txt"
+?? "Tips/Archive/GitHub/git status porcelain.txt"
+
+hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/vox-estate-agent$ git status --porcelain
+ M "Tips/Archive/GitHub/push 19-09 mobile front.txt"
+?? "Tips/Archive/GitHub/git status porcelain.txt"

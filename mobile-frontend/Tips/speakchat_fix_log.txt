@@ -1,0 +1,68 @@
+SpeakChat Fix Log — mobile-frontend
+
+Overview
+--------
+This log documents the fixes and improvements applied to `mobile-frontend/src/pages/Chat.jsx` to align it with the web frontend `SpeakChat.js` and to resolve UI issues observed during testing (notably white text in the input ribbon and missing background/card layout).
+
+Files edited
+------------
+- `mobile-frontend/src/pages/Chat.jsx` — added background + centered card, link rendering, timestamps, helpful links, audio playback improvements, typing indicator, and speech recognition start/stop.
+- `mobile-frontend/src/styles.css` — set message and input colors, placeholder color, helpful links styling, timestamps, and button styles.
+
+Fixes applied
+-------------
+1) Background and card wrapper
+   - Added gradient overlay + Unsplash photo as page background to match webfront.
+   - Wrapped the chat container in a centered white card with rounded corners and drop shadow for better legibility.
+
+2) Chat text readability (messages)
+   - Ensured message text inside the white card is dark (`#111`) via `.chat-container, .message-body, .chat-message` rules.
+   - Set `agent` and `user` bubble backgrounds for visual separation.
+
+3) Chat ribbon/input (white text issue)
+   - Replaced the transparent input style with `background: #fff` and `color: #111` so that the input text is readable on the white card.
+   - Added `::placeholder` color (`#666`) and updated submit button styling.
+   - Ensured `.chat-input` aligns items to center and buttons are visible.
+
+4) TTS & audio playback
+   - Prefer `audio_url` returned by backend and rewrite relative URLs to absolute `http(s)://host:8000/...` during local testing.
+   - When no audio URL returned, use `TTSService.speak()` as fallback; set `isSpeaking` state to prevent overlaps.
+
+5) Link handling & Helpful links block
+   - Implemented `extractLinks()` to attach found URLs to messages.
+   - Rendered a small "Helpful links" list under agent replies when links are available.
+
+6) Typing indicator and timestamps
+   - Show a minimal "Typing..." indicator while awaiting the backend response.
+   - Added `timestamp` to user and agent messages and display the time in the message bubble.
+
+7) Speech recognition
+   - Added `startListening` and `stopListening` helpers based on `window.SpeechRecognition` to append recognized text to the input and auto-send on end.
+   - Added `isListening` and `error` states for UX feedback.
+
+Testing performed
+-----------------
+- Ran a local CSS syntax check (no errors).
+- Manual test sequence (recommended steps to reproduce):
+  1. Start backend: run `uvicorn realestate_agent.main:app --reload --host 0.0.0.0 --port 8000` from `backend/realestate_agent`.
+  2. Start mobile frontend: from `mobile-frontend` run `npm install` (already done) then `npm run dev`.
+  3. Open browser at `http://localhost:5173/` and open the Chat page.
+  4. Verify card background + image is visible.
+  5. Type a message and send; ensure the reply appears under agent and is read aloud. If the reply includes links, confirm the "Helpful links" block displays.
+  6. Verify the input box text color is dark and placeholder is gray.
+  7. (Chrome) Click the mic button (if present) to record — recognized text should append and auto-send.
+
+Notes & edge cases
+------------------
+- If you still see white input text, try a hard refresh (Ctrl+Shift+R) or clear dev server cache — Vite sometimes serves cached CSS.
+- Speech recognition won't work on all browsers (Safari currently lacks full support). The app will show a friendly message if unavailable.
+- The absolute rewrite of `/static/audio/...` to `http(s)://host:8000/static/audio/...` is for local demo convenience; in production ensure the backend returns absolute `audio_url` values.
+
+Next steps
+----------
+- Add a visible microphone UI element and wire `startListening` / `stopListening` to it.
+- Polish spacing and fonts to match the webfront exactly (copy `SpeakChat.js` inline styles or move them to `styles.css`).
+- Add unit tests for message rendering and TTS fallback flow.
+
+Date: 2025-09-20
+Author: Project assistant (applied fixes)

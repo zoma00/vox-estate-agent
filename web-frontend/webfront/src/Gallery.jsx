@@ -59,14 +59,19 @@ function Gallery() {
   };
 
   return (
-    <div style={galleryStyle}>
+    <div className="gallery-bg" style={galleryStyle}>
       <div style={containerStyle}>
         <h1 className="gallery-title" style={{ color: '#fff', textAlign: 'center', marginBottom: '2rem', textShadow: '2px 2px 4px rgba(0,0,0,0.5)' }}>Featured Properties</h1>
       
       <div className="properties-grid">
-        {properties.map((property) => (
+        {properties.map((property, idx) => (
           <div key={property.id} className="property-card">
-            <div className="property-image" style={{ backgroundImage: `url(${property.coverPhoto.url})` }}>
+            <div className="property-image-container">
+              <img
+                src={idx % 2 === 0 ? '/photo-1582407947304-fd86f028f716.avif' : '/real-estate-buildings-in-modern-city-akg75n64dxflm7dk.jpg'}
+                alt={property.title}
+                onError={(e) => { e.currentTarget.src = '/photo-1582407947304-fd86f028f716.avif'; }}
+              />
               <div className="property-price">{property.price}</div>
             </div>
             <div className="property-details">

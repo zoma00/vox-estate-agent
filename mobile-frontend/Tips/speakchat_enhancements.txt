@@ -1,0 +1,65 @@
+SpeakChat Enhancements — mobile-frontend
+
+Summary
+-------
+This document lists the enhancements made to the mobile chat page (`mobile-frontend/src/pages/Chat.jsx`) to bring it in line with the web frontend's `SpeakChat.js` experience. The edits focus on usability, accessibility, and reliable audio playback for demos.
+
+Files changed
+-------------
+- `mobile-frontend/src/pages/Chat.jsx` (updated)
+- `mobile-frontend/src/utils/TTSService.js` (existing helper used)
+- `mobile-frontend/src/styles.css` (may be updated later for visual polish)
+
+Features added / ported
+-----------------------
+1. Link rendering and extraction
+   - Converted plain-text URLs into clickable anchors inside messages.
+   - Added `extractLinks()` to capture URLs from message text and attach a `links` array to messages so a "Helpful links" block can be rendered below agent messages.
+
+2. Message metadata
+   - Added `timestamp` for both user and agent messages so the UI shows message times.
+   - Messages now include `links` and optional `audio` when the backend provides an `audio_url`.
+
+3. Audio playback improvements
+   - If the backend returns `audio_url`, the client prefers playing that URL directly.
+   - For relative `audio_url` values (e.g. `/static/audio/xxx.wav`) the client rewrites them to an absolute URL using the current page protocol and hostname with port `8000` so audio plays correctly during local demos.
+   - When no `audio_url` is supplied, the client falls back to `TTSService.speak()` which posts to `/api/tts` and plays the returned blob, or falls back to the Web Speech API.
+   - `isSpeaking` state was added to avoid overlapping speech commands and improve UX.
+
+4. Typing indicator
+   - A lightweight typing indicator (`Typing...`) is shown while awaiting the backend response.
+
+5. Basic speech recognition (voice input)
+   - Implemented start/stop functions using the browser `SpeechRecognition` API (Chrome/Edge).
+   - Recognition results are appended to the input box and recognition end triggers an auto-send if any text was captured.
+   - Error handling and state (`isListening`, `error`) were added for better feedback.
+
+6. Accessibility and UX
+   - `aria-live="polite"` remains on the chat container for screen readers.
+   - Play buttons include `aria-label`s. Inputs include `aria-label` and the send button is disabled appropriately to prevent duplicate sends.
+
+Testing performed
+-----------------
+- Warmed up TTS on component mount (best-effort) using `TTSService.warmup()`.
+- Sent a normal text query and validated the agent's reply is displayed and spoken.
+- Verified playback using both a returned `audio_url` and the fallback `TTSService.speak()` behavior.
+- Verified relative audio URLs are rewritten and playable when the backend runs on `localhost:8000`.
+- Verified typing indicator appears while waiting for the backend.
+- Tested the basic speech recognition flow in Chrome; results append to the input and auto-send occurs on recognition end.
+
+Edge cases noted
+----------------
+- Large message volumes: the mobile layout limits message width; consider collapsing long messages or adding a "Read more".
+- Multiple links in the same message: links render correctly but styling may need tuning for compactness.
+- Recognition language: default set to `en-US`; make configurable if needed.
+- Browser support: `SpeechRecognition` is not available on all browsers (Safari lacks full support). The app gracefully degrades but show a friendly message when not available.
+
+Next steps / polish
+-------------------
+- Add a visible microphone button in the input area and wire it to `startListening` / `stopListening`.
+- Add/update CSS rules in `mobile-frontend/src/styles.css` for `.helpful-links`, `.message-ts`, `.play-btn`, and `.typing` to match web visuals.
+- Improve error messages and transient toasts (e.g., "TTS failed, using fallback").
+- Add tests using `@testing-library/react` to validate message rendering and the TTS fallback path.
+
+Date: 2025-09-20
+Author: Project assistant (applied changes)

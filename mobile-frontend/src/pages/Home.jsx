@@ -2,10 +2,13 @@ import React from 'react'
 
 export default function Home(){
   return (
-    <div>
-      <div className="card">
-        <h2>Welcome to PropEstateAI (mobile)</h2>
-        <p className="muted">Demo mobile UI for the same React app. Use Chat to talk to the agent.</p>
+    <div className="home-hero hero-bg">
+      <div className="hero-overlay">
+        <div className="hero-card">
+          <h1>Welcome to PropEstateAI</h1>
+       <p className="muted">A demo mobile UI — chat with the agent, get spoken responses, explore listings.</p>
+          <a className="hero-cta" href="/gallery">View Gallery</a>
+        </div>
       </div>
     </div>
   )

@@ -1,0 +1,72 @@
+% npm-audit-and-hero-text-fix.tex
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{hyperref}
+\title{Security Audit and UI Readability Fix}
+\author{Automated Assistant}
+\date{2025-09-20}
+
+\begin{document}
+\maketitle
+
+\section*{Summary}
+This document summarizes two recent maintenance actions applied to the `propestateai-webfront` project (located at `web-frontend/webfront`):
+\begin{enumerate}
+  \item A dependency audit using `npm audit` identified several transitive vulnerabilities originating from `react-scripts` and its dependencies (e.g., `svgo`, `@svgr/*`, `nth-check`, `css-select`, `postcss`, `webpack-dev-server`).
+  \item A UI readability fix for the homepage "demo" sentence was added to improve contrast on the hero background image.
+\end{enumerate}
+
+\section*{npm audit findings}
+The `npm audit --json` report found 9 vulnerabilities (3 moderate, 6 high). Key affected packages included:
+\begin{itemize}
+  \item `react-scripts@5.0.1` (direct dependency) --- pulls in older transitive packages with advisories.
+  \item `svgo`, `@svgr/plugin-svgo`, `@svgr/webpack` --- high severity issues.
+  \item `nth-check`, `css-select` --- high severity transitive issues via `svgo`.
+  \item `postcss`, `resolve-url-loader`, `webpack-dev-server` --- moderate severity issues.
+\end{itemize}
+
+\section*{Recommended remediation steps}
+\begin{enumerate}
+  \item Run `npm audit fix` to apply non-breaking upgrades automatically.
+  \item If necessary and after testing, consider `npm audit fix --force` (may introduce breaking upgrades).
+  \item For a robust long-term solution, migrate away from `react-scripts` (Create React App) to a modern toolchain such as Vite which has fewer legacy transitive dependencies.
+  \item Always create a Git branch and commit current `package.json` and `package-lock.json` before applying global upgrades so changes can be reviewed and reverted if necessary.
+\end{enumerate}
+
+\section*{UI fix applied}
+The homepage was updated to include the following paragraph text and styling to improve readability over the hero background image:
+\begin{verbatim}
+A demo web UI — chat with the agent, get spoken responses, and explore listings.
+\end{verbatim}
+
+The change was implemented in `web-frontend/webfront/src/App.js` as an inline-styled paragraph with white color and a dark text-shadow. The mobile counterpart was updated in `mobile-frontend/src/styles.css` to force the `.muted` paragraph to white and add a dark shadow:
+\begin{verbatim}
+.hero-card .muted { color: #fff !important; text-shadow: 0 2px 8px rgba(0,0,0,0.85) !important; }
+\end{verbatim}
+
+\section*{Verification steps}
+\begin{enumerate}
+  \item In the web frontend:
+    \begin{verbatim}
+    cd web-frontend/webfront
+    npm install
+    npm start
+    \end{verbatim}
+    Open the browser at the Vite/CRA dev server address (commonly http://localhost:3000 or the printed dev server URL) and confirm the new demo sentence appears in white with a dark shadow.
+  \item In the mobile frontend:
+    \begin{verbatim}
+    cd mobile-frontend
+    npm install
+    npm run dev
+    \end{verbatim}
+    Open the mobile dev server address (commonly http://localhost:5173) and confirm the `.muted` paragraph on the Home hero appears white with a dark shadow.
+\end{enumerate}
+
+\section*{Change log}
+\begin{itemize}
+  \item `web-frontend/webfront/src/App.js` — inserted demo paragraph with inline white color and text-shadow.
+  \item `mobile-frontend/src/styles.css` — updated `.hero-card .muted` rule to white with dark text-shadow.
+  \item `mobile-frontend/CHANGES/muted-paragraph-readability.txt` — added explanatory changelog note.
+\end{itemize}
+
+\end{document}

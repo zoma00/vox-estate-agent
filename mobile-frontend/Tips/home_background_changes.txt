@@ -1,0 +1,61 @@
+Home background image changes — web + mobile
+
+Overview
+- Purpose: Replace the previous remote Pexels background with the local real-estate image on both the web and mobile frontends.
+- Local image used:
+  - `web-frontend/webfront/public/real-estate-buildings-in-modern-city-akg75n64dxflm7dk.jpg`
+  - `mobile-frontend/public/assets/real-estate-buildings-in-modern-city-akg75n64dxflm7dk.jpg`
+
+Changes made (exact files and edits)
+
+1) Web frontend
+- File edited: `web-frontend/webfront/src/App.js`
+- What changed: replaced the remote `homeBg` constant value with the local public image path.
+  - before:
+    const homeBg = 'https://images.pexels.com/photos/186077/pexels-photo-186077.jpeg?auto=compress&cs=tinysrgb&w=1920&h=1080&dpr=2';
+  - after:
+    const homeBg = '/real-estate-buildings-in-modern-city-akg75n64dxflm7dk.jpg';
+- Why: CRA/Vite serve files in `public/` at the site root, so referencing `/filename.jpg` loads `public/filename.jpg` directly.
+- How it is used: the homepage container sets `backgroundImage: `linear-gradient(...), url(${homeBg})`` inline in the JSX.
+
+2) Mobile frontend
+- Files edited:
+  - `mobile-frontend/src/pages/Home.jsx` — created/updated to render a `div` with classes `home-hero hero-bg` and an inner `.hero-card` with the content.
+  - `mobile-frontend/src/styles.css` — updated to include `.hero-bg` and `.hero-overlay` rules and set `.hero-bg { background-image: url('/assets/real-estate-buildings-in-modern-city-akg75n64dxflm7dk.jpg') }`.
+  - `mobile-frontend/src/App.jsx` — replaced the inline route hero (which used a Pexels URL) with `<Home />` so the centralized `Home.jsx` is used for `/`.
+- Why: Vite's `public/` folder serves `public/assets/...` at `/assets/...`, so `url('/assets/real-estate-...jpg')` points to the copied image.
+
+Verification / Testing steps
+
+1) Make sure both servers are running (or run each dev server in its folder):
+
+Web frontend (from `web-frontend/webfront`):
+```bash
+npm install
+npm run dev
+# or if CRA setup: npm start
+```
+
+Mobile frontend (from `mobile-frontend`):
+```bash
+npm install
+npm run dev
+```
+
+2) Confirm the images are present in the public folders:
+- `web-frontend/webfront/public/real-estate-buildings-in-modern-city-akg75n64dxflm7dk.jpg`
+- `mobile-frontend/public/assets/real-estate-buildings-in-modern-city-akg75n64dxflm7dk.jpg`
+
+3) Open the site in the browser and verify:
+- Web: Open `http://localhost:5173/` (or the dev server URL) and confirm the home hero uses the local image.
+- Mobile: Open the mobile dev URL (Vite will show the network address if accessible) and confirm the mobile home hero uses the `/assets/...` image.
+
+Troubleshooting tips
+- If you still see the previous remote image, clear the browser cache (hard refresh: Ctrl+Shift+R) — browsers may cache the inline style or image.
+- If the image is missing, double-check the path and that the file exists in the correct `public/` or `public/assets/` directory.
+- If using a different base path or deployment configuration, consider using absolute paths that match your hosting environment.
+
+Notes
+- I intentionally kept the mobile path as `/assets/...` because Vite serves files from `public/` at the root; this keeps the mobile public assets organized. If you prefer the same root path as the webfront (`/real-estate-buildings-in-modern-city-akg75n64dxflm7dk.jpg`), I can copy that file to `mobile-frontend/public/` and update the CSS to use that root path instead.
+
+If you want, I can also update the web frontend to use `/assets/...` so both use the same path style, or create a small script to sync a single master image into both public folders automatically.

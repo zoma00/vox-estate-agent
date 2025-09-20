@@ -1,0 +1,53 @@
+Activity summary - PropEstateAI mobile frontend
+
+Date: 2025-09-19
+Branch: feature/tts-implementation
+
+Summary of changes made in this branch (mobile frontend area):
+
+1) Implemented mobile chat UI
+   - File: src/pages/Chat.jsx
+   - Behavior: Sends user messages to `/api/chat` (POST JSON { message }), displays messages in a scrolling container, renders URLs as links, shows a typing indicator, and includes a play button to replay agent messages.
+   - TTS: After receiving an agent reply, the UI calls the TTSService to play the audio.
+
+2) Centralized TTS helper
+   - File: src/utils/TTSService.js
+   - Behavior: Primary TTS path: POST `/api/tts` with `{ text }`, expects audio blob and plays via an `Audio` object; fallback to the browser `speechSynthesis` API if backend TTS is unavailable.
+   - Warmup: `warmup()` attempts an initial `/api/tts` call on mount (best-effort).
+
+3) Routing and small UI scaffolding
+   - Files: src/App.jsx, src/main.jsx, index.html
+   - Routing: BrowserRouter with routes for `/`, `/chat`, `/gallery`.
+   - Navbar component added at src/components/Navbar.jsx (basic links and Logout button placeholder).
+
+4) Styles
+   - File: src/styles.css (existing file used for layout and colors).
+
+5) Build verification
+   - Ran `npm install` and `npm run build` in `mobile-frontend` to ensure there are no syntax or build errors. Build completed successfully.
+
+6) Notes and assumptions
+   - Assumed backend endpoints are the same as the web frontend (`/api/chat` and `/api/tts`).
+   - TTSService expects `/api/tts` to return an audio blob when POSTed with `{ text }`. If your backend returns `audio_url` strings instead, we can add URL rewriting logic.
+   - Navbar component is included but not fully wired with `token`/`user` props; it is left as a simple presentational nav.
+
+How to run locally (developer steps):
+
+1) Start backend (FastAPI/uvicorn). Example (adjust as appropriate):
+
+   uvicorn realestate_agent.app.main:app --host 0.0.0.0 --port 8000
+
+2) Start the mobile dev server:
+
+   cd mobile-frontend
+   npm install
+   npm run dev
+
+3) Open the dev server in your browser or a device on the same LAN and navigate to `/chat`.
+
+Next recommended tasks:
+- Polish chat styles to match `web-frontend` `SpeakChat` look and animation.
+- Wire Navbar with authentication state (magic-link provider) and implement guest/demo flow.
+- Add tests for Chat component and TTSService (optional but recommended).
+
+End of summary.

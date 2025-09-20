@@ -1,0 +1,13 @@
+[Unit]
+Description=Uvicorn instance to serve realestate_agent FastAPI
+After=network.target
+
+[Service]
+User=www-data
+Group=www-data
+WorkingDirectory=/var/www/propestate/backend/realestate_agent
+Environment="PATH=/var/www/propestate/backend/realestate_agent/venv/bin"
+ExecStart=/var/www/propestate/backend/realestate_agent/venv/bin/uvicorn realestate_agent.main:app --host 127.0.0.1 --port 8000
+
+[Install]
+WantedBy=multi-user.target

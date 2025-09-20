@@ -1,6 +1,4 @@
-1- Clean the project.
 
-2- Create new Git branch after cleaning the project.
 
 3- Make the mobile forntend
 

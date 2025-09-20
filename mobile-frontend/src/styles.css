@@ -13,6 +13,103 @@ body,html,#root{height:100%;margin:0;font-family:Inter,system-ui,Arial}
 .bottom-nav{display:flex;justify-content:space-around;padding:10px;background:rgba(0,0,0,0.15)}
 .bottom-nav a{color:var(--accent);text-decoration:none}
 .card{background:rgba(255,255,255,0.02);padding:12px;border-radius:10px;margin-bottom:12px}
-.chat-input{display:flex;gap:8px}
-.chat-input input{flex:1;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.06);background:transparent;color:inherit}
+.chat-input{display:flex;gap:8px;align-items:center}
+.chat-input input{flex:1;padding:8px;border-radius:8px;border:1px solid rgba(0,0,0,0.08);background:#fff;color:#111}
+.chat-input input::placeholder{color:#666}
+.chat-input button{background:#1a73e8;color:#fff;border:none;padding:8px 12px;border-radius:8px}
+
+/* Chat message colors on white card */
+.chat-container, .message-body, .chat-message { color: #111 !important; }
+.chat-message.agent { background: rgba(255,255,255,0.96); }
+.chat-message.user { background: #e3f2fd; }
+.message-body { color: #111; }
+.message-ts { color: #666; font-size: 0.75rem; margin-top: 6px; }
+.helpful-links a { color: #1a73e8; text-decoration: none; display: inline-block; margin: 4px 0; }
 .btn{padding:8px 12px;border-radius:8px;background:var(--accent);color:#042; border:none}
+
+.home-hero{display:flex;align-items:center;justify-content:center;margin:12px 0}
+.hero-card{background:rgba(255,255,255,0.92);padding:18px;border-radius:10px;max-width:720px;color:#222}
+.hero-card h1{margin:0 0 8px;font-size:1.5rem}
+.hero-card p{color:#444;line-height:1.5}
+.hero-cta{display:inline-block;margin-top:12px;padding:10px 18px;background:#1a73e8;color:#fff;border-radius:8px;text-decoration:none}
+
+/* Home hero background using provided asset */
+.hero-bg{min-height:320px;display:flex;align-items:center;justify-content:center;background-size:cover;background-position:center center;background-repeat:no-repeat}
+.hero-overlay{width:100%;min-height:320px;background:linear-gradient(180deg, rgba(3,7,12,0.55), rgba(3,7,12,0.45));display:flex;align-items:center;justify-content:center;padding:28px}
+.hero-bg{background-image: url('/assets/real-estate-buildings-in-modern-city-akg75n64dxflm7dk.jpg')}
+.hero-card{background:transparent;color:#f6eeee;max-width:720px}
+.hero-card h1, .hero-card p { text-shadow: 0 2px 10px rgba(0,0,0,0.6); }
+.hero-card .muted { color: #fff !important; text-shadow: 0 2px 8px rgba(0,0,0,0.85) !important; }
+.hero-cta{background:rgba(242, 235, 235, 0.12);color:#f2eeee}
+
+/* Gallery / Featured properties styles (cards, thumbnails, badges) */
+.properties-hero{min-height:180px}
+.properties-hero .hero-overlay{padding:18px}
+.featured-heading{color:#fff;text-align:center;margin:0;font-size:2rem;font-weight:700}
+
+/* Grid of property cards */
+.properties-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;padding:18px}
+.prop-card{background:#fff;color:#10202b;border-radius:12px;padding:0;box-shadow:0 10px 30px rgba(2,6,23,0.25);overflow:hidden}
+.prop-thumb img{width:100%;height:160px;object-fit:cover;display:block}
+.prop-content{padding:14px}
+.prop-content h3{margin:0 0 8px;font-size:1.05rem}
+.prop-location{color:#7b98a5;margin-bottom:8px}
+.prop-badges{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.badge{background:#eef6fb;padding:6px 8px;border-radius:16px;color:#2f6b86;font-size:0.8rem}
+.prop-actions{display:flex;gap:10px;align-items:center}
+.btn{background:#1a73e8;color:#fff;padding:10px 14px;border-radius:8px;border:none}
+.link-btn{background:#eef2f6;padding:8px 12px;border-radius:8px;color:#3b6b7f;text-decoration:none}
+
+/* Mobile adjustments for the properties grid */
+@media (max-width:600px){
+  .properties-grid{grid-template-columns:repeat(1,1fr);gap:16px;padding:12px}
+  .prop-thumb img{height:200px}
+  .featured-heading{font-size:1.5rem}
+}
+
+@media (min-width:601px) and (max-width:1024px){
+  .properties-grid{grid-template-columns:repeat(2,1fr)}
+}
+
+/* Mobile adjustments: make hero taller and change focal point for portraits */
+@media (max-width: 700px) {
+  .hero-bg { min-height: 70vh; background-position: center 25%; }
+  .hero-overlay { padding: 20px; }
+  .hero-card { max-width: 92%; padding: 16px; }
+}
+
+@media (max-width: 420px) {
+  .hero-bg { min-height: 78vh; background-position: center 18%; }
+  .hero-overlay { padding: 14px; }
+  .hero-card { padding: 12px; }
+  .hero-card h1 { font-size: 1.25rem; }
+}
+
+/* Navbar styles (inspired by web front) */
+.mf-navbar, .navbar{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:#0f1720;color:#fff}
+.mf-brand, .nav-brand{font-weight:700;font-size:1.1rem;color:#fff;text-decoration:none}
+.mf-links, .nav-links{display:flex;gap:12px;align-items:center}
+.mf-link, .nav-link{color:#cfeaf5;text-decoration:none;padding:6px 10px;border-radius:6px;transition:all .15s}
+.mf-link:hover, .nav-link:hover{background:rgba(255,255,255,0.04)}
+.mf-logout, .logout-btn{background:#c0392b;color:#fff;border:none;padding:6px 10px;border-radius:8px;cursor:pointer}
+.mf-greeting, .user-greeting{font-size:0.85rem;color:#9aa4b2;margin-left:8px}
+
+/* Responsive navbar hamburger */
+.nav-toggle{display:none;background:transparent;border:none;color:inherit;padding:6px 8px;cursor:pointer}
+.nav-toggle .hamburger{display:block;width:20px;height:2px;background:#fff;position:relative}
+.nav-toggle .hamburger::before,.nav-toggle .hamburger::after{content:'';position:absolute;left:0;right:0;height:2px;background:#fff}
+.nav-toggle .hamburger::before{top:-6px}
+.nav-toggle .hamburger::after{top:6px}
+
+@media (max-width:700px){
+  .nav-toggle{display:block}
+  .nav-links{position:absolute;top:56px;right:12px;background:rgba(15,23,32,0.95);flex-direction:column;gap:0;padding:8px;border-radius:8px;display:none;min-width:160px}
+  .nav-links.open{display:flex}
+  .nav-link{padding:10px 12px;width:100%;}
+  .mf-greeting{display:none}
+}
+
+@media (max-width:600px){
+  .mf-links{flex-wrap:wrap;justify-content:flex-end}
+  .mf-greeting{display:none}
+}

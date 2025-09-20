@@ -1,0 +1,80 @@
+Hamburger navigation bar — implementation notes
+
+Files modified / created:
+- mobile-frontend/src/components/Navbar.jsx
+- mobile-frontend/src/styles.css
+- mobile-frontend/Tips/hamburger_nav_bar_creation.txt (this file)
+
+Goal
+- Make the top navigation responsive so that links (Home / Chat / Gallery / Login / Register) fit on small mobile widths without forcing the user to rotate the device.
+- Provide an accessible hamburger toggle that opens a vertical menu on small screens and closes when a link is selected.
+
+High-level approach
+1. Add a small toggle button (hamburger) that controls component state (`open`) in `Navbar.jsx`.
+2. Render navigation links inside a container that receives the CSS class `open` when `open` is true.
+3. Use responsive CSS rules in `src/styles.css` to hide the links and show the hamburger on small screens (media query). The `.nav-links` container switches to a vertical layout when open.
+4. Add `aria` attributes for accessibility: the button uses `aria-expanded` and `aria-controls` and each link is keyboard-focusable.
+5. When a navigation link is clicked on small screens, close the menu by setting `open` to false so the menu collapses.
+
+Key implementation details
+
+1) Component state and handler (in `mobile-frontend/src/components/Navbar.jsx`)
+- Use React `useState` to track `open`:
+  const [open, setOpen] = useState(false);
+
+- Toggle handler:
+  const toggle = () => setOpen(!open);
+
+- Close on navigation:
+  const closeMenu = () => setOpen(false);
+
+2) Markup structure
+- The button has an accessible label and toggles `open`:
+  <button aria-controls="nav-links" aria-expanded={open} onClick={toggle}>...</button>
+
+- Links container gets `className={open ? 'nav-links open' : 'nav-links'}` and an `id="nav-links"`.
+
+- Each `NavLink` (or `a`) includes an `onClick={closeMenu}` callback to collapse on selection.
+
+3) CSS (in `mobile-frontend/src/styles.css`)
+- Desktop / wide screens: show links inline, hide the hamburger button.
+- Small screens (max-width: ~700px): hide the inline links, show the hamburger button, style `.nav-links` as a fixed/absolute panel or a sliding column. Example rules used:
+
+  /* hide the hamburger on wide screens */
+  .hamburger { display: none; }
+
+  @media (max-width: 700px) {
+    .hamburger { display: inline-flex; }
+    .nav-links { display: none; position: absolute; top: 64px; right: 12px; background: rgba(255,255,255,0.95); border-radius: 8px; box-shadow: 0 8px 24px rgba(0,0,0,0.12); padding: 8px; width: calc(100% - 32px); }
+    .nav-links.open { display: block; }
+    .nav-links a { display: block; padding: 12px 16px; }
+  }
+
+- The exact values used in `styles.css` were chosen to visually match the `web-frontend` navbar while keeping the mobile design compact and finger-friendly.
+
+4) Accessibility notes
+- `aria-expanded` toggles between true and false so screen readers announce the expanded/collapsed state.
+- The button has an accessible label (either `aria-label` or visible text) and keyboard focus styles are preserved in CSS.
+- Links are normal anchor elements so they are tabbable and announced correctly by assistive tech.
+
+5) Testing instructions
+- Run the mobile frontend dev server from `mobile-frontend`:
+
+  npm install
+  npm run dev
+
+- Open the site in a desktop browser and resize the window to less than 700px width. Confirm the hamburger icon appears and the inline links hide.
+- Click the hamburger button to open the vertical menu. Confirm links appear stacked vertically.
+- Click a link (e.g., Chat). The menu should close and the app should navigate to the chosen route.
+- Use keyboard navigation (Tab/Enter) to focus the button and open/close the menu. Confirm `aria-expanded` changes value.
+
+6) Common pitfalls and fixes
+- If the menu stays open after clicking a link, ensure each link calls `onClick={closeMenu}` or the navigation callback closes the menu.
+- If the hamburger is visible on wide screens, check that `.hamburger { display: none }` exists outside the media query and the media query changes it to `display: inline-flex`.
+- If the menu overlaps important content on small screens, adjust `top`/`right`/`width` in the CSS so the menu sits below the header and occupies the expected space.
+
+7) Files and snippets reference
+- `mobile-frontend/src/components/Navbar.jsx` — toggling state and markup
+- `mobile-frontend/src/styles.css` — media queries, `.hamburger`, `.nav-links`, `.nav-links.open` styling
+
+If you'd like, I can also extract the specific code snippets from the repo and paste them here or create a small demo HTML/CSS file that reproduces just the hamburger behavior for quick testing.
