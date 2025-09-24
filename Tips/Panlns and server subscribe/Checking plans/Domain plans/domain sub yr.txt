@@ -1,0 +1,251 @@
+propestateai.ae
+Save 18%
+US$ 59.99
+
+US$ 49.00/1st yr
+
+Buy now
+propestateai.com
+Save 85%
+Only for 3yr+ term
+US$ 19.99
+
+US$ 2.99/1st yr
+
+Buy now
+propestateai.solutions
+Save 79%
+US$ 32.99
+
+US$ 6.99/1st yr
+
+Buy now
+propestateai.shop
+Save 97%
+US$ 34.99
+
+US$ 0.99/1st yr
+
+Buy now
+propestateai.org
+Save 50%
+US$ 15.99
+
+US$ 7.99/1st yr
+
+Buy now
+propestateai.store
+Save 98%
+US$ 51.99
+
+US$ 0.99/1st yr
+
+Buy now
+propestateai.tech
+Save 88%
+US$ 59.99
+
+US$ 6.99/1st yr
+
+Buy now
+propestateai.xyz
+Save 86%
+US$ 13.99
+
+US$ 1.99/1st yr
+
+Buy now
+propestateai.cloud
+Save 92%
+US$ 25.99
+
+US$ 1.99/1st yr
+
+Buy now
+propestateai.site
+Save 97%
+US$ 32.99
+
+US$ 0.99/1st yr
+
+Buy now
+propestateai.space
+Save 96%
+US$ 23.99
+
+US$ 0.99/1st yr
+
+Buy now
+propestateai.blog
+Save 93%
+US$ 29.99
+
+US$ 1.99/1st yr
+
+Buy now
+propestateai.io
+Save 53%
+US$ 67.99
+
+US$ 31.99/1st yr
+
+Buy now
+propestateai.fun
+Save 97%
+US$ 32.99
+
+US$ 0.99/1st yr
+
+Buy now
+propestateai.art
+Save 92%
+US$ 25.99
+
+US$ 1.99/1st yr
+
+Buy now
+propestateai.click
+Save 83%
+US$ 11.99
+
+US$ 1.99/1st yr
+
+Buy now
+propestateai.me
+Save 60%
+US$ 19.99
+
+US$ 7.99/1st yr
+
+Buy now
+propestateai.ai
+Save 20%
+Only for 2yr+ term
+US$ 100.00
+
+US$ 79.99/1st yr
+
+Buy now
+propestateai.pro
+Save 90%
+US$ 28.99
+
+US$ 2.99/1st yr
+
+Buy now
+** So give me your recommendation about buy the cheapest domain , 
+Avoide noise and don't provide configs for the domain or server right now.
+ Just concentrate on selecting the domain name. I think i can select .space or .site
+
+##########
+Answer #################
+##########
+
+
+Good call narrowing to `.space` vs `.site`. Short recommendation and why:
+
+Recommendation
+- Pick `propestateai.site`.
+
+Why `.site` (concise)
+- Low‑noise and neutral — reads like a real product/site, not a gimmick.
+- More professional and familiar to users than `.space` 
+(which can feel novelty/portfolio-focused).
+- Cheap first‑year promos are available (.site often $0.99) and it’s short/clear.
+- Neutral for marketing and SEO (no penalty for `.site`), and it’s easy to type 
+and remember.
+
+When you might prefer `.space`
+- Use `.space` if you want a distinct, creative brand vibe 
+(e.g., portfolio, community, or novelty). It stands out but can feel less 
+"businesslike".
+
+Extra quick notes (no server/configs)
+-------------------------------------------
+
+- Check renewal price before buying — promos are cheap first year but renewals
+ can be much higher.
+
+- Enable WHOIS/privacy and auto‑renew (or set calendar reminders).
+- If you care about brand protection and budget allows, register `propestateai.com` 
+(if available) or one more TLD (.shop/.store/.com) later — but for a lean demo, 
+`.site` is perfectly fine.
+
+If you want, I’ll:
+--------------------
+- Hold on configs until you buy the domain.
+- After you register, I can generate the exact DNS and nginx/certbot steps
+ prefilled with your domain and VPS IP.
+
+Shall I mark `propestateai.site` as chosen and proceed when you confirm purchase?
+
+
+
+====================
+probautoai.site
+propestateai.site
+Save 97%
+US$ 32.99
+
+US$ 0.99/1st yr
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+############################################################################
+
+
+GitHub Copilot
+
+Short answer — domains are normally sold on a yearly basis (first‑year promos common). Monthly billing for a single domain is uncommon; registrars bundle monthly billing into hosting plans, not domain registration.
+
+Quick notes & recommendations
+- Pricing: first‑year promos (US$0.99) are fine — check the renewal price (usually much higher). Don’t be surprised by renewal cost.
+- Term: buy 1 year (or multiple years if you want to lock price). You can renew annually or enable auto‑renew.
+- Privacy: enable WHOIS privacy (if available) to hide your personal info.
+- Auto‑renew: enable to avoid accidental expiration, or set reminders if you prefer manual renewals.
+- Registrar features: prefer registrars with easy DNS management, DNSSEC, and account recovery.
+- Nameservers: keep registrar DNS if you want simple control, or use Cloudflare for CDN/proxy later.
+- SSL/HTTPS: use Let’s Encrypt on the server (free) after DNS points to the VPS.
+- Backup: after purchase, immediately set low TTL while testing, then increase TTL to reduce DNS propagation times.
+
+Checklist after purchase (replace YOUR_DOMAIN and VPS_IP)
+````bash
+# 1) Set DNS at registrar: A @ -> VPS_IP, CNAME www -> @
+# 2) Verify DNS propagation
+dig +short A YOUR_DOMAIN
+dig +short A www.YOUR_DOMAIN
+
+# 3) On your Ubuntu VPS (install basics if not done)
+sudo apt update && sudo apt upgrade -y
+sudo apt install -y nginx certbot python3-certbot-nginx ufw
+
+# 4) Open firewall for web
+sudo ufw allow OpenSSH
+sudo ufw allow 'Nginx Full'
+sudo ufw enable
+
+# 5) After nginx config, get TLS
+sudo certbot --nginx -d YOUR_DOMAIN -d www.YOUR_DOMAIN
+# test renewal
+sudo certbot renew --dry-run
+````
+
+Which TLD to pick?
+- If you want the cheap promo: choose one you like (.shop or .site are good). Prefer .shop for a commercial feel, .site is neutral.
+
+If you want, I’ll:
+- Generate a prefilled nginx config + certbot steps for the exact domain and your VPS IP, or
+- Walk you through purchasing and DNS setup step‑by‑step. Which do you want me to prepare next?

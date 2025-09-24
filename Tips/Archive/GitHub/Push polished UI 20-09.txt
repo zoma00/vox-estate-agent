@@ -1,0 +1,28 @@
+Push summary — Polished UI & Deploy helpers
+Date: 2025-09-20
+Branch: feature/tts-implementation
+Remote: origin (git@github.com:zoma00/vox-estate-agent.git)
+
+What I pushed
+- UI: Gallery improvements on mobile and web (card layout, thumbnail <img> with object-fit, price overlays, responsive grid).
+- Readability tweaks for hero/demo text and mobile `.muted` styling.
+- Mobile pages scaffold improvements for Chat, TTS, and Home.
+- Local image fallbacks (AVIF + JPG) added to reduce broken-image risk during demos.
+- Deploy helper artifacts: `scripts/deploy.sh`, `deploy/nginx-systemd/*` templates, and `deploy/README_DEPLOY.md`.
+- Playwright screenshot tooling and images: `tools/screenshot.js`, `web_home.png`, `mobile_home.png`.
+- Various docs and tips files under `Tips/` and `CHANGES/`.
+
+Commit message used
+"UI: gallery improvements (mobile + web); add deploy helpers, docs, and screenshots"
+
+Notes / Next steps
+- Open a PR to `main` from `feature/tts-implementation` for review and CI testing.
+- Optionally add a Playwright smoke test and a GitHub Actions workflow to run builds and tests on PRs.
+- After merging, follow `deploy/README_DEPLOY.md` to deploy to your server (create venv, pip install -r requirements.txt, place systemd service and nginx config, enable/ start services, reload nginx).
+
+Commands run locally
+- `git add .`
+- `git commit -m "UI: gallery improvements (mobile + web); add deploy helpers, docs, and screenshots"`
+- `git push origin feature/tts-implementation`
+
+If you want a short PR description, I can add one and open the PR for you.

@@ -1,0 +1,57 @@
+Good plan — push from local, then pull on the server. Keep it simple and safe.
+
+Local (commit and push your branch to GitHub)
+```bash
+# from your local repo
+git status
+git add .
+git commit -m "Your descriptive message"
+# if branch exists remotely
+git push origin feature/tts-implementation
+# if branch is new locally
+git push --set-upstream origin feature/tts-implementation
+```
+
+If you changed Python deps:
+```bash
+# update requirements (if you manage them this way)
+pip freeze > backend/realestate_agent/requirements.txt
+git add backend/realestate_agent/requirements.txt
+git commit -m "Update requirements"
+git push
+```
+
+Server (safe update and restart)
+```bash
+# as root or a sudo user run the git update as deploy
+sudo -u deploy -H bash -lc '
+cd /opt/vox-estate-agent
+GIT_SSH_COMMAND="ssh -i /home/deploy/.ssh/id_ed25519_deploykey -o IdentitiesOnly=yes" git fetch --all --prune
+GIT_SSH_COMMAND="ssh -i /home/deploy/.ssh/id_ed25519_deploykey -o IdentitiesOnly=yes" git checkout feature/tts-implementation
+GIT_SSH_COMMAND="ssh -i /home/deploy/.ssh/id_ed25519_deploykey -o IdentitiesOnly=yes" git pull --ff-only
+'
+
+# reinstall deps if changed (as deploy)
+sudo -u deploy -H bash -lc '
+source /opt/vox-estate-agent/venv/bin/activate
+pip install -r /opt/vox-estate-agent/backend/realestate_agent/requirements.txt || true
+'
+
+# restart service (as root)
+sudo systemctl restart vox-agent.service
+sudo systemctl status vox-agent.service --no-pager
+```
+
+If you expect conflicts or want a clean sync (destroys local changes):
+```bash
+sudo -u deploy -H bash -lc '
+cd /opt/vox-estate-agent
+GIT_SSH_COMMAND="ssh -i /home/deploy/.ssh/id_ed25519_deploykey -o IdentitiesOnly=yes" git fetch origin
+git reset --hard origin/feature/tts-implementation
+'
+```
+
+Notes
+- Use --ff-only to avoid accidental merge commits.
+- Test locally before pushing (run unit tests / quick app start).
+- If you want, I can generate a small deploy.sh that runs the safe sequence above. Which do you prefer?

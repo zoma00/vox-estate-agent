@@ -1,0 +1,134 @@
+Short answer and recommendation
+=================================
+
+- Priority: finish the server wiring first (systemd + nginx + TLS, or at least an nginx reverse-proxy). A stable, reachable endpoint is required before you publish a public demo — without it you can’t reliably stress-test quotas, collect real usage metrics, or give recruiters a consistent link to try.
+
+Assumptions
+-----------
+
+- You plan to publish the demo on LinkedIn and want it reachable from the internet.
+- The repository and virtual environment are already on the server (we previously cloned and installed dependencies).
+- You either have a domain for TLS (recommended) or will publish temporarily to an IP for invite-only testing.
+
+Why deploy → secure → monetize (short)
+-------------------------------------
+
+- Deploy first: create a stable endpoint (systemd to run FastAPI, nginx to reverse-proxy and serve static files). This is quick and gives you a shareable URL.
+- Secure second: add lightweight auth and quotas (magic-link or OAuth + per-user token quotas + CAPTCHA) to prevent abuse and runaway API costs.
+- Monetize later: add Stripe/credits after usage tracking is live so pricing is informed by real data.
+
+Prioritized plan (immediate → medium-term)
+-------------------------------------------
+
+1) Immediate (today — get the demo endpoint ready) — ~20–60 minutes
+   - Create and enable a `systemd` unit for `uvicorn` (run as `deploy`, WorkingDirectory set to your backend folder, ExecStart using the venv's `uvicorn`).
+   - Add an `nginx` site that reverse-proxies to `127.0.0.1:8000` and serves `/static/` from the backend static folder.
+   - Test `nginx -t`, reload nginx, and `systemctl enable --now vox-agent.service`.
+   - If you have a domain, request TLS via `certbot --nginx`. If you don't, keep the site invite-only until TLS is available.
+
+2) Very short follow-up (same day or next) — ~1–2 hours
+   - Add a global safety switch: env var `MAX_TOKENS_PER_DAY` and short-circuit that disables demo endpoints when exceeded.
+   - Add IP- and user-based rate limits (Redis + `slowapi` or `limits`) and a CAPTCHA on signup/first use.
+
+3) Minimal auth & usage tracking (next 1–2 days)
+   - Implement email magic-link auth (Supabase or Clerk) or OAuth and tie sessions to `user_id`.
+   - Add a `usage_logs` table and record every OpenAI call's `usage`; subtract tokens from `credits_remaining` / `monthly_quota`.
+   - Add Quota middleware that returns 402 when quota is exhausted.
+
+4) Soft public launch + monitor
+   - Open the demo publicly and monitor daily token usage; add alerts at ~80% of your budget.
+   - If traffic and costs justify it, add Stripe credits/subscriptions.
+
+5) Optional next: admin dashboard, Stripe webhooks, usage analytics, and polish.
+
+Immediate files & exact commands (copy/paste)
+--------------------------------------------
+
+Systemd unit — create `/etc/systemd/system/vox-agent.service` (as `root`):
+
+```ini
+[Unit]
+Description=vox-estate-agent uvicorn
+After=network.target
+
+[Service]
+User=deploy
+Group=deploy
+WorkingDirectory=/opt/vox-estate-agent/backend/realestate_agent
+Environment="PATH=/opt/vox-estate-agent/venv/bin"
+ExecStart=/opt/vox-estate-agent/venv/bin/uvicorn app.main:app --host 127.0.0.1 --port 8000 --workers 2
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
+```
+
+Enable and view logs:
+
+```bash
+sudo systemctl daemon-reload
+sudo systemctl enable --now vox-agent.service
+sudo journalctl -u vox-agent.service -f
+```
+
+Nginx site — create `/etc/nginx/sites-available/vox-agent`:
+
+```nginx
+server {
+    listen 80;
+    server_name your.example.domain;  # replace with your domain (or use IP for invite-only testing)
+
+    location /static/ {
+        alias /opt/vox-estate-agent/backend/realestate_agent/static/;
+        access_log off;
+        sendfile on;
+    }
+
+    location / {
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_pass http://127.0.0.1:8000;
+        proxy_read_timeout 120;
+    }
+}
+```
+
+Enable and test nginx:
+
+```bash
+sudo ln -s /etc/nginx/sites-available/vox-agent /etc/nginx/sites-enabled/vox-agent
+sudo nginx -t
+sudo systemctl reload nginx
+```
+
+TLS (if you own a domain) — Certbot:
+
+```bash
+sudo apt update
+sudo apt install certbot python3-certbot-nginx -y
+sudo certbot --nginx -d your.example.domain
+```
+
+Safety note: if you don't have a domain, protect the site with basic-auth or keep it invite-only until TLS is in place.
+
+Minimal auth + quota quick checklist
+----------------------------------
+
+- Wire Supabase or Clerk auth (email magic-link) into your frontend/backend and store `user.id` on requests.
+- Add a `usage_logs` DB table and persist `resp['usage']` from OpenAI responses.
+- Implement Quota middleware (per-user token/quota checks plus Redis-backed per-minute limits).
+- Add `MAX_TOKENS_PER_DAY` env var and short-circuit public endpoints (503) when exceeded.
+- Add monitoring/alerts (cron job or simple task to email/post to Slack when usage approaches threshold).
+
+When to pick the develop-first route instead
+-------------------------------------------
+
+If you only need a private demo or a recorded walkthrough for recruiters, continue developing features locally and postpone deployment and auth. That is fine if you plan to screen-share or send a recording rather than a public interactive link.
+
+Final recommendation
+--------------------
+
+Run `systemd + nginx` now to get a stable demo URL, then implement minimal auth and quotas before posting the link on LinkedIn. I can implement either or both steps — tell me which to start with and I’ll proceed immediately (default: `systemd + nginx`).

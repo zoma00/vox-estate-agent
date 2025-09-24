@@ -1,0 +1,50 @@
+I'll add a short todo to track this decision, mark it in-progress, give a concise recommendation (VPS vs shared hosting), list pros/cons, sizing and providers, and next steps you can pick. Then I'll mark the todo completed. 
+
+Starting (1/3) *Decide hosting option*
+
+I'll keep this concise and actionable.
+
+Recommendation (short)
+- Choose a VPS + domain for this project. It gives you the exact control needed to run two static frontends (web + mobile build), the FastAPI backend, and any future automation/workflows. For a demo and future growth, VPS is the better long-term choice.
+
+Why VPS (high level)
+- Full control: run uvicorn, systemd, cron jobs, background workers, and tune nginx.
+- Single bill and predictable infra for demo: you own the server and can set up logging, SSL, and backups.
+- Supports both static sites and backend services without hacks or extra configuration.
+- Easy to scale: start with a small VPS (1 vCPU, 2GB RAM) and upgrade if needed.
+
+When shared website hosting might make sense
+- If you only needed a simple CMS (WordPress) and don’t want to manage system updates – managed WordPress hosting is easier.
+- Shared hosting disallows running background services (uvicorn), so it’s not suitable for your FastAPI backend.
+
+Sizing suggestion (initial)
+- Small demo / low traffic: 1 vCPU, 2 GB RAM, 40 GB SSD — e.g., DigitalOcean Basic, Vultr, Linode, or Hetzner CX11/CX21.
+- If you plan to run TTS models locally or heavy media processing, use 4+ vCPUs and 8+ GB RAM (or use a separate worker with more resources).
+
+Provider suggestions
+- DigitalOcean: simple UI, good docs, one-click droplets.
+- Hetzner: cheapest per resource in many regions.
+- Linode / Vultr: similar to DigitalOcean.
+- AWS Lightsail: if you prefer AWS ecosystem with simple pricing.
+
+Operational checklist (VPS)
+1. Buy domain (you picked `propestateai.site` or similar).
+2. Create the VPS and note its public IP.
+3. SSH hardening + firewall (UFW), basic packages (nginx, certbot, node, python).
+4. Build both frontends locally and copy to `/var/www/propestateai/{web,mobile}` or upload builds directly from server via git/CI.
+5. Create systemd unit for backend (uvicorn) and nginx site config to proxy `/api` and serve static frontends.
+6. Obtain TLS via certbot and test renewals.
+7. Enable backups and monitoring (snapshots or provider backup service).
+
+Edge cases / cautions
+- If using Cloudflare proxy, set SSL to Full (strict) and install origin cert or Let’s Encrypt on server.
+- Make sure `CORS` and API base paths are correctly set between frontends and backend.
+- Don’t store secrets in repo; use environment variables in systemd unit or a .env file outside the repo.
+- If using Playwright in CI, ensure browser dependencies are installed in the runner.
+
+Next steps (pick one)
+- I will generate the exact `nginx` + `systemd` config and step-by-step commands to deploy on your VPS (ask for your VPS IP and preferred domain).
+- Or I can prepare a short provider-specific quickstart for DigitalOcean or Hetzner (droplet creation, firewall, cloud-init).
+- Or prepare a small GitHub Actions workflow to build frontends and upload via scp to your VPS.
+
+Tell me which next step you want and I’ll proceed.

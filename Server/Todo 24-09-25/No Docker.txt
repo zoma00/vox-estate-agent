@@ -1,0 +1,378 @@
+
+
+
+
+============||||||||||||============||||||||||||============||||||||||||============||||||||||||============||||||||||||
+############||||||||||||############||||||||||||############||||||||||||################################################
+============||||||||||||============||||||||||||============||||||||||||============||||||||||||============||||||||||||
+
+
+Good call — running the heavy local TTS model outside Docker is sensible for lowest latency. I’ll summarize
+ the recommended non‑Docker deployment pattern, give exact copy/paste files & commands to finish the server 
+ wiring (systemd + nginx + TLS), and note a few operational tips to keep latency low and costs predictable.
+
+Short plan (what I’ll help you do next)
+- Deploy the FastAPI app and TTS process on the host (no Docker). Use systemd units:
+  - one unit for the FastAPI uvicorn app
+  - an optional second unit for the TTS worker (if you want the TTS model loaded separately)
+- Use nginx on the host as TLS terminator and reverse-proxy to the local uvicorn port (keep static assets with nginx).
+- Add light protections (rate-limits, global token cap, auth) before opening the demo publicly.
+
+Why this is a good approach
+- Minimal network hops: the TTS model runs locally on the host so there’s no container-network overhead.
+- You can pre-load the model in a long-running worker process to avoid repeated startup latency.
+- nginx handles TLS, static files and buffering while uvicorn serves the API.
+
+Exact files & copy/paste (create these on the server as root / edit them locally and copy)
+
+1) systemd unit for the API (uvicorn)
+Create `/etc/systemd/system/vox-agent.service`:
+
+```ini
+[Unit]
+Description=vox-estate-agent uvicorn
+After=network.target
+
+[Service]
+User=deploy
+Group=deploy
+WorkingDirectory=/opt/vox-estate-agent/backend/realestate_agent
+Environment="PATH=/opt/vox-estate-agent/venv/bin"
+# Make sure uvicorn path points to venv
+ExecStart=/opt/vox-estate-agent/venv/bin/uvicorn app.main:app --host 127.0.0.1 --port 8000 --workers 2
+Restart=always
+RestartSec=5
+# Optional: limit memory/cpu if needed
+# MemoryMax=4G
+
+[Install]
+WantedBy=multi-user.target
+```
+
+Enable & start:
+
+```bash
+sudo systemctl daemon-reload
+sudo systemctl enable --now vox-agent.service
+sudo journalctl -u vox-agent.service -f
+```
+
+2) Optional systemd unit for a long-running TTS worker (recommended)
+If you load the local TTS model into memory once and serve audio generation from a persistent process (low latency), use a separate unit:
+
+Create `/etc/systemd/system/vox-tts-worker.service`:
+
+```ini
+[Unit]
+Description=vox-estate-agent TTS worker
+After=network.target
+
+[Service]
+User=deploy
+Group=deploy
+WorkingDirectory=/opt/vox-estate-agent/backend/realestate_agent
+Environment="PATH=/opt/vox-estate-agent/venv/bin"
+# Example: run a worker script that loads model and listens on unix socket or HTTP on localhost:9000
+ExecStart=/opt/vox-estate-agent/venv/bin/python tts/tts_worker.py
+Restart=on-failure
+RestartSec=5
+LimitNOFILE=4096
+# Consider Resource control if host has limited RAM:
+# MemoryMax=12G
+
+[Install]
+WantedBy=multi-user.target
+```
+
+Notes:
+- `tts_worker.py` should preload the model and expose a small internal HTTP or unix-socket endpoint the API calls (e.g., `POST /generate`).
+- Using a separate worker lets the API remain responsive even while the TTS model is busy.
+
+Enable & start:
+
+```bash
+sudo systemctl daemon-reload
+sudo systemctl enable --now vox-tts-worker.service
+sudo journalctl -u vox-tts-worker.service -f
+```
+
+3) nginx site (host TLS termination & static files)
+Create `/etc/nginx/sites-available/vox-agent`:
+
+```nginx
+server {
+    listen 80;
+    server_name your.example.domain;  # change to your domain (or keep IP for invite-only)
+
+    # Serve static files directly
+    location /static/ {
+        alias /opt/vox-estate-agent/backend/realestate_agent/static/;
+        access_log off;
+        sendfile on;
+        expires 1d;
+    }
+
+    # Proxy requests to the FastAPI app
+    location / {
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+
+        proxy_connect_timeout 5s;
+        proxy_send_timeout 120s;
+        proxy_read_timeout 120s;
+
+        # Buffering helps with slow client connections and large responses
+        proxy_buffering on;
+        proxy_buffers 16 4k;
+        proxy_pass http://127.0.0.1:8000;
+    }
+}
+```
+
+Enable + test + reload:
+
+```bash
+sudo ln -s /etc/nginx/sites-available/vox-agent /etc/nginx/sites-enabled/vox-agent
+sudo nginx -t
+sudo systemctl reload nginx
+```
+
+If you have a domain get TLS with certbot:
+
+```bash
+sudo apt update
+sudo apt install certbot python3-certbot-nginx -y
+sudo certbot --nginx -d your.example.domain
+```
+
+Operational tips to keep latency low
+- Pre-load models: have the TTS worker load the model at start and keep it resident (avoid re-loading per-request).
+- Use a local worker endpoint (unix socket or 127.0.0.1) to avoid public exposure.
+- Use a small number of worker processes tuned to available RAM and CPU (the TTS model may need a single process with multiple async tasks).
+- If model is GPU-accelerated, ensure appropriate drivers and isolate GPU usage; systemd resource limits may be needed.
+- Add async handling in the API: if TTS can take seconds, consider enqueuing generation and returning a job id (polling or websockets) so the API keeps responsive.
+- Cache generated audio for identical inputs (hash prompts + voice parameters) to avoid repeated generation.
+- Monitor host resources (top, nvidia-smi if GPU, free -m). Set alerts for memory and CPU spikes.
+
+Security & cost protections (don’t skip)
+- Keep OpenAI key server-side only (env var). Never expose it in HTML/JS.
+- Add a global daily token cap and rate-limits before public launch.
+- Add basic auth or invite-only gating if you don’t have TLS or auth ready.
+
+Next steps — tell me which you want me to do now
+- “Create systemd + nginx files on server” — I’ll prepare the exact unit & nginx files and (if you want) run the commands (I’ll need you to run them or provide SSH access).  
+- “Add TTS worker script template” — I’ll add a `tts/tts_worker.py` skeleton that preloads model and listens on `localhost:9000` (or unix socket) and include client usage code in the API.  
+- “Do both” — I’ll prepare units + TTS worker template + nginx config and provide exact commands to run.
+
+Which one should I implement first?
+
+
+
+
+
+
+
+
+
+============||||||||||||============||||||||||||============||||||||||||============||||||||||||============||||||||||||
+########################################################################################################################
+============||||||||||||============||||||||||||============||||||||||||============||||||||||||============||||||||||||
+============||||||||||||============||||||||||||============||||||||||||============||||||||||||============||||||||||||
+########################################################################################################################
+============||||||||||||============||||||||||||============||||||||||||============||||||||||||============||||||||||||
+
+
+
+
+
+
+
+
+Short answer: Yes — it’s both possible and perfectly reasonable to deploy your app on a VPS without Docker. Many production services run directly on VMs. Docker gives reproducibility and isolation, but running on the host (virtualenv + systemd + nginx) is a valid, low-latency, and often simpler approach — especially when you need full control of GPUs / large local TTS models.
+
+When to choose "no Docker" vs "Docker"
+- Choose no Docker when:
+  - You need the lowest possible latency (local TTS in-host, no container network overhead).
+  - You want simpler ops on a single VPS and you control the OS/packages.
+  - You rely on GPUs / drivers that are easier to manage on the host.
+- Choose Docker when:
+  - You need repeatable builds & isolation across environments.
+  - You want to run many services/teams with identical environments.
+  - You plan to scale out across multiple hosts or use container-native routing (Traefik, K8s).
+
+Pros / Cons (concise)
+- Pros (no Docker)
+  - Lower latency & simpler I/O for heavy local models.
+  - Easier direct access to host GPUs and drivers.
+  - Simpler for single-server deployments — fewer moving pieces.
+- Cons (no Docker)
+  - Harder to guarantee reproducible environments across machines.
+  - Less process isolation — dependency conflicts more visible.
+  - Slightly more manual ops for clean rollbacks, packaging and CI.
+
+Best-practices checklist for a host (non-Docker) deployment
+1. Isolate runtime
+   - Use a service account user (e.g., deploy) and run app as that user.
+   - Use a Python virtualenv at the project path: `/opt/vox-estate-agent/venv`.
+2. Process manager
+   - Use `systemd` units for uvicorn and (optionally) a long-running TTS worker.
+3. Reverse proxy & TLS
+   - Use `nginx` on host for TLS termination, static files, buffering, and headers.
+   - Use `certbot` for Let's Encrypt certificates.
+4. Secrets & env
+   - Store API keys as environment variables or in an `EnvironmentFile` referenced by systemd (not in repo).
+   - Limit file permissions for secrets.
+5. Quotas / safety
+   - Add token caps, rate-limits, CAPTCHA, and monitoring before public launch.
+6. Logging & rotation
+   - Use systemd + journalctl and configure logrotate for app logs if writing to files.
+7. Updates & rollbacks
+   - Use a short `deploy.sh` to pull, pip install, run migrations, then `systemctl restart`.
+   - Tag releases and `git checkout` a previous tag to rollback.
+8. Monitoring & alerts
+   - Add basic monitoring (CPU, memory, disk) and configure alerts for spike/budget thresholds.
+9. Backups & snapshots
+   - Snapshot VPS or backup DB/important assets regularly (audio caches, metadata).
+10. Security
+   - UFW: only allow SSH + 80/443.
+   - Fail2ban for SSH brute force mitigation.
+   - Keep system packages updated and rotate keys.
+
+Concrete commands / minimal setup (copy/paste)
+- Create venv, install deps, create system user and fix ownership (run as root or sudo):
+
+```bash
+# as root or a sudo user
+sudo useradd -m -s /bin/bash deploy || true
+sudo mkdir -p /opt/vox-estate-agent
+sudo chown deploy:deploy /opt/vox-estate-agent
+
+# switch to deploy user and set up venv (or run with sudo -u)
+cd /opt/vox-estate-agent
+python3 -m venv venv
+source venv/bin/activate
+pip install --upgrade pip
+pip install -r backend/realestate_agent/requirements.txt
+deactivate
+```
+
+- Example systemd unit (API) — save as `/etc/systemd/system/vox-agent.service`:
+
+```ini
+[Unit]
+Description=vox-estate-agent uvicorn
+After=network.target
+
+[Service]
+User=deploy
+Group=deploy
+WorkingDirectory=/opt/vox-estate-agent/backend/realestate_agent
+Environment="PATH=/opt/vox-estate-agent/venv/bin"
+ExecStart=/opt/vox-estate-agent/venv/bin/uvicorn app.main:app --host 127.0.0.1 --port 8000 --workers 2
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
+```
+
+```bash
+sudo systemctl daemon-reload
+sudo systemctl enable --now vox-agent.service
+sudo journalctl -u vox-agent.service -f
+```
+
+- Optional TTS worker unit (preloads model; recommended to avoid model reload on each request):
+
+```ini
+[Unit]
+Description=vox-estate-agent TTS worker
+After=network.target
+
+[Service]
+User=deploy
+Group=deploy
+WorkingDirectory=/opt/vox-estate-agent/backend/realestate_agent
+Environment="PATH=/opt/vox-estate-agent/venv/bin"
+ExecStart=/opt/vox-estate-agent/venv/bin/python tts/tts_worker.py
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
+```
+
+- Nginx (proxy & static) — save as `/etc/nginx/sites-available/vox-agent` and enable:
+
+```nginx
+server {
+    listen 80;
+    server_name your.example.domain;
+
+    location /static/ {
+        alias /opt/vox-estate-agent/backend/realestate_agent/static/;
+        access_log off;
+        sendfile on;
+        expires 1d;
+    }
+
+    location / {
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_pass http://127.0.0.1:8000;
+        proxy_read_timeout 120s;
+    }
+}
+```
+
+```bash
+sudo ln -s /etc/nginx/sites-available/vox-agent /etc/nginx/sites-enabled/vox-agent
+sudo nginx -t
+sudo systemctl reload nginx
+# then enable TLS:
+sudo apt update
+sudo apt install certbot python3-certbot-nginx -y
+sudo certbot --nginx -d your.example.domain
+```
+
+Deployment script pattern (deploy.sh)
+- Create a `deploy.sh` you run to update the server:
+
+```bash
+#!/usr/bin/env bash
+set -euo pipefail
+cd /opt/vox-estate-agent
+git fetch --all
+git checkout feature/tts-implementation
+git pull --ff-only
+source venv/bin/activate
+pip install -r backend/realestate_agent/requirements.txt
+# run migrations if any
+# e.g., alembic upgrade head
+sudo systemctl restart vox-agent.service
+# optionally restart tts worker
+sudo systemctl restart vox-tts-worker.service || true
+```
+
+Edge cases & gotchas (design for these)
+- Dependency drift: keep `requirements.txt` updated with `pip freeze > requirements.txt` on releases.
+- Reproducibility: without containers, differences between VPS and dev envs can cause surprises — mitigate by using pinned versions and Python version management (`pyenv`).
+- Resource exhaustion: local TTS models can use lots of RAM/swapping — provide swap or limit concurrency.
+- Race conditions on updates: use atomic steps and short downtime windows; consider maintenance page during deploy.
+- Secrets leakage: never commit keys; use systemd EnvironmentFile or a secrets manager.
+
+When it’s better to switch to Docker later
+- When you need multi-instance scaling, identical CI/CD builds across environments, or easier rollback via images, move to container images. You can start host-first now and containerize later using the same `deploy.sh` build steps.
+
+Wrap-up & next actions I can take immediately
+- I can: (pick one)
+  1) Create and install the `systemd` and `nginx` config on your server now (I’ll prepare the exact files and commands). I will need you to run them or provide SSH access.  
+  2) Add a `tts/tts_worker.py` skeleton that preloads the local TTS model and an example client call inside the API.  
+  3) Create the `deploy.sh` and a simple `monitoring/checks` script for token usage and resource alerts.  
+  4) Do all of the above in sequence.
+
+Which do you want me to do next?

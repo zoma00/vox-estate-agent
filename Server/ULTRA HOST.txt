@@ -1,0 +1,171 @@
+
+
+
+https://bill.ultahost.com/cart.php?a=complete
+https://bill.ultahost.com/clientarea.php?action=productdetails&id=160815
+
+
+
+Server Name:
+srv518662293.host
+
+Main IP:
+84.201.4.127
+
+pass:
+6Mz8D3sV35zu17TM93J7Sg
+
+
+
+
+
+
+Bash xterm:
+
+
+ 1) Create deploy key for deploy user (if missing) and print public key
+sudo -u deploy -H bash -lc 'il
+KEY="$HOME/.ssh/id_ed25519_deploykey"
+if [ -f "$KEY" ]; then for deploy user (if missing) and print public key
+  echo "Key already exists at $KEY"
+else"$HOME/.ssh/id_ed25519_deploykey"
+  umask 077EY" ]; then
+  ssh-keygen -t ed25519 -C "deploy@$(hostname)" -N "" -f "$KEY"
+fise
+echo "----- PUBLIC KEY START -----"
+cat "${KEY}.pub"ed25519 -C "deploy@$(hostname)" -N "" -f "$KEY"
+echo "----- PUBLIC KEY END -----"
+'cho "----- PUBLIC KEY START -----"
+cat "${KEY}.pub"
+# 2) Add GitHub to known_hosts for deploy (so ssh -T won't prompt interactively) 
+sudo -u deploy -H ssh-keyscan github.com >> /home/deploy/.ssh/known_hosts || true
+chmod 644 /home/deploy/.ssh/known_hosts || true
+# 2) Add GitHub to known_hosts for deploy (so ssh -T won't prompt interactively) 
+echo "Public key printed above. Add it to GitHub repo -> Settings -> Deploy keys -> Add key (read-only)."
+Generating public/private ed25519 key pair.true
+Your identification has been saved in /home/deploy/.ssh/id_ed25519_deploykey
+Your public key has been saved in /home/deploy/.ssh/id_ed25519_deploykey.pubkeys -> Add key (read-only)."
+The key fingerprint is:
+SHA256:ImWkuXOU3uSD8ZwZ4KXQvD6w6qky6e5CeAk7dA9jseY deploy@host
+The key's randomart image is:
++--[ED25519 256]--+
+|    .oo .        |
+|   . *o=         |
+|    = O.o        |
+|.. B.*.O +       |
+|oo=.B+= S        |
+|+.oE.=o. .       |
+|.+ .   .         |
+|= ..             |
+|BBo              |
++----[SHA256]-----+
+----- PUBLIC KEY START -----
+ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOVwPw8t5DRoUz4q+2gc/b7d6P5teeWKbzyume0KQN0E deploy@host
+----- PUBLIC KEY END -----
+# github.com:22 SSH-2.0-550beff
+# github.com:22 SSH-2.0-cb24e083
+# github.com:22 SSH-2.0-550beff
+# github.com:22 SSH-2.0-550beff
+# github.com:22 SSH-2.0-550beff
+Public key printed above. Add it to GitHub repo -> Settings -> Deploy keys -> Add key (read-only).
+root@host:~# 
+
+
+
+ssh-ed25519
+ 
+
+
+ Great — the deploy key was created and the public key printed:
+
+ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOVwPw8t5DRoUz4q+2gc/b7d6P5teeWKbzyume0KQN0E deploy@host
+
+Next steps (pick one): add that public key to GitHub (recommended) or use a PAT (less desirable). After adding the key you can clone over SSH and finish the deploy. I’ll give exactly what to run and what to paste into GitHub.
+
+1) Add the printed public key to GitHub (recommended)
+- Go to the repository page: https://github.com/zoma00/vox-estate-agent
+- Click Settings → Deploy keys → Add deploy key
+  - Title: e.g. "deploy@srv518662293"
+  - Key: paste the public key line shown above (the single `ssh-ed25519 ... deploy@host` line)
+  - Leave "Allow write access" unchecked (read-only) unless you need server pushes.
+  - Click Add key.
+
+If you prefer to add the key to an organization or account-level key, use the repo Deploy Keys page for a per-repo key.
+
+2) (Optional) Add deploy key via GitHub API (if you prefer to automate)
+If you have a GitHub Personal Access Token (`GITHUB_PAT`) with repo:public_repo or repo scope, you can add the key with curl (replace owner/repo and the key):
+
+```bash
+# Replace placeholders before running
+GITHUB_PAT="ghp_xxx"   # your PAT (keep it secret)
+REPO_OWNER="zoma00"
+REPO_NAME="vox-estate-agent"
+TITLE="deploy@srv518662293"
+KEY="ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOVwPw8t5DRoUz4q+2gc/b7d6P5teeWKbzyume0KQN0E deploy@host"
+
+curl -s -X POST -H "Authorization: token $GITHUB_PAT" \
+  -H "Accept: application/vnd.github+json" \
+  https://api.github.com/repos/$REPO_OWNER/$REPO_NAME/keys \
+  -d "{\"title\":\"$TITLE\",\"key\":\"$KEY\",\"read_only\":true}"
+```
+
+Security note: avoid pasting PATs into shared logs; create a short-lived PAT if possible and revoke it after use.
+
+3) Verify SSH auth from the server (runs as deploy)
+Once you’ve added the key in GitHub, run this on the server (you can run it as root on console or from your SSH session):
+
+```bash
+# run as deploy
+sudo -u deploy -H ssh -T git@github.com
+```
+
+Expected success (example):
+- "Hi zoma00! You've successfully authenticated, but GitHub does not provide shell access."
+
+If it still says "Permission denied (publickey)", confirm you copied the correct public key to the repo and that the deploy key is enabled.
+
+4) Clone the repo via SSH (as deploy)
+After the key is accepted, run:
+
+```bash
+# clone (as root or on console)
+sudo -u deploy -H git clone --branch feature/tts-implementation --depth 1 git@github.com:zoma00/vox-estate-agent.git /opt/vox-estate-agent
+# or, if the directory exists, update it:
+sudo -u deploy -H bash -lc 'cd /opt/vox-estate-agent && git fetch --all && git reset --hard origin/feature/tts-implementation'
+```
+
+5) Continue deploy: venv, systemd, nginx (run as root on console)
+If clone succeeds, run (this is the same block I gave before but safe to repeat):
+
+```bash
+# create venv & install backend deps as deploy
+sudo -u deploy -H bash -lc '
+set -e
+cd /opt/vox-estate-agent
+python3 -m venv venv
+. venv/bin/activate
+pip install --upgrade pip setuptools wheel
+if [ -f backend/realestate_agent/requirements.txt ]; then
+  pip install -r backend/realestate_agent/requirements.txt
+else
+  echo "WARNING: backend/realestate_agent/requirements.txt not found"
+fi
+deactivate
+'
+
+# (then restart service)
+systemctl daemon-reload
+systemctl restart vox-agent.service
+systemctl status vox-agent.service --no-pager -l
+journalctl -u vox-agent.service -n 200 --no-pager
+```
+
+6) Quick smoke tests
+```bash
+# local test on the server
+curl -I http://127.0.0.1:8000/ || true
+# nginx test
+curl -I http://127.0.0.1/ || true
+```
+
+If you want, do the GitHub UI step now and paste the result of `sudo -u deploy -H ssh -T git@github.com` here. If it worked, run the clone command and paste the clone output and the `systemctl status vox-agent.service` output — I’ll inspect logs and fix any remaining issues.

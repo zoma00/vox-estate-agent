@@ -1,0 +1,36 @@
+Got it ✅
+You have **modified, deleted, and untracked files**. Let’s go step by step:
+
+### 1. Add modified + deleted files
+
+```bash
+git add -u
+```
+
+(`-u` stages modifications and deletions only)
+
+### 2. Add new (untracked) files/folders
+
+```bash
+git add .
+```
+
+(`.` adds everything untracked in the working directory)
+
+### 3. Commit with a message
+
+Choose a clear message, for example:
+
+```bash
+git commit -m "Update TTS implementation: cleanup, new tools, and docs"
+```
+
+### 4. Push to your branch
+
+```bash
+git push origin feature/tts-implementation
+```
+
+---
+
+👉 Do you want me to make a **single commit with all files**, or do you prefer to **separate docs, code, and assets into multiple commits** for cleaner history?

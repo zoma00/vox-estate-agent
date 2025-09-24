@@ -1,0 +1,90 @@
+hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/vox-estate-agent$ # distro info
+cat /etc/os-release
+
+# or
+lsb_release -a
+
+# kernel info
+uname -a
+
+# systemd/OS short form
+hostnamectl
+PRETTY_NAME="Ubuntu 24.04.3 LTS"
+NAME="Ubuntu"
+VERSION_ID="24.04"
+VERSION="24.04.3 LTS (Noble Numbat)"
+VERSION_CODENAME=noble
+ID=ubuntu
+ID_LIKE=debian
+HOME_URL="https://www.ubuntu.com/"
+SUPPORT_URL="https://help.ubuntu.com/"
+BUG_REPORT_URL="https://bugs.launchpad.net/ubuntu/"
+PRIVACY_POLICY_URL="https://www.ubuntu.com/legal/terms-and-policies/privacy-policy"
+UBUNTU_CODENAME=noble
+LOGO=ubuntu-logo
+No LSB modules are available.
+Distributor ID: Ubuntu
+Description:    Ubuntu 24.04.3 LTS
+Release:        24.04
+Codename:       noble
+Linux hazem-elbatawy-Vostro-15-3510 6.14.0-29-generic #29~24.04.1-Ubuntu SMP PREEMPT_DYNAMIC Thu Aug 14 16:52:50 UTC 2 x86_64 x86_64 x86_64 GNU/Linux
+ Static hostname: hazem-elbatawy-Vostro-15-3510
+       Icon name: computer-laptop
+         Chassis: laptop 💻
+      Machine ID: 6687c2a97602477e9e90ac07be5141e7
+         Boot ID: 797d7191e1ca4bbca6769bf8cfd85fc9
+Operating System: Ubuntu 24.04.3 LTS              
+          Kernel: Linux 6.14.0-29-generic
+    Architecture: x86-64
+ Hardware Vendor: Dell Inc.
+  Hardware Model: Vostro 15 3510
+Firmware Version: 1.39.0
+   Firmware Date: Wed 2025-07-02
+    Firmware Age: 2month 2w 5d
+hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/vox-estate-agent$ 
+
+
+- Ubuntu 24.04 detected on your machine — good choice for the server.
+
+- Next recommended step: open the PR using the draft file you created. Quick checklist before PR:
+  - Ensure branch is up-to-date and builds pass (optional but recommended).
+  - Confirm PR title/body (you already have PR_DRAFT_PUSH_POLISHED_UI.md).
+
+Commands you can run locally to build and create the PR with the GitHub CLI:
+
+````bash
+# optional: ensure branch is current
+git checkout feature/tts-implementation
+git pull --rebase origin feature/tts-implementation
+
+# optional: quick builds (catch obvious errors)
+cd web-frontend/webfront && npm ci && npm run build || echo "web build failed"
+cd - 
+cd mobile-frontend && npm ci && npm run build || echo "mobile build failed"
+cd -
+
+# create PR using the draft file as the body (requires gh CLI and auth)
+gh pr create \
+  --base main \
+  --head feature/tts-implementation \
+  --title "Polished UI, TTS feature, and deploy helpers" \
+  --body-file PR_DRAFT_PUSH_POLISHED_UI.md
+````
+
+If you prefer to open the PR in the browser (interactive):
+````bash
+gh pr create --web --base main --head feature/tts-implementation
+````
+
+If you don't have gh installed:
+````bash
+# install GitHub CLI (Ubuntu)
+sudo snap install gh --classic
+gh auth login
+````
+
+If you want, I can:
+- Draft the exact PR description and open the PR for you (you must authenticate `gh auth login` locally or grant access), or
+- Create a GitHub Actions CI file to run the builds and a Playwright smoke test before merging.
+
+Which do you want me to do next?

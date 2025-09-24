@@ -1,0 +1,415 @@
+deploy@host:~$ sudo -u deploy -H ls -la /opt/vox-estate-agent/vox-estate-agent || true
+total 64
+drwxrwxr-x 13 deploy deploy 4096 Sep 22 23:49  .
+drwxr-xr-x 15 deploy deploy 4096 Sep 22 23:52  ..
+drwxrwxr-x  8 deploy deploy 4096 Sep 22 23:49  .git
+drwxrwxr-x  2 deploy deploy 4096 Sep 22 23:49  .githooks
+-rw-rw-r--  1 deploy deploy 2220 Sep 22 23:49  .gitignore
+drwxrwxr-x  9 deploy deploy 4096 Sep 22 23:49  Tips
+drwxrwxr-x  2 deploy deploy 4096 Sep 22 23:49 'UI changes both gallery '
+drwxrwxr-x  3 deploy deploy 4096 Sep 22 23:49  backend
+drwxrwxr-x  3 deploy deploy 4096 Sep 22 23:49  deploy
+drwxrwxr-x  2 deploy deploy 4096 Sep 22 23:49  docs
+drwxrwxr-x  6 deploy deploy 4096 Sep 22 23:49  mobile-frontend
+-rw-rw-r--  1 deploy deploy 1660 Sep 22 23:49  package-lock.json
+-rw-rw-r--  1 deploy deploy   59 Sep 22 23:49  package.json
+drwxrwxr-x  2 deploy deploy 4096 Sep 22 23:49  scripts
+drwxrwxr-x  2 deploy deploy 4096 Sep 22 23:49  tools
+drwxrwxr-x  3 deploy deploy 4096 Sep 22 23:49  web-frontend
+
+
+Run these as deploy to inspect the nested repo safely — copy/paste the commands and paste outputs if you want interpretation.
+
+```bash
+# list top-level files and sizes
+sudo -u deploy -H ls -la /opt/vox-estate-agent/vox-estate-agent
+sudo -u deploy -H du -sh /opt/vox-estate-agent/vox-estate-agent/* | sort -h
+
+# git quick status + current commit
+sudo -u deploy -H bash -lc 'cd /opt/vox-estate-agent/vox-estate-agent && git rev-parse --abbrev-ref HEAD && git rev-parse HEAD && git status --short'
+
+# show remotes and branches
+sudo -u deploy -H bash -lc 'cd /opt/vox-estate-agent/vox-estate-agent && git remote -v && git branch -av'
+
+# recent commit history (compact)
+sudo -u deploy -H bash -lc 'cd /opt/vox-estate-agent/vox-estate-agent && git log --oneline --decorate --graph -n 20'
+
+# show repository README and package files if present
+sudo -u deploy -H bash -lc 'cd /opt/vox-estate-agent/vox-estate-agent && [ -f README.md ] && sed -n "1,200p" README.md || echo "no README.md"'
+sudo -u deploy -H bash -lc 'cd /opt/vox-estate-agent/vox-estate-agent && [ -f package.json ] && sed -n "1,200p" package.json || echo "no package.json"'
+sudo -u deploy -H bash -lc 'cd /opt/vox-estate-agent/vox-estate-agent && [ -f backend/realestate_agent/requirements.txt ] && sed -n "1,200p" backend/realestate_agent/requirements.txt || echo "no backend requirements"'
+
+# list large files/dirs (top 50)
+sudo -u deploy -H bash -lc 'cd /opt/vox-estate-agent/vox-estate-agent && find . -type f -printf "%s %p\n" | sort -nr | head -n 50'
+```
+
+If you’d like a safe copy to examine locally, move it out of the project tree first:
+```bash
+sudo -u deploy -H mv /opt/vox-estate-agent/vox-estate-agent /home/deploy/wave2lip-backup-$(date +%s)
+ls -ld /home/deploy/wave2lip-backup-*
+```
+
+Tell me which command you ran and paste the output you want help interpreting.
+
+
+
+Bash
+-----------
+
+deploy@host:~$ ^C
+deploy@host:~$ # list top-level files and sizes
+sudo -u deploy -H ls -la /opt/vox-estate-agent/vox-estate-agent
+sudo -u deploy -H du -sh /opt/vox-estate-agent/vox-estate-agent/* | sort -h
+
+# git quick status + current commit
+sudo -u deploy -H bash -lc 'cd /opt/vox-estate-agent/vox-estate-agent && git rev-parse --abbrev-ref HEAD && git rev-parse HEAD && git status --short'
+
+# show remotes and branches
+sudo -u deploy -H bash -lc 'cd /opt/vox-estate-agent/vox-estate-agent && git remote -v && git branch -av'
+
+# recent commit history (compact)
+sudo -u deploy -H bash -lc 'cd /opt/vox-estate-agent/vox-estate-agent && git log --oneline --decorate --graph -n 20'
+
+# show repository README and package files if present
+sudo -u deploy -H bash -lc 'cd /opt/vox-estate-agent/vox-estate-agent && [ -f README.md ] && sed -n "1,200p" README.md || echo "no README.md"'
+sudo -u deploy -H bash -lc 'cd /opt/vox-estate-agent/vox-estate-agent && [ -f package.json ] && sed -n "1,200p" package.json || echo "no package.json"'
+sudo -u deploy -H bash -lc 'cd /opt/vox-estate-agent/vox-estate-agent && [ -f backend/realestate_agent/requirements.txt ] && sed -n "1,200p" backend/realestate_-type f -printf "%s %p\n" | sort -nr | head -n 50'nt/vox-estate-agent && find . 
+total 64
+drwxrwxr-x 13 deploy deploy 4096 Sep 22 23:49  .
+drwxr-xr-x 15 deploy deploy 4096 Sep 22 23:52  ..
+drwxrwxr-x  8 deploy deploy 4096 Sep 22 23:49  .git
+drwxrwxr-x  2 deploy deploy 4096 Sep 22 23:49  .githooks
+-rw-rw-r--  1 deploy deploy 2220 Sep 22 23:49  .gitignore
+drwxrwxr-x  9 deploy deploy 4096 Sep 22 23:49  Tips
+drwxrwxr-x  2 deploy deploy 4096 Sep 22 23:49 'UI changes both gallery '
+drwxrwxr-x  3 deploy deploy 4096 Sep 22 23:49  backend
+drwxrwxr-x  3 deploy deploy 4096 Sep 22 23:49  deploy
+drwxrwxr-x  2 deploy deploy 4096 Sep 22 23:49  docs
+drwxrwxr-x  6 deploy deploy 4096 Sep 22 23:49  mobile-frontend
+-rw-rw-r--  1 deploy deploy 1660 Sep 22 23:49  package-lock.json
+-rw-rw-r--  1 deploy deploy   59 Sep 22 23:49  package.json
+drwxrwxr-x  2 deploy deploy 4096 Sep 22 23:49  scripts
+drwxrwxr-x  2 deploy deploy 4096 Sep 22 23:49  tools
+drwxrwxr-x  3 deploy deploy 4096 Sep 22 23:49  web-frontend
+4.0K    /opt/vox-estate-agent/vox-estate-agent/package-lock.json
+4.0K    /opt/vox-estate-agent/vox-estate-agent/package.json
+12K     /opt/vox-estate-agent/vox-estate-agent/UI changes both gallery 
+12K     /opt/vox-estate-agent/vox-estate-agent/scripts
+12K     /opt/vox-estate-agent/vox-estate-agent/tools
+20K     /opt/vox-estate-agent/vox-estate-agent/deploy
+36K     /opt/vox-estate-agent/vox-estate-agent/docs
+1.8M    /opt/vox-estate-agent/vox-estate-agent/web-frontend
+2.8M    /opt/vox-estate-agent/vox-estate-agent/mobile-frontend
+4.7M    /opt/vox-estate-agent/vox-estate-agent/Tips
+22M     /opt/vox-estate-agent/vox-estate-agent/backend
+feature/tts-implementation
+ef15436d873fa415ea7746c5f6d855acc83c3d41
+origin  git@github.com:zoma00/vox-estate-agent.git (fetch)
+origin  git@github.com:zoma00/vox-estate-agent.git (push)
+* feature/tts-implementation                ef15436 UI: gallery improvements (mobile + web); add deploy helpers, docs, and screenshots
+  remotes/origin/feature/tts-implementation ef15436 UI: gallery improvements (mobile + web); add deploy helpers, docs, and screenshots
+* ef15436 (grafted, HEAD -> feature/tts-implementation, origin/feature/tts-implementation) UI: gallery improvements (mobile + web); add deploy helpers, docs, and screenshots
+no README.md
+{
+  "devDependencies": {
+    "playwright": "^1.55.0"
+  }
+}
+fastapi>=0.68.0
+uvicorn>=0.15.0
+requests>=2.26.0
+transformers<4.50
+nltk>=3.8.1
+pyttsx3>=2.90
+python-multipart>=0.0.5
+python-dotenv>=0.19.0
+pydantic>=1.8.0
+20055711 ./.git/objects/pack/pack-8c93eb09b3a31aeec5c0dbe3a85068cedf004c9f.pack
+5145164 ./backend/realestate_agent/static/audio/output_20250917_054356_5a85c7f8.wav
+2316076 ./backend/realestate_agent/static/audio/output_20250917_055201_70d09860.wav
+1461680 ./mobile-frontend/web_home.png
+998208 ./backend/realestate_agent/static/audio/output_20250918_034942_c6867950.wav
+998208 ./backend/realestate_agent/static/audio/output_20250918_034912_132aefff.wav
+913536 ./backend/realestate_agent/static/audio/output_20250917_062224_a17154f8.wav
+821760 ./backend/realestate_agent/static/audio/output_20250917_062838_8d82251d.wav
+700992 ./backend/realestate_agent/static/audio/output_20250917_062723_41a1b424.wav
+666504 ./web-frontend/webfront/package-lock.json
+657165 ./Tips/face.jpg
+645609 ./mobile-frontend/mobile_home.png
+582485 ./Tips/hh.jpg
+565073 ./Tips/download.jpeg
+549453 ./Tips/download (4).jpeg
+414127 ./Tips/Archive/All Chat/Chat 10-09.txt
+406764 ./web-frontend/webfront/public/real-estate-buildings-in-modern-city-akg75n64dxflm7dk.jpg
+406764 ./mobile-frontend/public/assets/real-estate-buildings-in-modern-city-akg75n64dxflm7dk.jpg
+320620 ./backend/realestate_agent/static/audio/output_20250917_032707_433e4383.wav
+313964 ./backend/realestate_agent/static/audio/output_20250917_032019_ac7dcf86.wav
+312576 ./backend/realestate_agent/static/audio/output_20250918_043757_8f5eeeb8.wav
+312576 ./backend/realestate_agent/static/audio/output_20250918_043750_35be9102.wav
+301164 ./backend/realestate_agent/static/audio/output_20250917_060352_d6e3285f.wav
+285312 ./backend/realestate_agent/static/audio/output_20250917_062047_115f0298.wav
+284780 ./backend/realestate_agent/static/audio/output_20250917_024131_badc5962.wav
+257644 ./backend/realestate_agent/static/audio/output_20250917_023737_3c9d9d68.wav
+240716 ./backend/realestate_agent/static/audio/output_20250917_030127_3f8f8df9.wav
+217137 ./Tips/Archive/All Chat/Chat 13-08.txt
+197818 ./Tips/Archive/All Chat/Chat 9-09.txt
+184428 ./backend/realestate_agent/static/audio/output_20250917_030812_3c3e08b6.wav
+179820 ./backend/realestate_agent/static/audio/output_20250917_031205_e387ecb9.wav
+164428 ./backend/realestate_agent/static/audio/output_20250917_054258_5f56f6b2.wav
+163584 ./backend/realestate_agent/static/audio/output_20250917_065504_8905d25a.wav
+153676 ./backend/realestate_agent/static/audio/output_20250917_025744_a38d09fe.wav
+152256 ./backend/realestate_agent/static/audio/output_20250918_045627_fd30e8bb.wav
+152256 ./backend/realestate_agent/static/audio/output_20250918_045623_1450841b.wav
+134132 ./Tips/Archive/All Chat/Chat 8-09.txt
+130560 ./backend/realestate_agent/static/audio/output_20250918_041228_b64b6022.wav
+130560 ./backend/realestate_agent/static/audio/output_20250918_041223_3536a94a.wav
+122880 ./backend/realestate_agent/static/audio/output_20250918_045939_603cc2bb.wav
+122880 ./backend/realestate_agent/static/audio/output_20250918_045937_e3ce3a78.wav
+104256 ./backend/realestate_agent/static/audio/output_20250918_050046_17b60e36.wav
+104256 ./backend/realestate_agent/static/audio/output_20250918_050044_caec2a7c.wav
+102336 ./backend/realestate_agent/static/audio/output_20250917_065519_b558a5ae.wav
+100416 ./backend/realestate_agent/static/audio/output_20250918_050140_70e3181e.wav
+100416 ./backend/realestate_agent/static/audio/output_20250918_050138_428dafb1.wav
+97536 ./backend/realestate_agent/static/audio/output_20250918_034140_ee81cf10.wav
+92544 ./backend/realestate_agent/static/audio/output_20250918_043554_403c81a0.wav
+92544 ./backend/realestate_agent/static/audio/output_20250918_043552_848890f8.wav
+81532 ./web-frontend/webfront/src/pages/Screenshot from 2025-09-16 21-12-07.png
+deploy@host:~$ 
+
+deploy@host:~$ sudo -u deploy -H mv /opt/vox-estate-agent/vox-estate-agent /home/deploy/wave2lip-backup-$(date +%s)
+ls -ld /home/deploy/wave2lip-backup-*
+drwxrwxr-x 13 deploy deploy 4096 Sep 22 23:49 /home/deploy/wave2lip-backup-1758661425
+```
+
+
+Nice — the nested repo was moved to /home/deploy/wave2lip-backup-1758661425. Quick options and exact commands.
+
+Inspect the backup:
+```bash
+sudo -u deploy -H ls -la /home/deploy/wave2lip-backup-1758661425
+sudo -u deploy -H du -sh /home/deploy/wave2lip-backup-1758661425 | sed -n '1,200p'
+sudo -u deploy -H bash -lc 'cd /home/deploy/wave2lip-backup-1758661425 && git status --short && git log --oneline -n 10'
+```
+
+Restore it back into the project (if you change your mind):
+```bash
+sudo -u deploy -H mv /home/deploy/wave2lip-backup-1758661425 /opt/vox-estate-agent/vox-estate-agent
+sudo chown -R deploy:deploy /opt/vox-estate-agent/vox-estate-agent
+```
+
+Permanently remove the backup:
+```bash
+sudo -u deploy -H rm -rf /home/deploy/wave2lip-backup-1758661425
+```
+
+If you want the parent repo to ignore that folder (so it won’t be tracked if restored), append an entry to the parent .gitignore and commit:
+````bash
+# ...existing code...
+vox-estate-agent/
+# ...existing code...
+````
+
+Then commit the change:
+```bash
+sudo -u deploy -H bash -lc 'cd /opt/vox-estate-agent && git add .gitignore && git commit -m "Ignore nested wave2lip backup" || true'
+```
+
+Recommendation: inspect the backup first, then either keep it outside the project (good for archives) or delete it. If you’ll never use it, remove to free space; if you may reuse it later, keep it in /home/deploy and add the ignore rule.
+
+
+
+deploy@host:~$ sudo -u deploy -H ls -la /home/deploy/wave2lip-backup-1758661425
+sudo -u deploy -H du -sh /home/deploy/wave2lip-backup-1758661425 | sed -n '1,200p'
+sudo -u deploy -H bash -lc 'cd /home/deploy/wave2lip-backup-1758661425 && git status --short && git log --oneline -n 10'
+total 64
+drwxrwxr-x 13 deploy deploy 4096 Sep 22 23:49  .
+drwxr-x---  7 deploy deploy 4096 Sep 23 21:03  ..
+drwxrwxr-x  8 deploy deploy 4096 Sep 23 21:01  .git
+drwxrwxr-x  2 deploy deploy 4096 Sep 22 23:49  .githooks
+-rw-rw-r--  1 deploy deploy 2220 Sep 22 23:49  .gitignore
+drwxrwxr-x  9 deploy deploy 4096 Sep 22 23:49  Tips
+drwxrwxr-x  2 deploy deploy 4096 Sep 22 23:49 'UI changes both gallery '
+drwxrwxr-x  3 deploy deploy 4096 Sep 22 23:49  backend
+drwxrwxr-x  3 deploy deploy 4096 Sep 22 23:49  deploy
+drwxrwxr-x  2 deploy deploy 4096 Sep 22 23:49  docs
+drwxrwxr-x  6 deploy deploy 4096 Sep 22 23:49  mobile-frontend
+-rw-rw-r--  1 deploy deploy 1660 Sep 22 23:49  package-lock.json
+-rw-rw-r--  1 deploy deploy   59 Sep 22 23:49  package.json
+drwxrwxr-x  2 deploy deploy 4096 Sep 22 23:49  scripts
+drwxrwxr-x  2 deploy deploy 4096 Sep 22 23:49  tools
+drwxrwxr-x  3 deploy deploy 4096 Sep 22 23:49  web-frontend
+50M     /home/deploy/wave2lip-backup-1758661425
+ef15436 (grafted, HEAD -> feature/tts-implementation, origin/feature/tts-implementation) UI: gallery improvements (mobile + web); add deploy helpers, docs, and screenshots
+
+
+Yes — that folder (/home/deploy/wave2lip-backup-1758661425) is the wave2lip backup and it’s about 50M.
+
+Commands you can run (pick one):
+
+Inspect contents and git history:
+````bash
+# inspect
+sudo -u deploy -H ls -la /home/deploy/wave2lip-backup-1758661425
+sudo -u deploy -H du -sh /home/deploy/wave2lip-backup-1758661425
+sudo -u deploy -H bash -lc 'cd /home/deploy/wave2lip-backup-1758661425 && git status --short && git log --oneline -n 10'
+````
+
+Restore it into the project:
+````bash
+sudo -u deploy -H mv /home/deploy/wave2lip-backup-1758661425 /opt/vox-estate-agent/vox-estate-agent
+sudo chown -R deploy:deploy /opt/vox-estate-agent/vox-estate-agent
+````
+
+Delete it permanently:
+````bash
+sudo -u deploy -H rm -rf /home/deploy/wave2lip-backup-1758661425
+````
+
+Keep it but ensure parent repo ignores it:
+````bash
+echo 'vox-estate-agent/' | sudo -u deploy -H tee -a /opt/vox-estate-agent/.gitignore
+sudo -u deploy -H bash -lc 'cd /opt/vox-estate-agent && git add .gitignore && git commit -m "Ignore nested wave2lip backup" || true'
+````
+
+Recommendation: inspect first, then either keep it in /home/deploy (safe backup) or delete if you no longer need it.
+
+
+
+
+if delete wave2lip it will only removed from server not git:
+
+
+Short answer: yes — deleting /home/deploy/wave2lip-backup-1758661425 only removes that copy from the server filesystem. It will not remove anything from the remote GitHub repo unless you make and push a git commit that deletes those files from a tracked repository.
+
+Quick checks and safe commands
+
+- Confirm the backup is not tracked by the parent repo:
+```bash
+sudo -u deploy -H bash -lc 'cd /opt/vox-estate-agent && git status --short || true'
+# if you had restored it into the project path earlier, also test:
+sudo -u deploy -H bash -lc "cd /opt/vox-estate-agent && git ls-files --error-unmatch vox-estate-agent 2>/dev/null || echo not-tracked"
+```
+
+- Inspect the backup repo (optional):
+```bash
+sudo -u deploy -H bash -lc 'cd /home/deploy/wave2lip-backup-1758661425 && git status --short && git log --oneline -n 5'
+```
+
+- Delete the backup from the server (irreversible):
+```bash
+sudo -u deploy -H rm -rf /home/deploy/wave2lip-backup-1758661425
+```
+
+- If you plan to restore that folder into the project later and want Git to ignore it, add an ignore entry to the parent repo before restoring:
+```bash
+echo 'vox-estate-agent/' | sudo -u deploy -H tee -a /opt/vox-estate-agent/.gitignore
+sudo -u deploy -H bash -lc 'cd /opt/vox-estate-agent && git add .gitignore && git commit -m "Ignore nested backup folder" || true'
+```
+
+Note: if those files were ever committed inside the parent repo and pushed 
+to GitHub, deleting the server copy does not remove the remote copy — only a git
+ commit that deletes them and a push would.
+
+
+
+
+
+deploy@host:~$ sudo -u deploy -H rm -rf /home/deploy/wave2lip-backup-1758661425
+deploy@host:~$ sudo -u deploy -H ls -la /home/deploy/wave2lip-backup-1758661425
+ls: cannot access '/home/deploy/wave2lip-backup-1758661425': No such file or directory
+
+
+
+
+
+Summarized conversation historyGood — I’ll show how to discover everything left on the server under the project root and identify other projects/repos, large files, and any services pointing at them. Run the commands I list and paste results if you want me to interpret them.
+
+What I’ll help you check
+- What top-level folders exist under `/opt/vox-estate-agent`.
+- Which subfolders are git repositories (nested repos/submodules).
+- Where large files live.
+- Any systemd units or nginx configs that reference project paths.
+
+Run these commands (copy/pasteable). I’ll group them by purpose and note what to look for.
+
+1) Quick project inventory (top-level dirs + sizes)
+```bash
+# List entries and sizes at project root
+sudo -u deploy -H ls -la /opt/vox-estate-agent
+sudo -u deploy -H du -sh /opt/vox-estate-agent/* | sort -h
+```
+What to look for: directories listed and their sizes. Big entries indicate where heavy data (audio, images, model files) live.
+
+2) Find nested git repositories or submodules
+```bash
+# show any nested .git directories under the project
+sudo -u deploy -H find /opt/vox-estate-agent -type d -name '.git' -printf '%h\n' || true
+
+# show any git worktrees (rare)
+sudo -u deploy -H find /opt/vox-estate-agent -type f -name 'gitdir: *' -exec sed -n '1p' {} \; 2>/dev/null || true
+```
+What to look for: each printed path is a separate repo root. If none prints, no nested .git directories remain.
+
+3) Identify files larger than 10MB (where disk is used)
+```bash
+# find large files under project (sorted descending)
+sudo -u deploy -H find /opt/vox-estate-agent -type f -size +10M -printf '%s %p\n' | sort -nr | awk '{ printf "%.1fMB\t%s\n", $1/1024/1024, $2 }' | sed -n '1,100p'
+```
+What to look for: large audio, images, packs or model files you may want to prune.
+
+4) For each subdirectory that is a git repo, show branch and last commit
+```bash
+# loop over git roots found earlier and print branch + last commit
+for d in $(sudo -u deploy -H find /opt/vox-estate-agent -type d -name '.git' -printf '%h\n'); do
+  echo "---- $d ----"
+  sudo -u deploy -H bash -lc "cd '$d' && git rev-parse --abbrev-ref HEAD 2>/dev/null || echo 'no branch'; git log -1 --oneline 2>/dev/null || true"
+done
+```
+Expected: the branch name and one-line commit for each repo root.
+
+5) Check for package indicators (frontend/backend) so you know how to deploy each piece
+```bash
+# find key manifest files
+sudo -u deploy -H find /opt/vox-estate-agent -maxdepth 4 -type f \( -name 'package.json' -o -name 'requirements.txt' -o -name 'pyproject.toml' \) -printf '%p\n'
+```
+This helps identify which directories are frontend (package.json) vs backend (requirements.txt / pyproject).
+
+6) Check systemd units and nginx site files that reference project paths (to see if services point to removed/backup dirs)
+```bash
+# systemd units mentioning the project path
+sudo grep -R --line-number '/opt/vox-estate-agent' /etc/systemd/system /lib/systemd/system /etc/systemd/system/* 2>/dev/null || true
+
+# nginx sites (enabled & available) referencing the project path
+sudo grep -R --line-number '/opt/vox-estate-agent' /etc/nginx/sites-enabled /etc/nginx/sites-available 2>/dev/null || true
+```
+If any unit or config references a path that you moved/deleted, update it or reload after fixing.
+
+7) (Optional) Show all GitHub remotes for the main repo
+```bash
+sudo -u deploy -H bash -lc 'cd /opt/vox-estate-agent && git remote -v'
+```
+This verifies the remote URL for pulls/pushes.
+
+8) If you prefer a one-shot audit script
+Run this single script (it combines steps 1–4) and paste the output:
+```bash
+sudo -u deploy -H bash -lc '
+echo "=== Top-level list ==="; ls -la /opt/vox-estate-agent;
+echo; echo "=== Sizes ==="; du -sh /opt/vox-estate-agent/* | sort -h;
+echo; echo "=== Nested git roots ==="; find /opt/vox-estate-agent -type d -name ".git" -printf "%h\n";
+echo; echo "=== Large files (>10MB) ==="; find /opt/vox-estate-agent -type f -size +10M -printf "%s %p\n" | sort -nr | awk "{ printf \"%.1fMB\t%s\n\", \$1/1024/1024, \$2 }" | sed -n "1,100p";
+echo; echo "=== Git status per nested repo ===";
+for d in $(find /opt/vox-estate-agent -type d -name .git -printf "%h\n"); do
+  echo \"---- $d ----\";
+  cd \"$d\";
+  git rev-parse --abbrev-ref HEAD 2>/dev/null || echo \"no branch\";
+  git log -1 --oneline 2>/dev/null || true;
+done
+'
+```
+
+Edge cases to be aware of
+- Symlinks: directories may be symlinked elsewhere — `ls -la` will show them.
+- Submodules or subtrees: if the project used submodules, there may be references in 
+
+

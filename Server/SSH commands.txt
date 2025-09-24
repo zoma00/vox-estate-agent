@@ -1,0 +1,133 @@
+Bash
+
+ssh deploy@84.201.4.127
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Here are exact, copy‑pasteable SSH commands and the most likely fixes if you can't connect — plus a few useful post-login checks (service status, logs, smoke tests).
+
+Quick connect (use this first)
+- If your laptop's default SSH key (e.g. `~/.ssh/id_ed25519` or `~/.ssh/id_rsa`) was added to `/home/deploy/.ssh/authorized_keys` on the server:
+```bash
+ssh deploy@84.201.4.127
+```
+
+If you need to force a particular private key from your laptop:
+```bash
+ssh -i ~/.ssh/id_ed25519 deploy@84.201.4.127
+# or if you use an RSA key:
+ssh -i ~/.ssh/id_rsa deploy@84.201.4.127
+```
+
+If your provider used a non-standard SSH port (22 is default), add `-p`:
+```bash
+ssh -p 2222 deploy@84.201.4.127
+```
+
+If you see a host key change warning
+- Remove the old host key and retry (run on your laptop):
+```bash
+ssh-keygen -R 84.201.4.127
+ssh deploy@84.201.4.127
+# Accept the new fingerprint when prompted
+```
+
+If you get "Permission denied (publickey)" or it still refuses
+1) Run a verbose client debug to see which key is offered:
+```bash
+ssh -vvv -i ~/.ssh/id_ed25519 deploy@84.201.4.127 2>&1 | sed -n '1,200p'
+```
+2) On the server (provider console / root), verify the deploy user's authorized keys and permissions:
+```bash
+# run on server as root
+ls -l /home/deploy/.ssh
+stat -c "%U %G %a %n" /home/deploy/.ssh /home/deploy/.ssh/authorized_keys /home/deploy/.ssh/authorized_keys.pub || true
+sed -n '1,200p' /home/deploy/.ssh/authorized_keys
+```
+- `~/.ssh` should be `700` (drwx------) and `authorized_keys` should be `600`. Owner must be `deploy:deploy`.
+
+If you want to use SSH agent forwarding (so the server can use your laptop keys for git pushes):
+```bash
+ssh -A deploy@84.201.4.127
+```
+(Use only if you trust the server.)
+
+If you cannot make key auth work and must recover
+- Use the provider console (serial/noVNC) to log in as `root` and re-insert your public key into `/home/deploy/.ssh/authorized_keys` (the provider console is what we used earlier).
+
+Post-login quick checks and deploy commands
+- Verify repository and venv are present:
+```bash
+# on server after you ssh in
+ls -la /opt/vox-estate-agent
+sudo -u deploy -H bash -lc 'cd /opt/vox-estate-agent && . venv/bin/activate && python -V && pip -V'
+```
+
+- Check the app systemd service (start/enable/status/logs):
+```bash
+sudo systemctl daemon-reload
+sudo systemctl enable --now vox-agent.service
+sudo systemctl status vox-agent.service --no-pager
+sudo journalctl -u vox-agent.service -n 200 --no-pager
+```
+
+- Nginx config check and reload:
+```bash
+sudo nginx -t && sudo systemctl reload nginx
+sudo tail -n 200 /var/log/nginx/error.log
+sudo tail -n 200 /var/log/nginx/access.log
+```
+
+- Local smoke tests (from the server):
+```bash
+curl -v http://127.0.0.1:8000/ || true
+curl -v http://127.0.0.1/ || true
+```
+
+- Tail logs while reproducing an issue:
+```bash
+sudo journalctl -u vox-agent.service -f
+sudo tail -f /var/log/nginx/error.log
+```
+
+If you used the server-side deploy key only for cloning (the key in `/home/deploy/.ssh/id_ed25519_deploykey`), note:
+- That deploy key is on the server and not used by your laptop. To SSH into the server from your laptop you must use a key already present in `/home/deploy/.ssh/authorized_keys` (your laptop's public key). If that public key was added earlier, `ssh deploy@...` should work.
+
+If you still cannot SSH from your laptop
+- Paste the output of this client-side debug command (run on your laptop):
+```bash
+ssh -vvv -i ~/.ssh/id_ed25519 deploy@84.201.4.127 2>&1 | sed -n '1,200p'
+```
+- And paste the output of these server-side checks (run on provider console as root) if you can’t SSH:
+```bash
+# run on the server console as root
+stat -c "%U %G %a %n" /home/deploy /home/deploy/.ssh /home/deploy/.ssh/authorized_keys || true
+sed -n '1,200p' /home/deploy/.ssh/authorized_keys || true
+sudo tail -n 200 /var/log/auth.log || sudo tail -n 200 /var/log/secure || true
+```
+Paste both or tell me the error message you see and I’ll parse it and give the exact fix.
+
+Short checklist to verify everything after you connect
+- You can SSH as deploy.
+- `ls -la /opt/vox-estate-agent` shows the repo (you successfully moved it).
+- `source /opt/vox-estate-agent/venv/bin/activate` then `pip list` confirms dependencies installed.
+- `sudo systemctl status vox-agent` shows running or shows recent logs for troubleshooting.
+- `curl http://127.0.0.1/` returns content proxied by nginx.
+
+Tell me which SSH command you ran and what the client output/error was (or paste the debug output). I’ll guide you through the exact minimal fix.

@@ -1,0 +1,160 @@
+Yes — whatever branch you cloned is what the server has checked out. To verify and to update safely, run these commands on the server.
+
+Check current branch and status:
+```bash
+sudo -u deploy -H bash -lc 'cd /opt/vox-estate-agent && git rev-parse --abbrev-ref HEAD && git status --porcelain && git log -1 --oneline'
+```
+
+Fetch updates and fast‑forward the same branch (safe):
+```bash
+sudo -u deploy -H bash -lc '
+cd /opt/vox-estate-agent
+GIT_SSH_COMMAND="ssh -i /home/deploy/.ssh/id_ed25519_deploykey -o IdentitiesOnly=yes" git fetch --all --prune
+GIT_SSH_COMMAND="ssh -i /home/deploy/.ssh/id_ed25519_deploykey -o IdentitiesOnly=yes" git checkout feature/tts-implementation
+GIT_SSH_COMMAND="ssh -i /home/deploy/.ssh/id_ed25519_deploykey -o IdentitiesOnly=yes" git pull --ff-only
+'
+```
+
+If you want to force the working tree to exactly match remote (warning: discards local changes):
+```bash
+sudo -u deploy -H bash -lc '
+cd /opt/vox-estate-agent
+GIT_SSH_COMMAND="ssh -i /home/deploy/.ssh/id_ed25519_deploykey -o IdentitiesOnly=yes" git fetch origin
+git reset --hard origin/feature/tts-implementation
+'
+```
+
+After updating, if requirements or code changed, reinstall deps and restart the service:
+```bash
+# reinstall Python deps if needed
+sudo -u deploy -H bash -lc 'source /opt/vox-estate-agent/venv/bin/activate && pip install -r backend/realestate_agent/requirements.txt'
+
+# restart the app service
+sudo systemctl restart vox-agent.service
+sudo systemctl status vox-agent.service --no-pager
+```
+
+Notes
+- Use the GIT_SSH_COMMAND to force the deploy key so the server uses the correct SSH identity.
+- Prefer git pull --ff-only for safe updates. Use reset --hard only when you are sure you don't need local changes.
+
+
+bash
+
+deploy@host:~$ sudo -u deploy -H bash -lc 'cd /opt/vox-estate-agent && git rev-parse --abbrev-ref HEAD && git status --porcelain && git log -1 --oneline'
+feature/tts-implementation
+?? vox-estate-agent/
+ef15436 (grafted, HEAD -> feature/tts-implementation, origin/feature/tts-implementation) UI: gallery improvements (mobile + web); add deploy helpers, docs, and screenshots
+
+
+
+
+Yes — the server is on the same branch (feature/tts-implementation). Quick notes about the output and what to do next.
+
+- "feature/tts-implementation" — current checked-out branch.
+- "?? vox-estate-agent/" — an untracked directory inside /opt/vox-estate-agent (likely a nested copy). Inspect it before removing.
+- "ef15436 (grafted, ...)" — "grafted" just means the commit graph has a graft or imported history; not blocking.
+
+Safe steps (inspect → optionally clean → update)
+
+Inspect the untracked directory:
+```bash
+sudo -u deploy -H ls -la /opt/vox-estate-agent/vox-estate-agent || true
+```
+
+If it's a duplicate/backup, move it instead of deleting:
+```bash
+sudo -u deploy -H mv /opt/vox-estate-agent/vox-estate-agent /home/deploy/vox-estate-agent-backup-$(date +%s)
+```
+Or delete if you’re sure:
+```bash
+sudo rm -rf /opt/vox-estate-agent/vox-estate-agent
+```
+
+Safe update (fetch + fast-forward):
+````bash
+sudo -u deploy -H bash -lc '
+cd /opt/vox-estate-agent
+GIT_SSH_COMMAND="ssh -i /home/deploy/.ssh/id_ed25519_deploykey -o IdentitiesOnly=yes" git fetch --all --prune
+git checkout feature/tts-implementation
+GIT_SSH_COMMAND="ssh -i /home/deploy/.ssh/id_ed25519_deploykey -o IdentitiesOnly=yes" git pull --ff-only
+git log -1 --oneline
+'
+````
+
+Force update (will discard local changes — use only if safe):
+````bash
+sudo -u deploy -H bash -lc '
+cd /opt/vox-estate-agent
+GIT_SSH_COMMAND="ssh -i /home/deploy/.ssh/id_ed25519_deploykey -o IdentitiesOnly=yes" git fetch origin
+git reset --hard origin/feature/tts-implementation
+'
+````
+
+After updating, reinstall deps and restart the service if needed:
+````bash
+sudo -u deploy -H bash -lc 'source /opt/vox-estate-agent/venv/bin/activate && pip install -r backend/realestate_agent/requirements.txt'
+sudo systemctl restart vox-agent.service
+sudo systemctl status vox-agent.service --no-pager
+````
+
+If you want, I can create a one-line deploy script (deploy.sh) that does the safe fetch/pull, optional cleanup of the nested dir, venv reinstall and systemd restart. Which do you prefer?
+
+
+
+Bash:
+------
+
+deploy@host:~$ sudo -u deploy -H ls -la /opt/vox-estate-agent/vox-estate-agent || true
+total 64
+drwxrwxr-x 13 deploy deploy 4096 Sep 22 23:49  .
+drwxr-xr-x 15 deploy deploy 4096 Sep 22 23:52  ..
+drwxrwxr-x  8 deploy deploy 4096 Sep 22 23:49  .git
+drwxrwxr-x  2 deploy deploy 4096 Sep 22 23:49  .githooks
+-rw-rw-r--  1 deploy deploy 2220 Sep 22 23:49  .gitignore
+drwxrwxr-x  9 deploy deploy 4096 Sep 22 23:49  Tips
+drwxrwxr-x  2 deploy deploy 4096 Sep 22 23:49 'UI changes both gallery '
+drwxrwxr-x  3 deploy deploy 4096 Sep 22 23:49  backend
+drwxrwxr-x  3 deploy deploy 4096 Sep 22 23:49  deploy
+drwxrwxr-x  2 deploy deploy 4096 Sep 22 23:49  docs
+drwxrwxr-x  6 deploy deploy 4096 Sep 22 23:49  mobile-frontend
+-rw-rw-r--  1 deploy deploy 1660 Sep 22 23:49  package-lock.json
+-rw-rw-r--  1 deploy deploy   59 Sep 22 23:49  package.json
+drwxrwxr-x  2 deploy deploy 4096 Sep 22 23:49  scripts
+drwxrwxr-x  2 deploy deploy 4096 Sep 22 23:49  tools
+drwxrwxr-x  3 deploy deploy 4096 Sep 22 23:49  web-frontend
+deploy@host:~$ 
+
+
+
+
+Good — that nested folder is a full repo copy inside the server repo. Safe options: inspect commits, back it up, then remove (or keep it as a backup). Commands:
+
+1) Compare commits (quick check)
+```bash
+sudo -u deploy -H git -C /opt/vox-estate-agent rev-parse HEAD
+sudo -u deploy -H git -C /opt/vox-estate-agent/vox-estate-agent rev-parse HEAD
+```
+
+2) If you don’t need the nested copy, move it as a backup (recommended)
+```bash
+sudo -u deploy -H mv /opt/vox-estate-agent/vox-estate-agent /home/deploy/vox-estate-agent-backup-$(date +%s)
+ls -ld /opt/vox-estate-agent /home/deploy/vox-estate-agent-backup-*
+```
+
+3) Or keep the files but remove the nested git metadata so it becomes a normal subdir
+```bash
+sudo -u deploy -H rm -rf /opt/vox-estate-agent/vox-estate-agent/.git
+```
+
+4) After cleanup, update the server repo safely
+```bash
+sudo -u deploy -H bash -lc '
+cd /opt/vox-estate-agent
+GIT_SSH_COMMAND="ssh -i /home/deploy/.ssh/id_ed25519_deploykey -o IdentitiesOnly=yes" git fetch --all --prune
+git checkout feature/tts-implementation
+GIT_SSH_COMMAND="ssh -i /home/deploy/.ssh/id_ed25519_deploykey -o IdentitiesOnly=yes" git pull --ff-only
+'
+```
+
+Pick backup-and-remove (2) if you want to be safe.

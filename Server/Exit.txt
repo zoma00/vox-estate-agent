@@ -1,0 +1,43 @@
+Quick — here are safe ways to leave your SSH session and what to check first.
+
+Basic (preferred)
+- Run:
+```bash
+exit
+```
+or:
+```bash
+logout
+```
+or press `Ctrl+D`
+
+These close your shell and end the SSH connection.
+
+If you started a foreground job (tail, journalctl, a server)
+- Stop it first with `Ctrl+C`, then `exit`.
+- If you accidentally started a long-running process in the shell and want it to continue after logout, either:
+  - Use `Ctrl+Z` then `bg` and `disown` (not recommended for production), or
+  - Better: run it under `systemd`, `nohup`, or `tmux`/`screen` so it survives your logout.
+
+If your session is hung/unresponsive
+- Force disconnect from the SSH client by typing Enter then:
+```text
+~.
+```
+(That is a tilde `~` followed by a dot `.` typed at the start of a new line — works only on the local SSH client when the connection is alive.)
+
+If you're using tmux/screen on the server
+- Detach instead of exit:
+  - tmux: `Ctrl-B` then `d`
+  - screen: `Ctrl-A` then `d`
+- Reattach later with `tmux attach` or `screen -r`.
+
+If you used `sudo -i` or `su -` to become root
+- Run `exit` once (or as many times as needed) to return to your normal account and close the session.
+
+Quick checklist before leaving
+- Did you start any processes that should stay up? If yes, make sure they’re managed by `systemd` (use `sudo systemctl start vox-agent.service`), or run in `tmux`/`screen`, or run them with `nohup` and `&` and `disown`.
+- If you were tailing logs, stop the tail (`Ctrl+C`) before exiting.
+- If you used the provider console in another browser tab, you can close that tab too.
+
+If you want, tell me what command you’re currently running in the SSH shell and I’ll give the exact sequence to safely detach or exit.

@@ -1,0 +1,131 @@
+I'll mark the venv/install task completed and set the "Configure systemd & nginx" todo as in-progress, then provide the exact commands to create the systemd unit and nginx site, enable and start them, and run smoke tests. 
+
+Starting (6/8) *Configure systemd & nginx*
+
+Great — you can SSH in as deploy, so connectivity is solved.
+
+I'll now give exact commands to create the systemd unit, enable/start it, configure nginx, and run smoke tests. Run each block and paste output if anything fails.
+
+1) Create the systemd unit
+- Create `/etc/systemd/system/vox-agent.service` as root with this content:
+```ini
+[Unit]
+Description=Vox Estate Agent (uvicorn)
+After=network.target
+
+[Service]
+User=deploy
+Group=deploy
+WorkingDirectory=/opt/vox-estate-agent/backend/realestate_agent
+Environment="PATH=/opt/vox-estate-agent/venv/bin"
+ExecStart=/opt/vox-estate-agent/venv/bin/uvicorn app.main:app --host 127.0.0.1 --port 8000 --workers 1
+Restart=on-failure
+LimitNOFILE=65536
+
+[Install]
+WantedBy=multi-user.target
+```
+
+Create file and enable:
+```bash
+sudo tee /etc/systemd/system/vox-agent.service > /dev/null <<'EOF'
+[Unit]
+Description=Vox Estate Agent (uvicorn)
+After=network.target
+
+[Service]
+User=deploy
+Group=deploy
+WorkingDirectory=/opt/vox-estate-agent/backend/realestate_agent
+Environment="PATH=/opt/vox-estate-agent/venv/bin"
+ExecStart=/opt/vox-estate-agent/venv/bin/uvicorn app.main:app --host 127.0.0.1 --port 8000 --workers 1
+Restart=on-failure
+LimitNOFILE=65536
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+sudo systemctl daemon-reload
+sudo systemctl enable --now vox-agent.service
+sudo systemctl status vox-agent.service --no-pager
+sudo journalctl -u vox-agent.service -n 200 --no-pager
+```
+
+2) Nginx site
+- Create `/etc/nginx/sites-available/vox-agent` with:
+```nginx
+server {
+    listen 80;
+    server_name _;
+
+    location /static/ {
+        alias /opt/vox-estate-agent/backend/realestate_agent/static/;
+        expires 30d;
+    }
+
+    location / {
+        proxy_pass http://127.0.0.1:8000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_read_timeout 120s;
+    }
+}
+```
+
+Create, enable and reload nginx:
+```bash
+sudo tee /etc/nginx/sites-available/vox-agent > /dev/null <<'EOF'
+server {
+    listen 80;
+    server_name _;
+
+    location /static/ {
+        alias /opt/vox-estate-agent/backend/realestate_agent/static/;
+        expires 30d;
+    }
+
+    location / {
+        proxy_pass http://127.0.0.1:8000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_read_timeout 120s;
+    }
+}
+EOF
+
+sudo ln -sf /etc/nginx/sites-available/vox-agent /etc/nginx/sites-enabled/vox-agent
+sudo nginx -t
+sudo systemctl reload nginx
+sudo systemctl status nginx --no-pager
+sudo tail -n 100 /var/log/nginx/error.log
+```
+
+3) Smoke tests
+```bash
+# Check uvicorn directly
+curl -v http://127.0.0.1:8000/ || true
+
+# Check through nginx
+curl -v http://127.0.0.1/ || true
+
+# If you have an endpoint like /health or /docs, try it:
+curl -v http://127.0.0.1/docs || true
+```
+
+4) If the service fails to start
+- Check journal for errors and possible missing env vars, import errors, or missing files:
+```bash
+sudo journalctl -u vox-agent.service -n 500 --no-pager
+sudo -u deploy -H bash -lc 'cd /opt/vox-estate-agent/backend/realestate_agent && /opt/vox-estate-agent/venv/bin/python -m pip list'
+sudo -u deploy -H bash -lc 'cd /opt/vox-estate-agent/backend/realestate_agent && /opt/vox-estate-agent/venv/bin/python -c "import app; print(\"app imported ok\")" || true'
+```
+
+Once you run the unit creation and nginx steps, paste the outputs for `systemctl status vox-agent.service` and the smoke curl results and I’ll interpret them and finish the remaining todos (TLS/firewall/monitoring and final smoke tests).
+
+
+

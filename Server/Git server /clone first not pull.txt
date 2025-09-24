@@ -1,0 +1,30 @@
+Short answer: we used clone because the server didn’t have the repository yet. git pull updates an existing clone — it won’t create the .git metadata or checkout the branch for a fresh directory.
+
+Why clone was correct here
+- Fresh machine: /opt had no .git, so pull is impossible until a clone exists.
+- Controlled branch/clean state: clone --branch ... --depth 1 gave a fresh, predictable checkout.
+- Troubleshooting: the broken-pipe made a filtered shallow clone into /home/deploy a safe fallback; after moving it to /opt you now have a proper repo for future pulls.
+
+How to update the repo from now on (safe, repeatable)
+- Fetch and fast‑forward (keeps local work safe):
+````bash
+sudo -u deploy -H bash -lc '
+cd /opt/vox-estate-agent
+GIT_SSH_COMMAND="ssh -i /home/deploy/.ssh/id_ed25519_deploykey -o IdentitiesOnly=yes" git fetch --all --prune
+GIT_SSH_COMMAND="ssh -i /home/deploy/.ssh/id_ed25519_deploykey -o IdentitiesOnly=yes" git checkout feature/tts-implementation
+GIT_SSH_COMMAND="ssh -i /home/deploy/.ssh/id_ed25519_deploykey -o IdentitiesOnly=yes" git pull --ff-only
+'
+````
+- Or for deterministic deploys (overwrites local changes):
+````bash
+sudo -u deploy -H bash -lc '
+cd /opt/vox-estate-agent
+GIT_SSH_COMMAND="ssh -i /home/deploy/.ssh/id_ed25519_deploykey -o IdentitiesOnly=yes" git fetch origin
+GIT_SSH_COMMAND="ssh -i /home/deploy/.ssh/id_ed25519_deploykey -o IdentitiesOnly=yes" git reset --hard origin/feature/tts-implementation
+'
+````
+
+Notes
+- Use the GIT_SSH_COMMAND above to force the deploy key (avoids wrong key being offered).
+- Use reset --hard only if you don’t need local uncommitted changes.
+- For production, prefer automated deploys (CI or a deploy script) rather than manual pull/reset.

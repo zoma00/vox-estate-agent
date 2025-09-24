@@ -1,0 +1,59 @@
+GitHub Copilot
+
+- Ubuntu 24.04 is a good choice.
+
+Check Ubuntu version locally (run any of these):
+````bash
+# distro info
+cat /etc/os-release
+
+# or
+lsb_release -a
+
+# kernel info
+uname -a
+
+# systemd/OS short form
+hostnamectl
+````
+
+Quick recommended server bootstrap for Ubuntu 24.04 (update + install basics for this project: Node, Python, nginx, certbot):
+````bash
+sudo apt update && sudo apt upgrade -y
+
+# Node (use NodeSource for recent LTS)
+curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+sudo apt install -y nodejs build-essential
+
+# Python + venv + pip
+sudo apt install -y python3 python3-venv python3-pip
+
+# nginx + certbot
+sudo apt install -y nginx certbot python3-certbot-nginx
+
+# useful tools
+sudo apt install -y git curl unzip
+````
+
+Firewall (allow HTTP/HTTPS):
+````bash
+sudo ufw allow OpenSSH
+sudo ufw allow 'Nginx Full'
+sudo ufw enable
+sudo ufw status
+````
+
+WordPress vs n8n vs nothing
+- WordPress: use it only if you need a CMS for marketing/content pages that non‑developers will edit. It is heavy and unnecessary for this demo app.
+- n8n: use it if you need workflow automation or integrations (email, Zapier-like flows). Otherwise unnecessary.
+- For a 2‑day demo of PropEstateAI: do NOT install WordPress. Serve the built web and mobile frontends as static sites (nginx) and run the FastAPI backend (uvicorn + systemd). Less overhead and faster to deploy.
+
+Recommended minimal deployment stack for this project
+- Ubuntu 24.04, nginx reverse proxy, systemd service for uvicorn, static builds for the two frontends (served by nginx), and Let’s Encrypt (certbot) for HTTPS.
+
+If you want, I can:
+- Generate exact apt + Node install commands tailored to your server,
+- Produce nginx + systemd config templates filled with your domain/paths,
+- Or walk you through building and uploading the frontend builds.
+
+Which of those should I prepare next?
