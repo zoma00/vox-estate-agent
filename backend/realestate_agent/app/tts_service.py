@@ -1,6 +1,5 @@
 import os
 import tempfile
-import pyttsx3
 import shutil
 from pathlib import Path
 from fastapi import HTTPException
@@ -14,7 +13,6 @@ logger = logging.getLogger(__name__)
 class TTSService:
     def __init__(self):
         self.engine = None
-        self.initialize_engine()
         self.audio_dir = Path("audio_output")
         self.audio_dir.mkdir(exist_ok=True)
     
@@ -22,6 +20,18 @@ class TTSService:
         """Initialize the TTS engine with preferred settings."""
         try:
             logger.info("Initializing TTS engine...")
+            # Import pyttsx3 lazily because importing it at module import time can
+            # raise a RuntimeError if the system TTS binary (eSpeak/eSpeak-ng) is
+            # missing. Importing here lets the application start even when the
+            # system dependency is absent; the TTS engine will be disabled until
+            # the dependency is installed.
+            try:
+                import pyttsx3
+            except Exception as imp_err:
+                logger.error(f"pyttsx3 import failed: {imp_err}", exc_info=True)
+                self.engine = None
+                return False
+
             self.engine = pyttsx3.init()
             if not self.engine:
                 raise Exception("Failed to initialize pyttsx3 engine")
