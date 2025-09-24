@@ -76,11 +76,14 @@ class TTSService:
             logger.warning("No text provided for TTS")
             raise ValueError("No text provided for TTS")
         
-        # Ensure the engine is initialized
-        if not self.engine and not self.initialize_engine():
-            error_msg = "TTS engine initialization failed"
-            logger.error(error_msg)
-            raise HTTPException(status_code=500, detail=error_msg)
+        # Ensure the engine is initialized; if not available, we'll try a
+        # network-based fallback (gTTS) so the app can produce audio without
+        # requiring system packages like eSpeak.
+        engine_ready = True
+        if not self.engine:
+            engine_ready = self.initialize_engine()
+
+        use_gtts_fallback = not engine_ready
         
         try:
             # Create a unique filename
@@ -95,13 +98,33 @@ class TTSService:
             
             logger.info(f"Generating speech for text: {text[:100]}...")
             
-            try:
-                # Save the speech to the file
-                self.engine.save_to_file(text, str(output_path))
-                self.engine.runAndWait()
-            except Exception as e:
-                logger.error(f"Error generating speech: {e}", exc_info=True)
-                raise Exception(f"Failed to generate speech: {str(e)}")
+            if not use_gtts_fallback:
+                try:
+                    # Save the speech to the file using pyttsx3
+                    self.engine.save_to_file(text, str(output_path))
+                    self.engine.runAndWait()
+                except Exception as e:
+                    logger.error(f"Error generating speech with pyttsx3: {e}", exc_info=True)
+                    # Fall back to gTTS if pyttsx3 fails at runtime
+                    use_gtts_fallback = True
+
+            if use_gtts_fallback:
+                logger.info("Using gTTS fallback to generate audio (network-based)")
+                try:
+                    from gtts import gTTS
+                except Exception as e:
+                    logger.error("gTTS fallback is not available: %s", str(e), exc_info=True)
+                    raise Exception("No available TTS backend (pyttsx3 failed and gTTS is not installed)")
+
+                # Write mp3 output via gTTS
+                try:
+                    # Use mp3 extension for gTTS output
+                    output_path = output_path.with_suffix('.mp3')
+                    tts = gTTS(text=text, lang='en')
+                    tts.save(str(output_path))
+                except Exception as e:
+                    logger.error(f"gTTS generation failed: {e}", exc_info=True)
+                    raise Exception(f"Failed to generate speech via gTTS: {str(e)}")
             
             # Verify the file was created and has content
             if not output_path.exists():
