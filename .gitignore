@@ -207,3 +207,9 @@ backend/.env.*
 
 # Ignore Tips keys and other local keys files
 Tips/keys/
+
+# Ignore specific server connect files
+Server/Connect.txt
+Server/Connect using the xterm js.txt
+Server/SSH commands.txt
+server/SSh.txt

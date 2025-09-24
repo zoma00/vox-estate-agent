@@ -34,3 +34,45 @@ git push origin feature/tts-implementation
 ---
 
 👉 Do you want me to make a **single commit with all files**, or do you prefer to **separate docs, code, and assets into multiple commits** for cleaner history?
+
+
+
+#############||||||||||||||#############||||||||||||||#############||||||||||||||#############||||||||||||||
+#############||||||||||||||#############||||||||||||||#############||||||||||||||#############||||||||||||||
+
+ create mode 100644 Server/Connect using the xterm js.txt
+ create mode 100644 Server/Connect.txt
+** i want to dlete these 2 files from pushed git
+
+
+
+Understood 👍 You accidentally staged and pushed those two files, and now you want to **remove them from the remote repo**.
+
+Here’s how to do it:
+
+### 1. Remove the files from git tracking (not just locally)
+
+```bash
+git rm --cached "Server/Connect using the xterm js.txt"
+git rm --cached "Server/Connect.txt"
+```
+
+(`--cached` removes them from Git but keeps them locally on your disk)
+
+### 2. Commit the removal
+
+```bash
+git commit -m "Remove unwanted Server/Connect files"
+```
+
+### 3. Push the change
+
+```bash
+git push origin feature/tts-implementation
+```
+
+---
+
+⚠️ Note: This will **delete the files from the branch in GitHub** but keep them locally.
+
+Do you want these files **completely ignored in the future** (so they never get staged again), in which case I’ll also give you the `.gitignore` update?
