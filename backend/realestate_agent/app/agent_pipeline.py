@@ -7,7 +7,6 @@ from typing import Optional, Dict, Any, List
 from datetime import datetime
 from pathlib import Path
 
-import openai
 from fastapi import HTTPException
 from pydantic import BaseModel
 import dotenv
@@ -101,8 +100,24 @@ async def generate_ai_response(
     Returns:
         AIResponse with generated text + extracted URLs
     """
+    # Ensure OpenAI API key is present
     if not os.getenv("OPENAI_API_KEY"):
         error_msg = "OpenAI API key not found in environment variables"
+        logger.error(error_msg)
+        raise HTTPException(status_code=500, detail=error_msg)
+
+    # Import `openai` lazily so the application can start even if the
+    # package hasn't been installed into the runtime venv yet. If it's
+    # missing, return a clear HTTP 500 message so operators know what to do.
+    try:
+        import openai
+    except ImportError as e:
+        error_msg = (
+            "OpenAI Python package is not installed in this environment. "
+            "Install it into the project's virtualenv, for example:\n"
+            "/opt/vox-estate-agent/venv/bin/pip install openai\n"
+            "Or run: pip install -r backend/realestate_agent/requirements.txt"
+        )
         logger.error(error_msg)
         raise HTTPException(status_code=500, detail=error_msg)
 
