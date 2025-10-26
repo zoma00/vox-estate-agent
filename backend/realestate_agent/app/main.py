@@ -157,40 +157,64 @@ async def chat(chat_request: ChatRequest):
 # Text-to-Speech endpoint
 @app.post("/api/tts")
 async def text_to_speech(tts_request: TTSRequest):
+    print("/api/tts endpoint called! Received request.")
     """
     Convert text to speech using the pyttsx3 TTS engine.
     Returns a JSON object with the audio URL.
     """
     try:
-        logger.info(f"TTS Request - Text: {tts_request.text[:100]}..., Language: {tts_request.language}")
-        
-        # Check if text is provided
-        if not tts_request.text or not tts_request.text.strip():
+        logger.info(f"TTS Request - Text: {str(tts_request.text)[:100]}..., Language: {tts_request.language}")
+
+        # Normalize text input (support either a string or a list of strings).
+        raw_text = tts_request.text
+        if isinstance(raw_text, list):
+            # Join non-empty segments with a space
+            text_value = " ".join([seg for seg in raw_text if seg and str(seg).strip()])
+        else:
+            text_value = str(raw_text or "")
+
+        text_value = text_value.strip()
+        if not text_value:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="No text provided for TTS conversion",
             )
-            
+
         # Generate TTS audio using the agent pipeline
         try:
             from app.agent_pipeline import generate_tts_audio
-            
-            # Generate the audio file - this now returns just the audio_url
-            audio_url = await generate_tts_audio(
-                text=tts_request.text,
+
+            # Generate the audio file. The helper may return either a
+            # string (audio URL) or a dict with 'audio_path' and 'audio_url'.
+            tts_result = await generate_tts_audio(
+                text=text_value,
                 language=tts_request.language,
                 voice=tts_request.voice
             )
-            
-            if not audio_url:
+
+            if not tts_result:
                 raise HTTPException(
                     status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                     detail="Failed to generate TTS audio file"
                 )
-            
+
+            # Normalize result to a flat audio URL string for clients.
+            audio_url = None
+            if isinstance(tts_result, dict):
+                # Prefer an explicit 'audio_url' key, fall back to 'audio_path'
+                audio_url = tts_result.get('audio_url') or tts_result.get('audio_path')
+            elif isinstance(tts_result, str):
+                audio_url = tts_result
+
+            if not audio_url:
+                raise HTTPException(
+                    status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                    detail="TTS backend returned an unexpected result format"
+                )
+
             # Log the successful generation
             logger.info(f"TTS audio generated successfully. URL: {audio_url}")
-            
+
             # Return a clean JSON response with just the audio URL
             return {"audio_url": audio_url}
             
@@ -273,3 +297,7 @@ async def startup_event():
     os.makedirs("temp", exist_ok=True)
     os.makedirs("static/audio", exist_ok=True)
     logger.info("Application startup: Created necessary directories")
+
+
+
+

@@ -177,7 +177,7 @@ async def generate_tts_audio(
         output_path: Optional custom file path
 
     Returns:
-        Tuple: (audio_path, audio_url)
+        Dict: {'audio_path': ..., 'audio_url': ...}
     """
     if not text.strip():
         error_msg = "Text cannot be empty"
@@ -185,45 +185,19 @@ async def generate_tts_audio(
         raise HTTPException(status_code=400, detail=error_msg)
 
     try:
-        from tts.tts_simple import generate_tts_audio as simple_generate_tts_audio
+        from app.tts_service import tts_service
 
-        # Create unique filename if not provided
-        if not output_path:
-            filename = generate_unique_filename()
-            output_path = os.path.join(DEFAULT_TEMP_DIR, filename)
-
-        # Ensure directory exists
-        os.makedirs(os.path.dirname(output_path), exist_ok=True)
-
-        # Call simple TTS implementation
-        audio_path = simple_generate_tts_audio(
-            text=text,
-            output_path=output_path,
-            language=language,
-            speed=1.3  # 30% faster than normal
-        )
-
-        # Convert saved path into a URL for frontend
-        audio_url = get_audio_url(os.path.basename(audio_path))
-        
-        # Ensure the URL starts with a forward slash
-        if not audio_url.startswith('/'):
-            audio_url = f'/{audio_url}'
-            
+        # Use tts_service to generate audio
+        audio_path, audio_url = tts_service.text_to_speech(text)
         logger.info(f"TTS generated: {audio_path} (URL: {audio_url})")
         return {
             'audio_path': audio_path,
             'audio_url': audio_url
-        }
+        } # type: ignore
 
-    except ImportError as e:
-        error_msg = f"TTS module not installed. Please install pyttsx3: pip install pyttsx3"
-        logger.error(f"{error_msg} Error: {str(e)}", exc_info=True)
-        raise HTTPException(status_code=500, detail=error_msg)
     except Exception as e:
         error_msg = f"Failed to generate TTS audio: {str(e)}"
         logger.error(error_msg, exc_info=True)
-        raise HTTPException(status_code=500, detail=error_msg)
         raise HTTPException(status_code=500, detail=error_msg)
 
 
@@ -274,14 +248,13 @@ async def process_user_input(
         if generate_audio and response.text:
             try:
                 tts_result = await generate_tts_audio(response.text)
-                if tts_result:
+                if tts_result and isinstance(tts_result, dict):
                     audio_path = tts_result.get('audio_path')
                     audio_url = tts_result.get('audio_url')
-                    
                     response.audio_path = audio_path
                     response.audio_url = audio_url
                 else:
-                    logger.warning("TTS generation returned no result")
+                    logger.warning("TTS generation returned no result or wrong format")
             except Exception as e:
                 logger.error(f"Error generating TTS audio: {e}", exc_info=True)
                 # Continue without TTS rather than failing the entire request

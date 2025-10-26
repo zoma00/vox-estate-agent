@@ -5,7 +5,7 @@ import TTSService from './utils/ttsService';
 import ChromeSpeechRecognition from './components/ChromeSpeechRecognition';
 
 const agentImg = 'https://cdn-icons-png.flaticon.com/512/4712/4712027.png';
-const API_URL = 'http://localhost:8000/api/chat';
+const API_URL = '/api/chat';
 
 function SpeakChat() {
   const [messages, setMessages] = useState([]);

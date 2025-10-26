@@ -13,8 +13,20 @@ logger = logging.getLogger(__name__)
 class TTSService:
     def __init__(self):
         self.engine = None
-        self.audio_dir = Path("audio_output")
-        self.audio_dir.mkdir(exist_ok=True)
+        # Use the same static/audio directory the rest of the app expects
+        self.audio_dir = Path("static/audio")
+        self.audio_dir.mkdir(parents=True, exist_ok=True)
+
+        # Try to initialize the local pyttsx3 engine on construction so
+        # the service logs whether a local engine is available. If it
+        # fails, initialization is deferred until the first request and
+        # the gTTS fallback will be used.
+        try:
+            self.initialize_engine()
+        except Exception:
+            # initialize_engine already logs failures; swallow here to
+            # avoid raising during import.
+            pass
     
     def initialize_engine(self):
         """Initialize the TTS engine with preferred settings."""
@@ -131,17 +143,63 @@ class TTSService:
                 error_msg = f"TTS output file was not created: {output_path}"
                 logger.error(error_msg)
                 raise Exception(error_msg)
-                
+
             file_size = output_path.stat().st_size
             if file_size == 0:
                 error_msg = f"Generated audio file is empty: {output_path}"
                 logger.error(error_msg)
                 raise Exception(error_msg)
-                
+
+            # Detect actual audio format by peeking at file header bytes and
+            # ensure the filename extension matches the content. This avoids
+            # cases where MP3 data was saved with a .wav name.
+            def _detect_extension(path: Path) -> str | None:
+                try:
+                    with path.open('rb') as fh:
+                        hdr = fh.read(12)
+                except Exception:
+                    return None
+
+                # RIFF -> WAV
+                if hdr.startswith(b'RIFF'):
+                    return 'wav'
+
+                # ID3 tag or MP3 frame sync -> MP3
+                if hdr[:3] == b'ID3' or hdr[:2] in (b'\xff\xfb', b'\xff\xf3', b'\xff\xf2'):
+                    return 'mp3'
+
+                # MP4/M4A container often contains 'ftyp' at offset 4
+                if len(hdr) >= 8 and hdr[4:8] == b'ftyp':
+                    return 'm4a'
+
+                return None
+
+            detected_ext = _detect_extension(output_path)
+            if detected_ext:
+                current_ext = output_path.suffix.lower().lstrip('.')
+                if current_ext != detected_ext:
+                    new_path = output_path.with_suffix(f'.{detected_ext}')
+                    try:
+                        # Use shutil.move which is more robust across filesystems
+                        shutil.move(str(output_path), str(new_path))
+                        logger.info(f"Moved TTS output to correct extension: {output_path.name} -> {new_path.name}")
+                        output_path = new_path
+                        filename = output_path.name
+                    except Exception as e:
+                        logger.warning(f"Failed to move/rename output file extension: {e}")
+            else:
+                logger.debug("Could not detect audio extension from header bytes; leaving original filename.")
+
+            # Re-stat the file after any move/rename to get accurate size and existence
+            try:
+                file_size = output_path.stat().st_size
+            except Exception:
+                file_size = 0
+
             # Generate URL for the audio file
             audio_url = f"/static/audio/{filename}"
             logger.info(f"Successfully generated speech file at: {output_path} (Size: {file_size} bytes, URL: {audio_url})")
-            
+
             return str(output_path), audio_url
             
         except HTTPException:

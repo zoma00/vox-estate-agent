@@ -1,6 +1,10 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:8000/api/tts';
+// Prefer same-origin API path so the frontend works when served behind nginx
+// (e.g., https://www.autotechai.site). Fall back to localhost for dev
+// environments when window is not available.
+// For local development, always use the backend directly since no proxy is set
+const API_URL = '/api/tts';
 
 /**
  * Text-to-Speech Service
@@ -57,15 +61,41 @@ class TTSService {
       audioUrl = audioUrl.replace(/^['"]|['"]$/g, '');
       
       // Construct the full URL if it's a relative path
+      // Build full audio URL. If the server returned a relative path (e.g.
+      // /static/audio/...), resolve it against the current page origin so
+      // it works both in dev (localhost) and when served from a domain.
+  // Since API_URL is relative, just return the audioUrl as-is
       const fullAudioUrl = audioUrl.startsWith('http')
         ? audioUrl
-        : `http://localhost:8000${audioUrl.startsWith('/') ? '' : '/'}${audioUrl}`;
+  : audioUrl;
 
       console.log('Formatted audio URL:', fullAudioUrl);
       return fullAudioUrl;
     } catch (error) {
-      console.error('TTS Error:', error);
-      throw new Error(`TTS failed: ${error.message}`);
+      // Better debug information for axios/network errors
+      try {
+        if (error && error.isAxiosError) {
+          console.error('TTS Axios error:', {
+            message: error.message,
+            code: error.code,
+            status: error.response?.status,
+            responseData: error.response?.data,
+            hasRequest: !!error.request,
+          });
+        } else {
+          console.error('TTS Error:', error);
+        }
+      } catch (logErr) {
+        // Ensure we never throw while logging
+        console.error('Error while logging TTS error:', logErr);
+      }
+
+      // Prefer server-provided error body when available
+      const serverMsg = error?.response?.data && (typeof error.response.data === 'string'
+        ? error.response.data
+        : JSON.stringify(error.response.data));
+      const errMsg = serverMsg || error?.message || 'Unknown error';
+      throw new Error(`TTS failed: ${errMsg}`);
     }
   }
 
