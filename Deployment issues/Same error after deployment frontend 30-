@@ -1,0 +1,545 @@
+
+https://www.autotechai.site/chat
+
+
+hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/vox-estate-agent$ scp -r /home/hazem-elbatawy/Downloads/vox-estate-agent/web-frontend/webfront/build/* deploy@84.201.4.127:/opt/vox-estate-agent/web-frontend/dist/
+asset-manifest.json                                                            100%  369     4.0KB/s   00:00    
+favicon.ico                                                                    100% 3870    11.7KB/s   00:00    
+index.html                                                                     100%  816     2.1KB/s   00:00    
+logo192.png                                                                    100% 5347    21.5KB/s   00:00    
+logo512.png                                                                    100% 9664    16.8KB/s   00:00    
+manifest.json                                                                  100%  492     4.3KB/s   00:00    
+photo-1582407947304-fd86f028f716.avif                                          100%   80KB 242.0KB/s   00:00    
+real-estate-buildings-in-modern-city-akg75n64dxflm7dk.jpg                      100%  397KB 332.0KB/s   00:01    
+robots.txt                                                                     100%   67     0.3KB/s   00:00    
+main.7ab1d907.js.LICENSE.txt                                                   100% 1433     4.4KB/s   00:00    
+main.7ab1d907.js                                                               100%  291KB 412.3KB/s   00:00    
+main.7ab1d907.js.map                                                           100% 1509KB 934.9KB/s   00:01    
+main.c2755c7e.css.map                                                          100%   15KB 143.2KB/s   00:00    
+main.c2755c7e.css                                                              100% 7600    63.6KB/s   00:00    
+hazem-elbatawy@hazem-el
+
+
+
+
+
+
+root@host:/opt/vox-estate-agent/web-frontend/webfront# who i am
+root     ttyS0        2025-09-29 22:46                 chown -R deploy:deploy /opt/vox-estate-agent/web-frontend/dist
+root@host:/opt/vox-estate-agent/web-frontend/webfront# chmod -R 775 /opt/vox-estate-agent/web-frontend/distntend/dist
+root@host:/opt/vox-estate-agent/web-frontend/webfront# chmod -R 775 /opt/vox-estate-agent/web-frontend/dist
+root@host:/opt/vox-estate-agent/web-frontend/webfront# chown -R www-data:www-data /opt/vox-estate-agent/web-frontend/dist
+root@host:/opt/vox-estate-agent/web-frontend/webfront# chown -R www-data:www-data /opt/vox-estate-agent/web-frontend/dist
+root@host:/opt/vox-estate-agent/web-frontend/webfront# chmod -R 755 /opt/vox-estate-agent/web-frontend/dist
+root@host:/opt/vox-estate-agent/web-frontend/webfront# chmod -R 755 /opt/vox-estate-agent/web-frontend/dist
+root@host:/opt/vox-estate-agent/web-frontend/webfront# 
+root@host:/opt/vox-estate-agent/web-frontend/webfront# systemctl reload nginx
+root@host:/opt/vox-estate-agent/web-frontend/webfront# 
+
+Same error for tts service . i want to make sure that i had deployed the frontend. it is supposed that i had
+copied as deploy. i want  to recopy as root user?
+
+
+** Check my user on the server:
+root@host:/opt/vox-estate-agent/web-frontend/webfront# users
+deploy root
+** Recheck the data owned for the frontend for which one i think it is for root not deploy
+
+
+
+
+#############################################||||||||||||||||||||||||||||@#####################
+############=================++++++|||||||||||||||##########################################
+
+        Analysis
+
+        ###################################################################################
+
+
+        To check which user owns the frontend files and ensure correct deployment:
+
+1. **Check file ownership in the deployment directory:**
+   ```bash
+   ls -l /opt/vox-estate-agent/web-frontend/dist
+   ls -l /opt/vox-estate-agent/web-frontend/dist/static/js
+   ls -l /opt/vox-estate-agent/web-frontend/dist/static/css
+   ```
+
+2. **If files are owned by the wrong user (e.g., root or deploy), set correct ownership for nginx:**
+   ```bash
+   sudo chown -R www-data:www-data /opt/vox-estate-agent/web-frontend/dist
+   sudo chmod -R 755 /opt/vox-estate-agent/web-frontend/dist
+   ```
+
+3. **No need to recopy as root if you can change ownership as root.**  
+   Just fix permissions and reload nginx:
+   ```bash
+   sudo systemctl reload nginx
+   ```
+
+4. **Verify in browser and with:**
+   ```bash
+   ls -l /opt/vox-estate-agent/web-frontend/dist
+   ```
+
+If you still have issues, paste the output of the `ls -l` commands above. This will confirm the deployment and ownership.
+
+
+
+
+########||||||||||||########||||||||||||########||||||||||||########||||||||||||########||||||||||||
+Bash server
+########||||||||||||########||||||||||||########||||||||||||########||||||||||||
+########||||||||||||
+
+root@host:/opt/vox-estate-agent/web-frontend/webfront# ls -l /opt/vox-estate-agent/web-frontend/dist
+ls -l /opt/vox-estate-agent/web-frontend/dist/static/js
+ls -l /opt/vox-estate-agent/web-frontend/dist/static/css
+total 524
+-rwxr-xr-x 1 www-data www-data    369 Sep 30 13:44 asset-manifest.json
+-rwxr-xr-x 1 www-data www-data   3870 Sep 30 13:44 favicon.ico
+-rwxr-xr-x 1 www-data www-data    816 Sep 30 13:44 index.html
+-rwxr-xr-x 1 www-data www-data   5347 Sep 30 13:44 logo192.png
+-rwxr-xr-x 1 www-data www-data   9664 Sep 30 13:44 logo512.png
+-rwxr-xr-x 1 www-data www-data    492 Sep 30 13:44 manifest.json
+-rwxr-xr-x 1 www-data www-data  81412 Sep 30 13:44 photo-1582407947304-fd86f028f716.avif
+-rwxr-xr-x 1 www-data www-data 406764 Sep 30 13:44 real-estate-buildings-in-modern-city-akg75n64dxflm7dk.jpg
+-rwxr-xr-x 1 www-data www-data     67 Sep 30 13:44 robots.txt
+drwxr-xr-x 4 www-data www-data   4096 Sep 28 23:41 static
+total 5420
+-rwxr-xr-x 1 www-data www-data  297812 Sep 30 13:44 main.7ab1d907.js
+-rwxr-xr-x 1 www-data www-data    1433 Sep 30 13:44 main.7ab1d907.js.LICENSE.txt
+-rwxr-xr-x 1 www-data www-data 1544955 Sep 30 13:44 main.7ab1d907.js.map
+-rwxr-xr-x 1 www-data www-data  297287 Sep 28 23:48 main.df3066ba.js
+-rwxr-xr-x 1 www-data www-data    1433 Sep 28 23:48 main.df3066ba.js.LICENSE.txt
+-rwxr-xr-x 1 www-data www-data 1542791 Sep 28 23:48 main.df3066ba.js.map
+-rwxr-xr-x 1 www-data www-data  298052 Sep 29 22:29 main.f60aff2a.js
+-rwxr-xr-x 1 www-data www-data    1433 Sep 29 22:29 main.f60aff2a.js.LICENSE.txt
+-rwxr-xr-x 1 www-data www-data 1545455 Sep 29 22:29 main.f60aff2a.js.map
+total 24
+-rwxr-xr-x 1 www-data www-data  7600 Sep 30 13:44 main.c2755c7e.css
+-rwxr-xr-x 1 www-data www-data 15086 Sep 30 13:44 main.c2755c7e.css.map
+root@host:/opt/vox-estate-agent/web-frontend/webfront# 
+
+
+
+
+
+##################################################
+
+Analysis
+
+
+
+Your frontend files in `/opt/vox-estate-agent/web-frontend/dist` and its subdirectories are all owned by `www-data:www-data` with correct permissions (`755` for directories, `755` for files). This means your deployment and permissions are correct for nginx to serve the files.
+
+**Summary:**
+- The frontend is deployed and accessible to nginx.
+- No need to recopy as root or change ownership.
+
+If you are still seeing the same TTS error, the issue is not with the frontend deployment or file permissions. The problem is likely with:
+- Backend API not running or not reachable at `/api/tts`
+- Nginx config proxying `/api/` incorrectly
+- CORS or network issues
+
+Next steps:
+1. Check if your backend is running and accessible (`curl http://127.0.0.1:8000/api/tts` from the server).
+2. Check nginx logs for errors.
+3. Confirm your nginx config for `/api/` proxy is correct.
+
+Let me know if you want to debug the backend or nginx proxy next!
+
+
+
+ssh
+
+
+deploy@host:~$ curl -X POST http://127.0.0.1:8000/api/tts -H "Content-Type: application/json" -d '{"text":"Hello"}'
+{"audio_url":"/static/audio/output_20250930_135955_cfb3c14b.mp3"}deploy@host:~$ ^C
+deploy@host:~$ ps aux | grep uvicorn
+deploy       643  0.1  2.9 251652 59888 ?        Ssl  Sep29   1:29 /opt/vox-estate-agent/venv/bin/python3 /opt/vox-estate-agent/venv/bin/uvicorn app.main:app --host 127.0.0.1 --port 8000 --workers 1
+deploy      7677  0.0  0.1   7008  2224 pts/0    S+   14:00   0:00 grep --color=auto uvicorn
+
+
+
+
+server
+
+
+n 50 /var/log/nginx/error.lognt/web-frontend/webfront# tail -n 50 /var/log/nginx/error.log
+2025/09/30 00:16:56 [crit] 1279#1279: *141 SSL_do_handshake() failed (SSL: error:0A00006C:SSL routines::bad key share) while SSL handshaking, client: 65.49.1.124, server: 0.0.0.0:443
+2025/09/30 00:36:09 [crit] 1279#1279: *179 SSL_do_handshake() failed (SSL: error:0A00006C:SSL routines::bad key share) while SSL handshaking, client: 185.242.226.107, server: 0.0.0.0:443
+2025/09/30 01:14:44 [crit] 1279#1279: *213 SSL_do_handshake() failed (SSL: error:0A00006C:SSL routines::bad key share) while SSL handshaking, client: 14.194.11.238, server: 0.0.0.0:443
+2025/09/30 02:21:25 [crit] 1279#1279: *279 SSL_do_handshake() failed (SSL: error:0A00006C:SSL routines::bad key share) while SSL handshaking, client: 165.154.41.50, server: 0.0.0.0:443
+2025/09/30 04:13:45 [crit] 1279#1279: *405 SSL_do_handshake() failed (SSL: error:0A00006C:SSL routines::bad key share) while SSL handshaking, client: 206.189.31.119, server: 0.0.0.0:443
+2025/09/30 05:27:54 [crit] 1279#1279: *463 SSL_do_handshake() failed (SSL: error:0A00006C:SSL routines::bad key share) while SSL handshaking, client: 192.81.217.40, server: 0.0.0.0:443
+2025/09/30 06:47:46 [crit] 1279#1279: *537 SSL_do_handshake() failed (SSL: error:0A00006C:SSL routines::bad key share) while SSL handshaking, client: 157.245.225.221, server: 0.0.0.0:443
+2025/09/30 10:43:35 [crit] 1279#1279: *768 SSL_do_handshake() failed (SSL: error:0A00006C:SSL routines::bad key share) while SSL handshaking, client: 152.32.226.8, server: 0.0.0.0:443
+2025/09/30 12:08:38 [crit] 1279#1279: *981 SSL_do_handshake() failed (SSL: error:0A00006C:SSL routines::bad key share) while SSL handshaking, client: 64.227.32.66, server: 0.0.0.0:443
+2025/09/30 12:08:38 [crit] 1279#1279: *1013 SSL_do_handshake() failed (SSL: error:0A00006C:SSL routines::bad key share) while SSL handshaking, client: 134.209.25.199, server: 0.0.0.0:443
+2025/09/30 12:08:40 [crit] 1279#1279: *1139 SSL_do_handshake() failed (SSL: error:0A00006C:SSL routines::bad key share) while SSL handshaking, client: 167.71.81.114, server: 0.0.0.0:443
+2025/09/30 12:08:42 [crit] 1279#1279: *1156 SSL_do_handshake() failed (SSL: error:0A00006C:SSL routines::bad key share) while SSL handshaking, client: 64.227.70.2, server: 0.0.0.0:443
+2025/09/30 12:11:33 [crit] 1279#1279: *1207 SSL_do_handshake() failed (SSL: error:0A00006C:SSL routines::bad key share) while SSL handshaking, client: 35.204.90.0, server: 0.0.0.0:443
+2025/09/30 12:11:35 [crit] 1279#1279: *1218 SSL_do_handshake() failed (SSL: error:0A00006C:SSL routines::bad key share) while SSL handshaking, client: 35.204.90.0, server: 0.0.0.0:443
+2025/09/30 13:45:34 [notice] 7578#7578: signal process started
+root@host:/opt/vox-estate-agent/web-frontend/webfront# 
+
+
+
+####################################################
+analysis
+
+Your backend is running and responds correctly to local requests (`curl -X POST http://127.0.0.1:8000/api/tts` returns a valid `audio_url`).  
+Your frontend files are deployed and owned by `www-data`.  
+Nginx reloads without error, and there are no nginx errors related to `/api/` or static files—only unrelated SSL handshake issues.
+
+**Conclusion:**  
+- The frontend and backend are both deployed and accessible locally.
+- The backend is healthy and serving `/api/tts`.
+- File permissions and nginx reloads are correct.
+
+**If you are still seeing the TTS error in the browser:**
+- The problem is likely with nginx proxying, HTTPS config, or frontend API URL.
+
+**Next steps:**
+1. Open your site in the browser, open DevTools (F12), and check the Network tab for the TTS request:
+   - What is the full URL of the failed request?
+   - What is the HTTP status code and response body?
+2. Confirm your nginx HTTPS server block has:
+   ```nginx
+   location /api/ {
+       proxy_pass http://127.0.0.1:8000/;
+       # ...other headers...
+   }
+   ```
+3. If the frontend is using `http://localhost:8000/api/tts` in production, it will fail—ensure it uses a relative path (`/api/tts`) for production.
+
+**Paste the failed request details from the browser Network tab if you need more help!**
+
+
+
+##################################################3
+
+ChromeSpeechRecognition.js:78 Speech recognition initialized.
+SpeakChat.js:27 Warming up TTS service...
+ttsService.js:26 Sending TTS request for text: Hello
+ttsService.js:78 TTS Axios error: Object
+textToSpeech @ ttsService.js:78
+SpeakChat.js:37 TTS service warm-up failed: Error: TTS failed: Network Error
+    at Zr.textToSpeech (ttsService.js:98:13)
+    at async SpeakChat.js:27:21
+(anonymous) @ SpeakChat.js:37
+localhost:8000/api/tts:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+
+
+
+
+
+Your frontend is trying to call `http://localhost:8000/api/tts` in production, but this will not work on the deployed server—browsers interpret `localhost` as the user's own machine, not your server.
+
+**How to fix:**
+
+1. In production, your frontend should use a relative path for the API:
+   ```js
+   const API_URL = '/api/tts';
+   ```
+   This ensures requests go to your server's domain and are properly proxied by nginx.
+
+2. Edit your `ttsService.js`:
+   - Change any hardcoded `http://localhost:8000/api/tts` to `/api/tts`.
+   - Rebuild your frontend:
+     ```bash
+     npm run build
+     ```
+   - Redeploy the build to your server.
+
+**Summary:**  
+- Never use `localhost:8000` in frontend code for production.
+- Use `/api/tts` so nginx can proxy requests to your backend.
+
+Let me know if you want the exact code change or further deployment steps!
+
+
+
+
+
+\
+root@host:~# cat  /etc/nginx/sites-available/default 
+server {
+    listen 80;
+    listen [::]:80;
+    server_name autotechai.site www.autotechai.site;
+
+    # Allow Let's Encrypt ACME challenges
+    location /.well-known/acme-challenge/ {
+        root /var/www/certbot;
+    }
+
+    # Proxy API requests to backend
+    location /api/ {
+        rewrite ^/api(/.*)$ $1 break;
+        proxy_pass http://127.0.0.1:8000/;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_http_version 1.1;
+        proxy_set_header Connection "";
+    }
+
+    # Redirect all other requests to HTTPS
+    location / {
+        return 301 https://$host$request_uri;
+    }
+}
+
+server {
+    listen 443 ssl http2;
+    listen [::]:443 ssl http2;
+    server_name autotechai.site www.autotechai.site;
+
+    # Use certbot-provided certs
+    ssl_certificate /etc/letsencrypt/live/autotechai.site/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/autotechai.site/privkey.pem;
+    ssl_session_cache shared:SSL:10m;
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_prefer_server_ciphers off;
+
+    # Serve the React SPA (built into /opt/vox-estate-agent/web-frontend/dist)
+    root /opt/vox-estate-agent/web-frontend/dist;
+    index index.html;
+
+    # Try files then fallback to index.html for SPA routing
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+
+    # Proxy API requests to the FastAPI backend (uvicorn)
+    location /api/ {
+        rewrite ^/api(/.*)$ $1 break;
+        proxy_pass http://127.0.0.1:8000/;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_http_version 1.1;
+        proxy_set_header Connection "";
+    }
+
+    # Small security headers
+    add_header X-Frame-Options SAMEORIGIN;
+    add_header X-Content-Type-Options nosniff;
+}
+root@host:~# 
+
+
+
+Your nginx config is almost correct, but the line:
+```nginx
+rewrite ^/api(/.*)$ $1 break;
+```
+in the `location /api/` block is problematic. This rewrite strips `/api` from the path, so a request to `/api/tts` becomes `/tts` when proxied to your FastAPI backend. But your FastAPI expects `/api/tts`, not `/tts`.
+
+**How to fix:**
+
+1. **Remove the `rewrite` line from both HTTP and HTTPS `location /api/` blocks.**  
+   Your block should look like this:
+   ```nginx
+   location /api/ {
+       proxy_pass http://127.0.0.1:8000/;
+       proxy_set_header Host $host;
+       proxy_set_header X-Real-IP $remote_addr;
+       proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+       proxy_http_version 1.1;
+       proxy_set_header Connection "";
+   }
+   ```
+
+2. **Save the file and reload nginx:**
+   ```bash
+   sudo systemctl reload nginx
+   ```
+
+**Summary:**  
+- Remove the `rewrite` line so `/api/tts` is proxied as `/api/tts` to your backend.
+- Reload nginx.
+- Test your TTS endpoint again in the browser.
+
+
+
+
+
+
+
+root@host:~# curl -X POST https://autotechai.site/api/tts -H "Content-Type: application/json" -d '{"text":"Hello"}' -k
+{"detail":"Not Found"}root@host:~# ^Cotechai.site/api/tts -H "Content-Type: application/json" -d '{"text":"Hello"}' -k
+root@host:~# 
+root@host:~# 
+root@host:~# ^[[200~systemctl reload nginx~
+systemctl: command not found
+root@host:~# curl -X POST https://autotechai.site/api/tts -H "Content-Type: application/json" -d '{"text":"Hello"}' -k
+{"detail":"Not Found"}root@host:~#  ^Ctechai.site/api/tts -H "Content-Type: application/json" -d '{"text":"Hello"}' -k
+root@host:~# ^C
+root@host:~# ^C
+root@host:~# ^C
+root@host:~# systemctl reload nginx
+root@host:~# systemctl reload nginx -t
+systemctl: option requires an argument -- 't'
+root@host:~# systemctl reload nginx t 
+Failed to relcurl -X POST https://autotechai.site/api/tts -H "Content-Type: application/json" -d '{"text":"Hello"}' -k
+{"detail":"Not Found"}root@host:~# utotechai.site/api/tts -H "Content-Type: application/json" -d '{"text":"Hello"}' -k
+
+
+
+
+To check how your FastAPI/uvicorn backend is running on the server:
+
+1. List running uvicorn processes:
+   ```bash
+   ps aux | grep uvicorn
+   ```
+   - This will show the command line used to start uvicorn, including the host and port.
+
+2. If you use systemd, check the service file:
+   ```bash
+   cat /etc/systemd/system/vox-agent.service
+   ```
+   - Look for the `ExecStart` line to see the exact command.
+
+3. If you use a process manager (like pm2, supervisor, or gunicorn), check its config or status.
+
+**Summary:**  
+- Use `ps aux | grep uvicorn` to see the running command.
+- Or check your systemd service file for the startup command.
+
+Paste the output here if you want help interpreting it!
+
+
+root@host:~# ps aux | grep uvicorn
+deploy       648  0.3  2.6 246500 53520 ?        Ssl  14:31   0:01 /opt/vox-estate-agent/venv/bin/python3 /opt/vox-estate-agent/venv/bin/uvicorn app.main:app --host 127.0.0.1 --port 8000 --workers 1
+root        1048  0.0  0.1   7008  2212 ttyS0    R+   14:40   0:00 grep --color=auto uvicorn
+root@host:~# cat /etc/systemd/system/vox-agent.service
+[Unit]
+Description=Vox Agent (uvicorn)
+After=network.target
+
+[Service]
+User=deploy
+Group=deploy
+WorkingDirectory=/opt/vox-estate-agent/backend/realestate_agent
+Environment="PATH=/opt/vox-estate-agent/venv/bin"
+ExecStart=/opt/vox-estate-agent/venv/bin/uvicorn app.main:app --host 127.0.0.1 --port 8000 --workers 1
+
+Restart=on-failure
+RestartSec=5s
+
+[Install]
+WantedBy=multi
+
+
+
+
+
+Your FastAPI backend is running with the correct command:
+```
+/opt/vox-estate-agent/venv/bin/uvicorn app.main:app --host 127.0.0.1 --port 8000 --workers 1
+```
+and your systemd service is also configured correctly.
+
+**Summary:**
+- Backend is listening on 127.0.0.1:8000 (good for nginx proxy).
+- The FastAPI route is defined as `/api/tts`.
+- Nginx config is correct and proxies `/api/` to the backend.
+
+**If you are still getting `{"detail":"Not Found"}` from `https://autotechai.site/api/tts`:**
+- Restart both nginx and your backend service to ensure all changes are active:
+  ```bash
+  sudo systemctl restart nginx
+  sudo systemctl restart vox-agent
+  ```
+- Then test again:
+  ```bash
+  curl -X POST https://autotechai.site/api/tts -H "Content-Type: application/json" -d '{"text":"Hello"}' -k
+  ```
+
+If you still get 404, check your FastAPI logs for any errors when you make the request.  
+Let me know the result after restarting both services!
+
+
+-agent/backend/realestate_agent$ curl -X POST https://autotechai.site/api/tts -H "Content-Type: application/json" -d '{"text":"Hello"}' -k
+{"detail":"Not Found"}(venv) hazem-elbatawy@hazem-elbatawy-Vostro-15-3510:~/Downloads/vox-estate-agent/backend/realestate_agent$ 
+
+
+o audio URL in response from TTS service: Object
+textToSpeech @ ttsService.js:50Understand this error
+ttsService.js:86 TTS Error: Error: No audio URL in response from TTS service
+    at Zr.textToSpeech (ttsService.js:51:15)
+    at async SpeakChat.js:27:21
+textToSpeech @ ttsService.js:86Understand this error
+SpeakChat.js:37 TTS service warm-up failed: Error: TTS failed: No audio URL in response from TTS service
+    at Zr.textToSpeech (ttsService.js:98:13)
+    at async SpeakChat.js:27:21
+
+
+
+    ystemctl restart vox-agentestate-agent/backend/realestate_agent# systemctl restart vox-agent                                                journalctl -u vox-agent -f-estate-agent/backend/realestate_agent# journalctl -u vox-agent -f
+Sep 30 14:53:52 host uvicorn[1219]: INFO:     Started server process [1219]
+Sep 30 14:53:52 host uvicorn[1219]: INFO:     Waiting for application startup.
+Sep 30 14:53:52 host uvicorn[1219]: INFO:app.main:Application startup: Created necessary directories
+Sep 30 14:53:52 host uvicorn[1219]: INFO:     Application startup complete.
+Sep 30 14:53:52 host uvicorn[1219]: INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+Sep 30 14:54:10 host uvicorn[1219]: Loading environment variables from: /opt/vox-estate-agent/backend/.env
+Sep 30 14:54:10 host uvicorn[1219]: Current working directory: /opt/vox-estate-agent/backend/realestate_agent
+Sep 30 14:54:10 host uvicorn[1219]: OPENAI_API_KEY is set: Yes
+Sep 30 14:54:10 host uvicorn[1219]: INFO:     196.136.170.21:0 - "POST /tts HTTP/1.1" 404 Not Found
+Sep 30 14:54:18 host uvicorn[1219]: INFO:     196.136.170.21:0 - "POST /tts HTTP/1.1" 404 Not Found
+
+
+
+
+
+Your logs show requests to POST /tts (not /api/tts) returning 404. This means:
+
+- The backend is running and reachable.
+- The requests are hitting the backend, but the path is /tts, not /api/tts.
+- Your FastAPI route is defined as /api/tts, so /tts will always return 404.
+
+**Diagnosis:**  
+Nginx is likely stripping the /api prefix when proxying, so /api/tts becomes /tts for the backend.
+
+**How to fix:**
+
+1. Check your nginx config for a line like:
+```
+proxy_pass http://127.0.0.1:8000/;
+```
+If your location block is:
+```
+location /api/ {
+    proxy_pass http://127.0.0.1:8000/;
+    # ...other settings...
+}
+```
+This strips /api from the path. So /api/tts → /tts.
+
+**Solution:**  
+Change your nginx config to:
+```
+location /api/ {
+    proxy_pass http://127.0.0.1:8000/api/;
+    # ...other settings...
+}
+```
+This will preserve the /api prefix.
+
+**Steps:**
+1. Edit your nginx config (usually `/etc/nginx/sites-available/default` or similar).
+2. In the `location /api/` block, set:
+   ```
+   proxy_pass http://127.0.0.1:8000/api/;
+   ```
+3. Reload nginx:
+   ```
+   systemctl reload nginx
+   ```
+4. Test your endpoint again.
+
+Let me know if you want the exact lines to change or need help editing the config.

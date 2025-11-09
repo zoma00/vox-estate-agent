@@ -9,5 +9,5 @@ to be remove:
 ** Check if these files is working or i can remove it:
 
 backend/realestate_agent/audio_output
-backend/realestate_agent/avatar
-backend/realestate_agent/Generated old vids
+backend/realestate_agent/results
+backend/realestate_agent/temp

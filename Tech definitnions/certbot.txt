@@ -1,0 +1,30 @@
+Certbot is a **free, open-source tool** developed by the Electronic Frontier 
+Foundation (EFF) that helps you automatically get and renew SSL/TLS certificates
+ from [Let’s Encrypt](https://letsencrypt.org/).
+
+In simple terms:
+
+* 🔒 **Purpose** → It enables HTTPS on your website (so browsers show the padlock instead of “Not Secure”).
+* ⚡ **Automation** → Certbot can automatically fetch, install, and renew your certificates before they expire (Let’s Encrypt certs are valid for 90 days).
+* 🌍 **Compatibility** → Works with most popular web servers (like **Nginx**, **Apache**) and operating systems (Ubuntu, Debian, CentOS, etc.).
+* 🆓 **Cost** → 100% free (Let’s Encrypt provides the certificates at no charge).
+
+---
+
+### Typical workflow with Certbot
+
+1. Install Certbot (`apt install certbot python3-certbot-nginx` for Nginx, or `python3-certbot-apache` for Apache).
+2. Run something like:
+
+   ```bash
+   sudo certbot --nginx -d yourdomain.com -d www.yourdomain.com
+   ```
+
+   Certbot talks to Let’s Encrypt, verifies your domain ownership, gets the cert, and updates your Nginx config automatically.
+3. Certificates auto-renew in the background via a systemd timer or cron job.
+
+---
+
+✅ End result: Your site runs on **HTTPS with a valid SSL certificate**, renewed automatically.
+
+Do you want me to show you **exact commands to set up Certbot with Nginx** on your `vox-estate-agent` server so your FastAPI app can run securely over HTTPS?

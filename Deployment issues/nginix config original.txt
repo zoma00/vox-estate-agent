@@ -1,0 +1,130 @@
+Your current nginx config **does** have a `location /static/` block in your HTTPS server section:
+
+```nginx
+location /static/ {
+    alias /opt/vox-estate-agent/backend/realestate_agent/static/;
+    expires 1d;
+    add_header Cache-Control "public";
+}
+```
+
+**This block is the reason your SPA static assets (JS/CSS) are returning 404s.**  
+It tells nginx to serve all `/static/*` requests from your backend static folder, not from your SPA build directory.
+
+---
+
+## **How to fix:**
+
+1. **Remove or comment out the `location /static/` block in your HTTPS server config.**
+   - You can comment it out by adding a `#` at the start of each line:
+     ```nginx
+     # location /static/ {
+     #     alias /opt/vox-estate-agent/backend/realestate_agent/static/;
+     #     expires 1d;
+     #     add_header Cache-Control "public";
+     # }
+     ```
+   - Or delete those lines entirely.
+
+2. **Save the file and reload nginx:**
+   ```bash
+   systemctl reload nginx
+   ```
+
+---
+
+**Result:**  
+Nginx will now serve `/static/js/*` and `/static/css/*` from your SPA build directory, and your React app will load correctly.
+
+---
+
+If you need to serve backend audio files, use a different URL (e.g., `/audio-static/`) to avoid conflicts.
+
+Let me know once you’ve made the change and reloaded nginx, or if you need the exact patch!
+
+
+
+
+
+
+
+
+
+
+
+location /static/ {
+    alias /opt/vox-estate-agent/backend/realestate_agent/static/;
+    expires 1d;
+    add_header Cache-Control "public";
+}
+** i dont have this in my current file:
+
+
+  GNU nano 6.2           /etc/nginx/sites-available/default                     
+server {
+    listen 80;
+    listen [::]:80;
+    server_name autotechai.site www.autotechai.site;
+
+    # Allow Let's Encrypt ACME challenges
+    location /.well-known/acme-challenge/ {
+        root /var/www/certbot;
+    }
+
+    # Proxy API requests to backend
+    location /api/ {
+        proxy_pass http://127.0.0.1:8000/;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_http_version 1.1;
+        proxy_set_header Connection "";
+    }
+      # Redirect all other requests to HTTPS
+    location / {
+        return 301 https://$host$request_uri;
+    }
+}
+
+server {
+    listen 443 ssl http2;
+    listen [::]:443 ssl http2;
+    server_name autotechai.site www.autotechai.site;
+
+    # Use certbot-provided certs
+    ssl_certificate /etc/letsencrypt/live/autotechai.site/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/autotechai.site/privkey.pem;
+    ssl_session_cache shared:SSL:10m;
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_prefer_server_ciphers off;
+
+    # Serve the React SPA (built into /opt/vox-estate-agent/web-frontend/dist)
+
+    root /opt/vox-estate-agent/web-frontend/dist;
+    index index.html;
+
+    # Try files then fallback to index.html for SPA routing
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+
+    # Proxy API requests to the FastAPI backend (uvicorn)
+    location /api/ {
+        proxy_pass http://127.0.0.1:8000/;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_http_version 1.1;
+        proxy_set_header Connection "";
+    }
+
+    # Serve static audio files written by backend
+  # location /static/ {
+   #     alias /opt/vox-estate-agent/backend/realestate_agent/static/;
+    #    expires 1d;
+     #   add_header Cache-Control "public";
+    }
+
+    # Small security headers
+    add_header X-Frame-Options SAMEORIGIN;
+    add_header X-Content-Type-Options nosniff;

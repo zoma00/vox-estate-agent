@@ -1,3 +1,116 @@
+
+# Vox Estate Agent — Full Stack AI Real Estate Platform
+
+**System:** Ubuntu Linux (tested on 22.04+)
+
+This project is a full-stack AI-powered real estate assistant, combining a FastAPI backend (Python) and a React frontend (JavaScript). It demonstrates modern deployment skills (systemd, nginx, venv), patch management, and automated testing.
+
+---
+
+## Backend
+**Path:** `/home/hazem-elbatawy/Downloads/vox-estate-agent/backend`
+
+**Tech Stack:**
+- Python 3.10+
+- FastAPI (REST API)
+- OpenAI GPT (chat)
+- pyttsx3 & gTTS (Text-to-Speech)
+- Pydantic (models)
+- Logging, CORS, static file serving
+- Python venv for isolation
+
+**Deployment:**
+- Ubuntu Linux (systemd service for uvicorn)
+- Nginx for HTTPS, API proxy, and static files
+- `start_server.sh` for local dev quickstart
+- `.env` for secrets (OpenAI API key)
+- Audio files in `static/audio/`
+
+**Testing:**
+- Unit tests for TTS and chat pipeline (see `test_tts_api.py`)
+- Manual API tests via curl/Postman or Curl.
+
+**Patch Management:**
+- Git tracked patches (see commit history)
+- `.gitignore` for venv, logs, and deployment artifacts
+
+**Key Files:**
+- `app/main.py` — FastAPI app entry
+- `app/agent_pipeline.py` — AI/TTS pipeline
+- `app/tts_service.py` — TTS engine
+- `requirements.txt` — Python dependencies
+- `start_server.sh` — Dev server script
+
+---
+
+## Frontend
+**Path:** `/home/hazem-elbatawy/Downloads/vox-estate-agent/web-frontend/webfront`
+
+**Tech Stack:**
+- React (Create React App)
+- Axios (API calls)
+- React Router
+- Modern CSS, responsive design
+
+**Features:**
+- Chat UI with TTS playback
+- Admin dashboard, property management
+- API integration with backend endpoints
+
+**Testing:**
+- Jest + React Testing Library (`npm test`)
+- Manual browser tests
+
+**Deployment:**
+- Build with `npm run build`
+- Served via nginx (see deployment config)
+
+**Key Files:**
+- `src/App.js`, `src/SpeakChat.js` — main app/chat logic
+- `src/utils/ttsService.js` — TTS API integration
+- `public/` — static assets
+- `package.json` — dependencies/scripts
+
+---
+
+## Deployment Skills Demonstrated
+- Ubuntu systemd service for backend (see `vox-agent.service`)
+- Nginx config for API proxy/static files
+- Python venv for backend isolation
+- Patch management via git
+- Automated and manual testing
+
+---
+
+## How to Run
+**Backend:**
+```bash
+cd backend/realestate_agent
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+```
+**Frontend:**
+```bash
+cd web-frontend/webfront
+npm install
+npm start
+```
+
+---
+
+## See Also
+- `README.md` at project root for full-stack overview
+- Deployment scripts and configs in backend
+- Test scripts and patch history in git
+
+
+
+
+
+
+
 # PropEstateAI - Frontend (Create React App)
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
