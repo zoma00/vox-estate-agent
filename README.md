@@ -1,3 +1,11 @@
+![FastAPI](https://img.shields.io/badge/FastAPI-009688?logo=fastapi&logoColor=white)
+![Python](https://img.shields.io/badge/Python-3776AB?logo=python&logoColor=white)
+![AI](https://img.shields.io/badge/AI-412991?logo=openai&logoColor=white)
+![Text-to-Speech](https://img.shields.io/badge/Text--to--Speech-FF6F00?logo=googleassistant&logoColor=white)
+![Uvicorn](https://img.shields.io/badge/Uvicorn-499848?logo=uvicorn&logoColor=white)
+![Bash](https://img.shields.io/badge/Bash-4EAA25?logo=gnubash&logoColor=white)
+
+
 # Vox Estate Agent
 
 A full-stack AI-powered real estate assistant with Text-to-Speech (TTS), chat, and property management features. This project includes a FastAPI backend and a React frontend, designed for easy deployment and extensibility.
