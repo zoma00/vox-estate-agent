@@ -55,7 +55,7 @@ backend/
     static/audio/       # Generated audio files
 ```
 
-### Setup & Installation
+### Backend Setup & Installation
 1. **Python 3.10+ recommended**
 2. Create and activate a virtual environment:
    ```bash
@@ -72,14 +72,14 @@ backend/
    OPENAI_API_KEY=your-openai-key
    ```
 
-### API Endpoints
+### Backend API Endpoints
 - `GET /` — Health check
 - `POST /api/chat` — AI chat (input: text, options; output: response, audio, URLs)
 - `POST /api/tts` — Text-to-Speech (input: text, language; output: audio_url)
 - `GET /api/languages` — Supported TTS languages
 - `GET /static/audio/{filename}` — Serve generated audio files
 
-### Environment Variables
+### Backend Environment Variables
 - `OPENAI_API_KEY` — Required for AI chat
 - Optional: configure other keys in `.env`
 
@@ -117,23 +117,25 @@ web-frontend/webfront/
   README.md
 ```
 
-### Setup & Installation
+### Frontend Setup & Installation
 1. **Node.js 18+ recommended**
 2. Install dependencies:
    ```bash
    cd web-frontend/webfront
    npm install
    ```
-3. Start development server:
-   ```bash
-   npm start
-   # Runs at http://localhost:3000
-   ```
-4. Build for production:
-   ```bash
-   npm run build
-   # Output in build/
-   ```
+
+### Running the Frontend
+- Development:
+  ```bash
+  npm start
+  # Runs at http://localhost:3000
+  ```
+- Production build:
+  ```bash
+  npm run build
+  # Output in build/
+  ```
 
 ### API Integration
 - Frontend calls `/api/chat` and `/api/tts` (same-origin recommended for production)
