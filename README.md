@@ -5,6 +5,7 @@
 ![Uvicorn](https://img.shields.io/badge/Uvicorn-499848?logo=uvicorn&logoColor=white)
 ![Bash](https://img.shields.io/badge/Bash-4EAA25?logo=gnubash&logoColor=white)
 
+**Full-stack AI-powered real estate assistant** built with a **FastAPI** backend and **React** frontend, featuring **chat**, **text-to-speech (TTS)**, and **property management**.
 
 # Vox Estate Agent
 
