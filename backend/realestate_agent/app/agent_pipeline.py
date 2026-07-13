@@ -5,7 +5,6 @@ import webbrowser
 import uuid
 from typing import Optional, Dict, Any, List
 from datetime import datetime
-from pathlib import Path
 
 import openai
 from fastapi import HTTPException
@@ -202,7 +201,7 @@ async def generate_tts_audio(
         }
 
     except ImportError as e:
-        error_msg = f"TTS module not installed. Please install pyttsx3: pip install pyttsx3"
+        error_msg = "TTS module not installed. Please install pyttsx3: pip install pyttsx3"
         logger.error(f"{error_msg} Error: {str(e)}", exc_info=True)
         raise HTTPException(status_code=500, detail=error_msg)
     except Exception as e:

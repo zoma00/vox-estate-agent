@@ -1,0 +1,8 @@
+# Lint scope: first-party backend code only.
+# Wav2Lip is vendored third-party code and is not linted.
+extend-exclude = ["backend/realestate_agent/Wav2Lip"]
+
+[lint.per-file-ignores]
+# main.py must load .env and validate OPENAI_API_KEY before importing
+# app modules, so module-level imports cannot all sit at the top.
+"backend/realestate_agent/app/main.py" = ["E402"]

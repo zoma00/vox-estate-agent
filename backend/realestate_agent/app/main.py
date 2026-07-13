@@ -1,6 +1,5 @@
 import os
 import logging
-import shutil
 from typing import Union, Optional
 from pathlib import Path
 import dotenv
@@ -24,18 +23,16 @@ print(f"OPENAI_API_KEY is set: {'Yes' if os.getenv('OPENAI_API_KEY') else 'No'}"
 if not os.getenv("OPENAI_API_KEY"):
     raise ValueError("OPENAI_API_KEY environment variable not set. Please check your .env file.")
 
-from fastapi import FastAPI, HTTPException, status, UploadFile, File, Form, Request
+from fastapi import FastAPI, HTTPException, status, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse, FileResponse
+from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
 # Import TTS service
-from app.tts_service import tts_service
 
 # Import agent pipeline
 from app.agent_pipeline import (
-    generate_ai_response,
     process_user_input,
     AIResponse,
     DEFAULT_LANGUAGE,
@@ -257,7 +254,7 @@ app.mount(
 
 # Add CORS headers for static files
 @app.middleware("http")
-async def add_cors_headers(request: Request, call_next):
+async def add_static_cors_headers(request: Request, call_next):
     response = await call_next(request)
     if request.url.path.startswith("/static/"):
         response.headers["Access-Control-Allow-Origin"] = "*"

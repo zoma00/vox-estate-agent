@@ -1,7 +1,5 @@
 import os
-import tempfile
 import pyttsx3
-import shutil
 from pathlib import Path
 from fastapi import HTTPException
 import logging
