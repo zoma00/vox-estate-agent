@@ -1,3 +1,4 @@
+![CI](https://github.com/zoma00/vox-estate-agent/actions/workflows/ci.yml/badge.svg)
 ![FastAPI](https://img.shields.io/badge/FastAPI-009688?logo=fastapi&logoColor=white)
 ![Python](https://img.shields.io/badge/Python-3776AB?logo=python&logoColor=white)
 ![AI](https://img.shields.io/badge/AI-412991?logo=openai&logoColor=white)
