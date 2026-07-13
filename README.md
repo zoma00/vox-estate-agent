@@ -16,6 +16,7 @@ A full-stack AI-powered real estate assistant with Text-to-Speech (TTS), chat, a
 
 ## Table of Contents
 - [Project Overview](#project-overview)
+- [Architecture](#architecture)
 - [Backend (FastAPI)](#backend-fastapi)
   - [Features](#backend-features)
   - [Setup & Installation](#backend-setup--installation)
@@ -38,6 +39,23 @@ Vox Estate Agent is an AI-powered platform for real estate agents and clients. I
 - Property management dashboard
 - Admin tools and user authentication
 - Modern, responsive frontend
+
+---
+
+## Architecture
+
+```mermaid
+flowchart LR
+    Browser[User browser] --> UI[React SPA]
+    UI --> Chat[Chat and voice interface]
+    UI --> Property[Property and admin interfaces]
+    Chat -->|POST /api/chat and /api/tts| API[FastAPI REST API]
+    API --> Pipeline[AI and TTS pipeline]
+    Pipeline --> OpenAI[OpenAI API]
+    Pipeline --> TTS[Google Text-to-Speech]
+    TTS --> Audio[(Generated audio files)]
+    Audio -->|GET /static/audio/filename| Chat
+```
 
 ---
 
