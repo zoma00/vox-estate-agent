@@ -44,18 +44,9 @@ Vox Estate Agent is an AI-powered platform for real estate agents and clients. I
 
 ## Architecture
 
-```mermaid
-flowchart LR
-    Browser[User browser] --> UI[React SPA]
-    UI --> Chat[Chat and voice interface]
-    UI --> Property[Property and admin interfaces]
-    Chat -->|POST /api/chat and /api/tts| API[FastAPI REST API]
-    API --> Pipeline[AI and TTS pipeline]
-    Pipeline --> OpenAI[OpenAI API]
-    Pipeline --> TTS[Google Text-to-Speech]
-    TTS --> Audio[(Generated audio files)]
-    Audio -->|GET /static/audio/filename| Chat
-```
+<p align="center">
+  <img src="docs/application-flow.svg" width="100%" alt="Vox Estate Agent flow from the React interface through FastAPI chat and text-to-speech endpoints to OpenAI, gTTS speech generation, static audio files, and browser playback">
+</p>
 
 ---
 
